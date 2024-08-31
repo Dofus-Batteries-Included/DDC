@@ -8,6 +8,8 @@ on:
 jobs:
   job:
     uses: Dofus-Batteries-Included/workflows/.github/workflows/create_release_on_game_updage.job.yml@main
+    with:
+      archive_name: data.zip
 
 permissions:
   actions: write
