@@ -26,7 +26,9 @@ public class RawDataController : ControllerBase
     ///     Returns a JSON file.
     /// </remarks>
     [HttpGet("i18n/{lang}")]
-    public async Task<FileStreamResult> GetI18N(string version, Language lang)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<FileResult> GetI18N(string version, Language lang)
     {
         RawDataType type = lang switch
         {
@@ -49,7 +51,9 @@ public class RawDataController : ControllerBase
     ///     Returns a JSON file.
     /// </remarks>
     [HttpGet("map-positions")]
-    public async Task<FileStreamResult> GetMapPositions(string version)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<FileResult> GetMapPositions(string version)
     {
         IRawDataFile file = await _repository.GetRawDataFileAsync(version, RawDataType.MapPositions);
         return File(file.OpenRead(), file.ContentType, file.Name);
@@ -62,7 +66,9 @@ public class RawDataController : ControllerBase
     ///     Returns a JSON file.
     /// </remarks>
     [HttpGet("points-of-interest")]
-    public async Task<FileStreamResult> GetPointsOfInterest(string version)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<FileResult> GetPointsOfInterest(string version)
     {
         IRawDataFile file = await _repository.GetRawDataFileAsync(version, RawDataType.PointOfInterest);
         return File(file.OpenRead(), file.ContentType, file.Name);

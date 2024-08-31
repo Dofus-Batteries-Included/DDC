@@ -1,4 +1,6 @@
-﻿namespace DDC.Api.Repositories;
+﻿using DDC.Api.Exceptions;
+
+namespace DDC.Api.Repositories;
 
 class JsonRawDataFilesOnDisk : IRawDataRepository
 {
@@ -11,7 +13,18 @@ class JsonRawDataFilesOnDisk : IRawDataRepository
 
     public Task<IRawDataFile> GetRawDataFileAsync(string version, RawDataType type, CancellationToken cancellationToken = default)
     {
-        string path = Path.Join(_directory, version, GetFilename(type));
+        string versionPath = Path.Join(_directory, version);
+        if (!Directory.Exists(versionPath))
+        {
+            throw new BadRequestException($"Could not find data for version {version}.");
+        }
+
+        string path = Path.Join(versionPath, GetFilename(type));
+        if (!Path.Exists(path))
+        {
+            throw new BadRequestException($"Could not find data for for type {type} in version {version}.");
+        }
+
         return Task.FromResult<IRawDataFile>(new File(path));
     }
 
