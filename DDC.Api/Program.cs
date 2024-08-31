@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DDC.Api;
+using DDC.Api.Repositories;
 using Serilog;
 using Serilog.Events;
 
@@ -51,12 +52,16 @@ try
         }
     );
 
+    builder.Services.AddSingleton<IRawDataRepository, JsonRawDataFilesOnDisk>(_ => new JsonRawDataFilesOnDisk(Repository.RawDataPath));
+
     WebApplication app = builder.Build();
 
     app.UseHttpsRedirection();
 
     app.UseOpenApi();
     app.UseSwaggerUi();
+
+    app.MapDefaultControllerRoute();
 
     app.Run();
 }
