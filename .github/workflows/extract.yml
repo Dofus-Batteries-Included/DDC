@@ -57,7 +57,7 @@ jobs:
         run: 7z x BepInEx.zip -o"${{ steps.read_dofus_version.outputs.dofus_path }}" -aoa
 
       - name: Run game once
-        run: node scripts/bepinex-first-run ${{ steps.read_dofus_version.outputs.dofus_path }}\Dofus.exe
+        run: node scripts/bepinex-run-until "${{ steps.read_dofus_version.outputs.dofus_path }}\Dofus.exe" "Chainloader startup complete"
         timeout-minutes: 10
 
       - name: Read game build id
@@ -93,7 +93,7 @@ jobs:
           echo "$Configuration" > ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config
 
       - name: Extract data
-        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; ./Dofus.exe
+        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; node scripts/bepinex-run-until "Dofus.exe" "DDC data extraction complete."
 
       - name: Create metadata file
         run: |

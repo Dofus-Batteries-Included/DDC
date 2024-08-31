@@ -11,7 +11,7 @@ const path = require('path');
 const spawn = require('child_process').spawn;
 
 if (process.argv.length < 3) {
-    console.log('Usage: node run-dofus-once.js <executable path>')
+    console.log('Usage: node bepinex-run-until.js <executable path> <expected log>')
     process.exit(1);
 }
 
@@ -24,6 +24,9 @@ if (!fs.existsSync(exePath)) {
 }
 
 console.log(`Will run dofus executable at: ${exePath}`)
+
+const expectedLog = process.argv[3];
+console.Log(`Will listen for logs until: ${expectedLog}`);
 
 const proc = spawn(exePath);
 proc.stdout.pipe(process.stdout);
@@ -43,8 +46,8 @@ setInterval(function () {
     
     const logFile = fs.readFileSync(logFilePath, {encoding: 'utf8', flag: 'r'});
     
-    if (logFile.includes("Chainloader startup complete")) {
-        console.log("BepInEx has generated interop assemblies, exiting.")    
+    if (logFile.includes(expectedLog)) {
+        console.log("Found expected log, will exit now.")    
         process.exit(0);
     }
 }, 1000);
