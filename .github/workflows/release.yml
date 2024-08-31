@@ -5,7 +5,7 @@ name: Extract game data
 
 on:
   release:
-    types: [created]
+    types: [published]
   workflow_call:
   workflow_dispatch:
 
@@ -112,15 +112,26 @@ jobs:
           $null = $MetadataJson | Out-File -FilePath "${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/metadata.json"
 
       - name: Create release archive
+        if: ${{ github.event_name == 'release' }}
         run: |
           cd ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data
           7z a data.zip .
 
+      - name: Upload compiled libraries to release
+        if: ${{ github.event_name == 'release' }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/data.zip
+          asset_name: data.zip
+          tag: ${{ github.ref }}
+
       - name: Upload compiled library to artifacts
+        if: ${{ github.event_name != 'release' }}
         uses: actions/upload-artifact@v4
         with:
           name: data
-          path: ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/
+          path: ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data
           if-no-files-found: 'error'
 
 permissions:
