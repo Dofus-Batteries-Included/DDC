@@ -96,7 +96,7 @@ jobs:
           echo "$Configuration" > ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config/DDC.Extractor.cfg
 
       - name: Extract data
-        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; node scripts/bepinex-run-until "Dofus.exe" "DDC data extraction complete."
+        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; node ../scripts/bepinex-run-until "Dofus.exe" "DDC data extraction complete."
 
       - name: Create metadata file
         run: |
