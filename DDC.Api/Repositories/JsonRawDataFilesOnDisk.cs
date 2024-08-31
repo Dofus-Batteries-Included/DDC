@@ -5,15 +5,28 @@ namespace DDC.Api.Repositories;
 class JsonRawDataFilesOnDisk : IRawDataRepository
 {
     readonly string _directory;
+    static readonly string[] DefaultVersions = ["latest"];
 
     public JsonRawDataFilesOnDisk(string directory)
     {
         _directory = directory;
     }
 
+    public Task<IReadOnlyCollection<string>> GetAvailableVersionsAsync()
+    {
+        IEnumerable<string> versionDirs = GetActualVersions();
+        return Task.FromResult<IReadOnlyCollection<string>>(DefaultVersions.Concat(versionDirs).ToArray());
+    }
+
     public Task<IRawDataFile> GetRawDataFileAsync(string version, RawDataType type, CancellationToken cancellationToken = default)
     {
-        string versionPath = Path.Join(_directory, version);
+        string? versionDirectory = GetVersionDirectory(version);
+        if (versionDirectory == null)
+        {
+            throw new BadRequestException($"Could not find data for version {version}.");
+        }
+
+        string versionPath = Path.Join(_directory, versionDirectory);
         if (!Directory.Exists(versionPath))
         {
             throw new BadRequestException($"Could not find data for version {version}.");
@@ -28,6 +41,13 @@ class JsonRawDataFilesOnDisk : IRawDataRepository
         return Task.FromResult<IRawDataFile>(new File(path));
     }
 
+    string? GetVersionDirectory(string version) =>
+        version switch
+        {
+            "latest" => GetActualVersions().OrderDescending().FirstOrDefault(),
+            _ => version
+        };
+
     static string GetFilename(RawDataType type) =>
         type switch
         {
@@ -40,6 +60,8 @@ class JsonRawDataFilesOnDisk : IRawDataRepository
             RawDataType.PointOfInterest => "point-of-interest.json",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
+
+    IEnumerable<string> GetActualVersions() => Directory.EnumerateDirectories(_directory);
 
     class File : IRawDataFile
     {

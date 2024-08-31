@@ -7,6 +7,12 @@
 public interface IRawDataRepository
 {
     /// <summary>
+    ///     Get the available versions in the repository.
+    /// </summary>
+    /// <returns></returns>
+    Task<IReadOnlyCollection<string>> GetAvailableVersionsAsync();
+
+    /// <summary>
     ///     Get a file containing the requested data for the requested version of the game.
     /// </summary>
     Task<IRawDataFile> GetRawDataFileAsync(string version, RawDataType type, CancellationToken cancellationToken = default);
