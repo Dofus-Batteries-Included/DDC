@@ -31,7 +31,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: interop-assemblies
-          path: src/Interop
+          path: Interop
 
       - name: Install .NET 8.0
         uses: actions/setup-dotnet@v4
