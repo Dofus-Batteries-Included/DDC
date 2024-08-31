@@ -54,7 +54,7 @@ jobs:
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
 
       - name: Extract BepInEx
-        run: 7z x BepInEx.zip -o${{ steps.read_dofus_version.outputs.dofus_path }} -aoa
+        run: 7z x BepInEx.zip -o"${{ steps.read_dofus_version.outputs.dofus_path }}" -aoa
 
       - name: Run game once
         run: node scripts/bepinex-first-run ${{ steps.read_dofus_version.outputs.dofus_path }}\Dofus.exe
