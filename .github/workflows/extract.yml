@@ -84,13 +84,16 @@ jobs:
       - name: Copy plugin
         run: copy DDC.Extractor/bin/Release/net6.0/DDC*.dll ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/plugins
 
+      - name: Create BepInEx config folder
+        run: md ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config -Force
+
       - name: Write DDC.Extractor configuration
         run: |
           $Configuration = @'
           [General]
           OutputDirectory = ./extracted-data
           '@
-          echo "$Configuration" > ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config
+          echo "$Configuration" > ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config/DDC.Extractor.cfg
 
       - name: Extract data
         run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; node scripts/bepinex-run-until "Dofus.exe" "DDC data extraction complete."
