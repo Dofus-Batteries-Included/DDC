@@ -1,0 +1,123 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Extract game data
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:  
+  extract:
+    name: Extract game data
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Setup Github NPM registry for @dofus-batteries-included namespace
+        run: |
+          echo @dofus-batteries-included:registry=https://npm.pkg.github.com > ~/.npmrc
+          echo //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }} >> ~/.npmrc
+
+      - name: Install Cytrus v6
+        run: npm i @dofus-batteries-included/cytrus-v6 -g
+
+      - name: Read current game version
+        id: read_dofus_version
+        run: |
+          $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
+          $GameVersion=$CytrusGameVersion.Split(`"_`")[1]
+          echo "dofus_version=$GameVersion" >> $Env:GITHUB_OUTPUT
+          echo "dofus_path=dofus-beta-$GameVersion" >> $Env:GITHUB_OUTPUT
+
+      - name: Restore game files
+        id: restore_game_files
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ steps.read_dofus_version.outputs.dofus_path }}
+          key: ${{ steps.read_dofus_version.outputs.dofus_path }}
+
+      - name: Download latest game files
+        if: ${{ steps.restore_game_files.outputs.cache-hit != 'true' }}
+        run: cytrus-v6 download -g dofus -b -o ${{ steps.read_dofus_version.outputs.dofus_path }} # Use beta for now
+
+      - name: Download BepInEx
+        run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
+
+      - name: Extract BepInEx
+        run: 7z x BepInEx.zip -o${{ steps.read_dofus_version.outputs.dofus_path }} -aoa
+
+      - name: Run game once
+        run: node scripts/bepinex-first-run ${{ steps.read_dofus_version.outputs.dofus_path }}\Dofus.exe
+        timeout-minutes: 10
+
+      - name: Read game build id
+        id: read_dofus_build_id
+        run: echo "dofus_build_id=$(node scripts/read-build-guid.js ${{ steps.read_dofus_version.outputs.dofus_path }}/Dofus_Data/boot.config)" >> $Env:GITHUB_OUTPUT
+
+      - name: Display build information
+        run: |
+          echo "Build id: ${{ steps.read_dofus_build_id.outputs.dofus_build_id }}"
+          echo "Version: ${{ steps.read_dofus_version.outputs.dofus_version }}"
+
+      - name: Create Interop folder
+        run: md Interop -Force
+
+      - name: Copy Interop assemblies
+        run: copy ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/interop/* Interop/
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build DDC.Extractor plugin
+        run: dotnet build DDC.Extractor/DDC.Extractor.csproj --configuration Release --no-restore
+
+      - name: Copy plugin
+        run: copy DDC.Extractor/bin/Release/net6.0/DDC*.dll ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/plugins
+
+      - name: Write DDC.Extractor configuration
+        run: |
+          $Configuration = @'
+          [General]
+          OutputDirectory = ./extracted-data
+          '@
+          echo "$Configuration" > ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config
+
+      - name: Extract data
+        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; ./Dofus.exe
+
+      - name: Create metadata file
+        run: |
+          $Metadata = @{
+            BepInExVersion = "6.0.0-be.697+5362580" 
+            GameBuildId = "${{ steps.read_dofus_build_id.outputs.dofus_build_id }}"
+            GameVersion = "${{ steps.read_dofus_version.outputs.dofus_version }}"
+          }
+          $MetadataJson = $Metadata | ConvertTo-Json
+          $null = Write-Host $MetadataJson
+          $null = $MetadataJson | Out-File -FilePath "${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/metadata.json"
+
+      - name: Create release archive
+        run: |
+          cd ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data
+          7z a data.zip .
+
+      - name: Upload compiled library to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: data.zip
+          path: ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/data.zip
+          if-no-files-found: 'error'
+
+permissions:
+  contents: write
+  packages: read
