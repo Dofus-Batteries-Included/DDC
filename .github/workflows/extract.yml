@@ -35,7 +35,7 @@ jobs:
         id: read_dofus_version
         run: |
           $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
-          $GameVersion=$CytrusGameVersion.Split(`"_`")[1]
+          $GameVersion=$CytrusGameVersion.Split("_")[1]
           echo "dofus_version=$GameVersion" >> $Env:GITHUB_OUTPUT
           echo "dofus_path=dofus-beta-$GameVersion" >> $Env:GITHUB_OUTPUT
 
