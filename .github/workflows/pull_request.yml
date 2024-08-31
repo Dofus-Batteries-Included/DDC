@@ -1,0 +1,51 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Pull Request
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  fetch-game-files:
+    uses: Dofus-Batteries-Included/DBI/.github/workflows/fetch-game-files.job.yml@main
+  
+  build-release:
+    name: Build & Test
+    needs: fetch-game-files
+    runs-on: windows-latest
+
+    steps:
+      - name: Display build information
+        run: |
+          echo "Build id: ${{ needs.fetch-game-files.outputs.game_build_id }}"
+          echo "Version: ${{ needs.fetch-game-files.outputs.game_version }}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Interop assemblies
+        uses: actions/download-artifact@v4
+        with:
+          name: interop-assemblies
+          path: Interop
+
+      - name: Install .NET 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+permissions:
+  packages: read
