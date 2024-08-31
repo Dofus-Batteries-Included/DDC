@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DDC.Api;
+using DDC.Api.Exceptions;
+using DDC.Api.Repositories;
 using Serilog;
 using Serilog.Events;
 
@@ -40,6 +42,8 @@ try
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
         );
+    builder.Services.AddProblemDetails();
+    builder.Services.AddExceptionHandler<ExceptionHandler>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddOpenApiDocument(
@@ -51,12 +55,17 @@ try
         }
     );
 
+    builder.Services.AddSingleton<IRawDataRepository, JsonRawDataFilesOnDisk>(_ => new JsonRawDataFilesOnDisk(Repository.RawDataPath));
+
     WebApplication app = builder.Build();
 
+    app.UseExceptionHandler();
     app.UseHttpsRedirection();
 
     app.UseOpenApi();
     app.UseSwaggerUi();
+
+    app.MapDefaultControllerRoute();
 
     app.Run();
 }
