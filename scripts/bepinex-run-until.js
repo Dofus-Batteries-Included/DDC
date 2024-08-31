@@ -26,7 +26,7 @@ if (!fs.existsSync(exePath)) {
 console.log(`Will run dofus executable at: ${exePath}`)
 
 const expectedLog = process.argv[3];
-console.Log(`Will listen for logs until: ${expectedLog}`);
+console.log(`Will listen for logs until: ${expectedLog}`);
 
 const proc = spawn(exePath);
 proc.stdout.pipe(process.stdout);
