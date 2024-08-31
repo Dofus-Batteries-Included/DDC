@@ -61,7 +61,7 @@ class JsonRawDataFilesOnDisk : IRawDataRepository
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-    IEnumerable<string> GetActualVersions() => Directory.EnumerateDirectories(_directory);
+    IEnumerable<string> GetActualVersions() => Directory.EnumerateDirectories(_directory).Select(Path.GetFileName).OfType<string>();
 
     class File : IRawDataFile
     {
