@@ -4,6 +4,8 @@
 name: Extract game data
 
 on:
+  release:
+    types: [created]
   workflow_call:
   workflow_dispatch:
 
@@ -117,8 +119,8 @@ jobs:
       - name: Upload compiled library to artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: data.zip
-          path: ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/data.zip
+          name: data
+          path: ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data/
           if-no-files-found: 'error'
 
 permissions:
