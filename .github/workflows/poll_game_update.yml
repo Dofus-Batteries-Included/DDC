@@ -1,0 +1,15 @@
+name: Poll game update
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  job:
+    uses: Dofus-Batteries-Included/workflows/.github/workflows/create_release_on_game_updage.job.yml@main
+
+permissions:
+  actions: write
+  contents: write
+  packages: read
