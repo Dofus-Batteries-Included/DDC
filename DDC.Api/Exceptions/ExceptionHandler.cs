@@ -45,6 +45,10 @@ class ExceptionHandler : IExceptionHandler
                 statusCode = StatusCodes.Status400BadRequest;
                 detail = exception.Message;
                 return true;
+            case NotFoundException:
+                statusCode = StatusCodes.Status404NotFound;
+                detail = exception.Message;
+                return true;
             default:
                 statusCode = 0;
                 detail = "";
