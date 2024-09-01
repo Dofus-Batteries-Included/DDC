@@ -43,6 +43,7 @@ try
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
         );
+    builder.Services.AddControllersWithViews();
     builder.Services.AddProblemDetails();
     builder.Services.AddExceptionHandler<ExceptionHandler>();
 
