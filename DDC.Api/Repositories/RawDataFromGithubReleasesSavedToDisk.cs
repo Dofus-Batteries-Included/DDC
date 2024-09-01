@@ -29,19 +29,19 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
         string? versionDirectory = GetVersionDirectory(version);
         if (versionDirectory == null)
         {
-            throw new BadRequestException($"Could not find data for version {version}.");
+            throw new NotFoundException($"Could not find data for version {version}.");
         }
 
         string versionPath = Path.Join(_directory, versionDirectory);
         if (!Directory.Exists(versionPath))
         {
-            throw new BadRequestException($"Could not find data for version {version}.");
+            throw new NotFoundException($"Could not find data for version {version}.");
         }
 
         string path = Path.Join(versionPath, GetFilename(type));
         if (!Path.Exists(path))
         {
-            throw new BadRequestException($"Could not find data for for type {type} in version {version}.");
+            throw new NotFoundException($"Could not find data for for type {type} in version {version}.");
         }
 
         return Task.FromResult<IRawDataFile>(new File(path));
