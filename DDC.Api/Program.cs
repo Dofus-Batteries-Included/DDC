@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DDC.Api;
 using DDC.Api.Exceptions;
 using DDC.Api.Repositories;
+using DDC.Api.Workers;
 using Serilog;
 using Serilog.Events;
 
@@ -55,7 +56,14 @@ try
         }
     );
 
-    builder.Services.AddSingleton<IRawDataRepository, JsonRawDataFilesOnDisk>(_ => new JsonRawDataFilesOnDisk(Repository.RawDataPath));
+    builder.Services.AddHttpClient();
+
+    builder.Services.AddSingleton<RawDataFromGithubReleasesSavedToDisk>(
+        services => new RawDataFromGithubReleasesSavedToDisk(Repository.RawDataPath, services.GetRequiredService<ILogger<RawDataFromGithubReleasesSavedToDisk>>())
+    );
+    builder.Services.AddSingleton<IRawDataRepository, RawDataFromGithubReleasesSavedToDisk>(services => services.GetRequiredService<RawDataFromGithubReleasesSavedToDisk>());
+
+    builder.Services.AddHostedService<DownloadDataFromGithubReleases>();
 
     WebApplication app = builder.Build();
 
