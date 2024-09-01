@@ -113,7 +113,7 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-    IEnumerable<string> GetActualVersions() => Directory.EnumerateDirectories(_directory).Select(Path.GetFileName).OfType<string>();
+    IEnumerable<string> GetActualVersions() => Directory.Exists(_directory) ? Directory.EnumerateDirectories(_directory).Select(Path.GetFileName).OfType<string>() : [];
 
     async Task WriteDdcMetadataAsync(DownloadDataFromGithubReleases.Release release, string directory, CancellationToken cancellationToken)
     {
