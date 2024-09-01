@@ -7,6 +7,11 @@
 public interface IRawDataRepository
 {
     /// <summary>
+    ///     Get the latest available version in the repository.
+    /// </summary>
+    Task<string> GetLatestVersionAsync();
+
+    /// <summary>
     ///     Get the available versions in the repository.
     /// </summary>
     /// <returns></returns>

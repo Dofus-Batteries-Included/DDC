@@ -1,4 +1,5 @@
-﻿using DDC.Api.Repositories;
+﻿using DDC.Api.Controllers.Responses;
+using DDC.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDC.Api.Controllers;
@@ -23,5 +24,14 @@ public class VersionsController : ControllerBase
     ///     Get available versions
     /// </summary>
     [HttpGet]
-    public async Task<IReadOnlyCollection<string>> GetAvailableVersions() => await _repository.GetAvailableVersionsAsync();
+    public async Task<GetAvailableVersionsResponse> GetAvailableVersions()
+    {
+        string latestVersion = await _repository.GetLatestVersionAsync();
+        IReadOnlyCollection<string> versions = await _repository.GetAvailableVersionsAsync();
+        return new GetAvailableVersionsResponse
+        {
+            Latest = latestVersion,
+            Versions = versions
+        };
+    }
 }

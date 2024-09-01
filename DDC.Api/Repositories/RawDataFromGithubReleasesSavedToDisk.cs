@@ -10,7 +10,6 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
     readonly string _directory;
     readonly ILogger<RawDataFromGithubReleasesSavedToDisk> _logger;
     readonly JsonSerializerOptions _ddcMetadataJsonSerializerOptions = new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower };
-    static readonly string[] DefaultVersions = ["latest"];
 
     public RawDataFromGithubReleasesSavedToDisk(string directory, ILogger<RawDataFromGithubReleasesSavedToDisk> logger)
     {
@@ -18,11 +17,10 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
         _logger = logger;
     }
 
-    public Task<IReadOnlyCollection<string>> GetAvailableVersionsAsync()
-    {
-        IEnumerable<string> versionDirs = GetActualVersions();
-        return Task.FromResult<IReadOnlyCollection<string>>(DefaultVersions.Concat(versionDirs).ToArray());
-    }
+    public Task<string> GetLatestVersionAsync() =>
+        Task.FromResult(GetActualVersions().OrderDescending().FirstOrDefault() ?? throw new NotFoundException("Could not find any version."));
+
+    public Task<IReadOnlyCollection<string>> GetAvailableVersionsAsync() => Task.FromResult<IReadOnlyCollection<string>>(GetActualVersions().ToList());
 
     public Task<IRawDataFile> GetRawDataFileAsync(string version, RawDataType type, CancellationToken cancellationToken = default)
     {
