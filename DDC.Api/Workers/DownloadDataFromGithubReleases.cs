@@ -16,7 +16,7 @@ partial class DownloadDataFromGithubReleases : PeriodicService
         IHttpClientFactory httpClientFactory,
         RawDataFromGithubReleasesSavedToDisk rawDataFromGithubReleasesSavedToDisk,
         ILogger<PeriodicService> logger
-    ) : base(TimeSpan.FromMinutes(1), logger)
+    ) : base(TimeSpan.FromHours(1), logger)
     {
         _httpClientFactory = httpClientFactory;
         _rawDataFromGithubReleasesSavedToDisk = rawDataFromGithubReleasesSavedToDisk;
