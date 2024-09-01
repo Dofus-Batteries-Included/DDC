@@ -14,13 +14,15 @@ class ExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        if (!Handle(exception, out int statusCode, out string detail))
+        int statusCode = exception switch
         {
-            return false;
-        }
+            BadRequestException => StatusCodes.Status400BadRequest,
+            NotFoundException => StatusCodes.Status404NotFound,
+            _ => StatusCodes.Status500InternalServerError
+        };
 
         httpContext.Response.StatusCode = statusCode;
-        await _problemDetailsService.WriteAsync(
+        await _problemDetailsService.TryWriteAsync(
             new ProblemDetailsContext
             {
                 HttpContext = httpContext,
@@ -28,31 +30,12 @@ class ExceptionHandler : IExceptionHandler
                 {
                     Title = "An error occurred while processing your request.",
                     Status = statusCode,
-                    Detail = detail
+                    Detail = exception.Message
                 },
                 Exception = exception
             }
         );
 
         return true;
-    }
-
-    static bool Handle(Exception exception, out int statusCode, out string detail)
-    {
-        switch (exception)
-        {
-            case BadRequestException:
-                statusCode = StatusCodes.Status400BadRequest;
-                detail = exception.Message;
-                return true;
-            case NotFoundException:
-                statusCode = StatusCodes.Status404NotFound;
-                detail = exception.Message;
-                return true;
-            default:
-                statusCode = 0;
-                detail = "";
-                return false;
-        }
     }
 }
