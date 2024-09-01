@@ -7,6 +7,7 @@ namespace DDC.Api.Controllers;
 ///     Retrieve raw data in JSON files.
 /// </summary>
 [Route("/versions/{version}/raw")]
+[Tags("Raw data")]
 [ApiController]
 public class RawDataController : ControllerBase
 {
