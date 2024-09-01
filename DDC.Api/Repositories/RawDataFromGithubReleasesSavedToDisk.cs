@@ -29,19 +29,19 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
         string? versionDirectory = GetVersionDirectory(version);
         if (versionDirectory == null)
         {
-            throw new BadRequestException($"Could not find data for version {version}.");
+            throw new NotFoundException($"Could not find data for version {version}.");
         }
 
         string versionPath = Path.Join(_directory, versionDirectory);
         if (!Directory.Exists(versionPath))
         {
-            throw new BadRequestException($"Could not find data for version {version}.");
+            throw new NotFoundException($"Could not find data for version {version}.");
         }
 
         string path = Path.Join(versionPath, GetFilename(type));
         if (!Path.Exists(path))
         {
-            throw new BadRequestException($"Could not find data for for type {type} in version {version}.");
+            throw new NotFoundException($"Could not find data for for type {type} in version {version}.");
         }
 
         return Task.FromResult<IRawDataFile>(new File(path));
@@ -113,7 +113,7 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-    IEnumerable<string> GetActualVersions() => Directory.EnumerateDirectories(_directory).Select(Path.GetFileName).OfType<string>();
+    IEnumerable<string> GetActualVersions() => Directory.Exists(_directory) ? Directory.EnumerateDirectories(_directory).Select(Path.GetFileName).OfType<string>() : [];
 
     async Task WriteDdcMetadataAsync(DownloadDataFromGithubReleases.Release release, string directory, CancellationToken cancellationToken)
     {
