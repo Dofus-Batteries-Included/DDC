@@ -9,7 +9,7 @@ jobs:
   job:
     uses: Dofus-Batteries-Included/workflows/.github/workflows/create_release_on_game_updage.job.yml@main
     secrets:
-      ACTION_PAT: ${{ secrets.ACTION_PAT }}
+      ACTIONS_PAT: ${{ secrets.ACTIONS_PAT }}
     with:
       archive_name: data.zip
 
