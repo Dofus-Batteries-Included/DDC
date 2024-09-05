@@ -4,7 +4,7 @@ WORKDIR /App
 LABEL org.opencontainers.image.description="Dofus Data Center built with data extracted from the game."
 
 # Copy everything
-COPY .. ./
+COPY . ./
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release
