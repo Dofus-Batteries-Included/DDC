@@ -34,11 +34,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to registry
-        if: ${{ github.event_name == 'release' }}
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image
-        if: ${{ github.event_name == 'release' }}
         env:
           LAST_RELEASE: ${{ fromJSON(steps.fetch_last_release.outputs.data).tag_name }}
         run: |
