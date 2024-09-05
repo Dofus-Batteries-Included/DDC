@@ -10,7 +10,7 @@ jobs:
   job:
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: dbi
+      IMAGE_NAME: ddc_api
 
     steps:
       - uses: actions/checkout@v4
