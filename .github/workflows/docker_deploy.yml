@@ -42,6 +42,11 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+          
+          if ($VERSION -ne "latest") {
+            docker tag $IMAGE_NAME $IMAGE_ID:latest
+            docker push $IMAGE_ID:$VERSION
+          }
 
 permissions:
   packages: write
