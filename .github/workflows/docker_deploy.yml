@@ -4,8 +4,6 @@
 name: Publish Docker
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -26,27 +24,33 @@ jobs:
         run: |
           docker build . --file DDC.Api/Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
 
+      - name: Fetch last release
+        id: fetch_last_release
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{repository}/releases/latest
+          repository: ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Log in to registry
         if: ${{ github.event_name == 'release' }}
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image
         if: ${{ github.event_name == 'release' }}
+        env:
+          LAST_RELEASE: ${{ fromJSON(steps.fetch_last_release.outputs.data).tag_name }}
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')          
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')          
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')          
-          [ "$VERSION" == "main" ] && VERSION=latest
+          VERSION=$(echo $LAST_RELEASE | sed -e 's,.*/\(.*\),\1,')          
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION 
           docker push $IMAGE_ID:$VERSION
-          
-          if ($VERSION -ne "latest") {
-            docker tag $IMAGE_NAME $IMAGE_ID:latest
-            docker push $IMAGE_ID:$VERSION
-          }
+          docker tag $IMAGE_NAME $IMAGE_ID:latest 
+          docker push $IMAGE_ID:latest
 
 permissions:
   packages: write
