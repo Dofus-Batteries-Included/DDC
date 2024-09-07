@@ -68,6 +68,15 @@ try
 
     WebApplication app = builder.Build();
 
+    ILogger<Program> logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+    string? pathBase = app.Configuration.GetValue<string>("PathBase");
+    if (!string.IsNullOrWhiteSpace(pathBase))
+    {
+        logger.LogInformation("Using path base '{PathBase}'.", pathBase);
+        app.UsePathBase(pathBase);
+    }
+
     app.UseExceptionHandler();
 
     app.UseOpenApi();
