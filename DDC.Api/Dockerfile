@@ -2,6 +2,7 @@
 WORKDIR /App
 
 LABEL org.opencontainers.image.description="Dofus Data Center built with data extracted from the game."
+VOLUME /AppData
 
 # Copy everything
 COPY . ./
