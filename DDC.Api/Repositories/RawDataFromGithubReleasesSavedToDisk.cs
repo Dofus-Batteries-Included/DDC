@@ -2,18 +2,19 @@
 using System.Text.Json;
 using DDC.Api.Exceptions;
 using DDC.Api.Workers;
+using Microsoft.Extensions.Options;
 
 namespace DDC.Api.Repositories;
 
 class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
 {
-    readonly string _directory;
+    readonly IOptions<RepositoryOptions> _repositoryOptions;
     readonly ILogger<RawDataFromGithubReleasesSavedToDisk> _logger;
     readonly JsonSerializerOptions _ddcMetadataJsonSerializerOptions = new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower };
 
-    public RawDataFromGithubReleasesSavedToDisk(string directory, ILogger<RawDataFromGithubReleasesSavedToDisk> logger)
+    public RawDataFromGithubReleasesSavedToDisk(IOptions<RepositoryOptions> repositoryOptions, ILogger<RawDataFromGithubReleasesSavedToDisk> logger)
     {
-        _directory = directory;
+        _repositoryOptions = repositoryOptions;
         _logger = logger;
     }
 
@@ -30,7 +31,7 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
             throw new NotFoundException($"Could not find data for version {version}.");
         }
 
-        string versionPath = Path.Join(_directory, versionDirectory);
+        string versionPath = Path.Join(_repositoryOptions.Value.RawDataPath, versionDirectory);
         if (!Directory.Exists(versionPath))
         {
             throw new NotFoundException($"Could not find data for version {version}.");
@@ -51,7 +52,7 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
         Dictionary<string, DdcMetadata> versionsMetadata = new();
         foreach (string version in versions)
         {
-            string path = Path.Join(_directory, version);
+            string path = Path.Join(_repositoryOptions.Value.RawDataPath, version);
             DdcMetadata? metadata = await ReadDdcMetadataAsync(path, cancellationToken);
             if (metadata == null)
             {
@@ -69,7 +70,7 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
     {
         _logger.LogInformation("Saving data from release {Name} containing version {Version}.", release.Name, gameVersion);
 
-        string path = Path.Join(_directory, gameVersion);
+        string path = Path.Join(_repositoryOptions.Value.RawDataPath, gameVersion);
         Directory.CreateDirectory(path);
 
         await WriteDdcMetadataAsync(release, path, cancellationToken);
@@ -111,7 +112,10 @@ class RawDataFromGithubReleasesSavedToDisk : IRawDataRepository
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-    IEnumerable<string> GetActualVersions() => Directory.Exists(_directory) ? Directory.EnumerateDirectories(_directory).Select(Path.GetFileName).OfType<string>() : [];
+    IEnumerable<string> GetActualVersions() =>
+        Directory.Exists(_repositoryOptions.Value.RawDataPath)
+            ? Directory.EnumerateDirectories(_repositoryOptions.Value.RawDataPath).Select(Path.GetFileName).OfType<string>()
+            : [];
 
     async Task WriteDdcMetadataAsync(DownloadDataFromGithubReleases.Release release, string directory, CancellationToken cancellationToken)
     {

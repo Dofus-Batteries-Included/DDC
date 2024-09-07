@@ -4,6 +4,7 @@ using DDC.Api;
 using DDC.Api.Exceptions;
 using DDC.Api.Repositories;
 using DDC.Api.Workers;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
 
@@ -60,11 +61,25 @@ try
     builder.Services.AddHttpClient();
 
     builder.Services.AddSingleton<RawDataFromGithubReleasesSavedToDisk>(
-        services => new RawDataFromGithubReleasesSavedToDisk(Repository.RawDataPath, services.GetRequiredService<ILogger<RawDataFromGithubReleasesSavedToDisk>>())
+        services => new RawDataFromGithubReleasesSavedToDisk(
+            services.GetRequiredService<IOptions<RepositoryOptions>>(),
+            services.GetRequiredService<ILogger<RawDataFromGithubReleasesSavedToDisk>>()
+        )
     );
     builder.Services.AddSingleton<IRawDataRepository, RawDataFromGithubReleasesSavedToDisk>(services => services.GetRequiredService<RawDataFromGithubReleasesSavedToDisk>());
 
     builder.Services.AddHostedService<DownloadDataFromGithubReleases>();
+
+    builder.Services.Configure<RepositoryOptions>(
+        o =>
+        {
+            string? repositoryPath = builder.Configuration.GetValue<string?>("RepositoryPath", null);
+            if (!string.IsNullOrWhiteSpace(repositoryPath))
+            {
+                o.BasePath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(repositoryPath));
+            }
+        }
+    );
 
     WebApplication app = builder.Build();
 
