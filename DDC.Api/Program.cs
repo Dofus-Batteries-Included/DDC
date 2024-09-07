@@ -69,7 +69,6 @@ try
     WebApplication app = builder.Build();
 
     app.UseExceptionHandler();
-    app.UseHttpsRedirection();
 
     app.UseOpenApi();
     app.UseSwaggerUi();
