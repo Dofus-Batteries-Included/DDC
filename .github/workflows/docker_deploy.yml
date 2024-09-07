@@ -1,54 +1,27 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Publish Docker
 
 on:
+  release:
+    types: [ published ]
   workflow_dispatch:
 
 jobs:
-  job:
-    runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME: ddc_api
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
-
-      - name: Build the Docker image
-        run: |
-          docker build . --file DDC.Api/Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-
-      - name: Fetch last release
-        id: fetch_last_release
-        uses: octokit/request-action@v2.x
-        with:
-          route: GET /repos/{repository}/releases/latest
-          repository: ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push image
-        env:
-          LAST_RELEASE: ${{ fromJSON(steps.fetch_last_release.outputs.data).tag_name }}
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')          
-          VERSION=$(echo $LAST_RELEASE | sed -e 's,.*/\(.*\),\1,')          
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION 
-          docker push $IMAGE_ID:$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:latest 
-          docker push $IMAGE_ID:latest
+  publish:
+    uses: Dofus-Batteries-Included/workflows/.github/workflows/docker_build_publish.yml@main
+    with:
+      docker_image_name: ddc_api
+      docker_file: DDC.Api/Dockerfile
+  
+  deploy:
+    needs: publish
+    if: ${{ needs.publish.outputs.latest_has_changed == 'true' }}
+    uses: Dofus-Batteries-Included/workflows/.github/workflows/docker_deploy.yml@main
+    with:
+      directory: /home/debian/ddc
+    secrets: 
+      ssh_host: ${{ secrets.SSH_HOST }}
+      ssh_user: ${{ secrets.SSH_USER }}
+      ssh_key: ${{ secrets.SSH_KEY }}
 
 permissions:
   packages: write
