@@ -7,9 +7,11 @@ See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 namespace UnityBundleReader.Brotli;
 
 /// <summary>
-///     <see cref="System.IO.Stream" />
-///     decorator that decompresses brotli data.
-///     <p> Not thread-safe.
+///     <p>
+///         <see cref="System.IO.Stream" />
+///         decorator that decompresses brotli data.
+///     </p>
+///     Not thread-safe.
 /// </summary>
 public class BrotliInputStream : Stream
 {
@@ -37,7 +39,8 @@ public class BrotliInputStream : Stream
     ///         ) internal buffer with
     ///         <see cref="DefaultInternalBufferSize" />
     ///         size is allocated and used.
-    ///         <p> Will block the thread until first kilobyte of data of source is available.
+    ///     </p>
+    ///     Will block the thread until first kilobyte of data of source is available.
     /// </summary>
     /// <param name="source">underlying data source</param>
     /// <exception cref="System.IO.IOException">in case of corrupted data or source stream problems</exception>
@@ -54,7 +57,8 @@ public class BrotliInputStream : Stream
     ///         <see cref="ReadByte()" />
     ///         ) internal buffer of specified size is
     ///         allocated and used.
-    ///         <p> Will block the thread until first kilobyte of data of source is available.
+    ///     </p>
+    ///     Will block the thread until first kilobyte of data of source is available.
     /// </summary>
     /// <param name="source">compressed data source</param>
     /// <param name="byteReadBufferSize">
@@ -75,7 +79,8 @@ public class BrotliInputStream : Stream
     ///         <see cref="ReadByte()" />
     ///         ) internal buffer of specified size is
     ///         allocated and used.
-    ///         <p> Will block the thread until first kilobyte of data of source is available.
+    ///     </p>
+    ///     Will block the thread until first kilobyte of data of source is available.
     /// </summary>
     /// <param name="source">compressed data source</param>
     /// <param name="byteReadBufferSize">
@@ -88,7 +93,7 @@ public class BrotliInputStream : Stream
     ///     if not used
     /// </param>
     /// <exception cref="System.IO.IOException">in case of corrupted data or source stream problems</exception>
-    public BrotliInputStream(Stream source, int byteReadBufferSize, byte[] customDictionary)
+    public BrotliInputStream(Stream source, int byteReadBufferSize, byte[]? customDictionary)
     {
         if (byteReadBufferSize <= 0)
         {
@@ -207,7 +212,7 @@ public class BrotliInputStream : Stream
 
     public override bool CanWrite => false;
 
-    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state) => throw new NotSupportedException();
+    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state) => throw new NotSupportedException();
 
     public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
