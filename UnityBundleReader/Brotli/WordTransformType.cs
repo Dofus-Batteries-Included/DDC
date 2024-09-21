@@ -12,6 +12,7 @@ namespace UnityBundleReader.Brotli;
 ///     <p>
 ///         There are two simple types of transforms: omit X first/last symbols, two character-case
 ///         transforms and the identity transform.
+///     </p>
 /// </remarks>
 sealed class WordTransformType
 {

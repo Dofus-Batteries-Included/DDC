@@ -9,18 +9,20 @@ namespace UnityBundleReader.Brotli;
 /// <summary>Utilities for building Huffman decoding tables.</summary>
 sealed class Huffman
 {
-	/// <summary>
-	///     Maximum possible Huffman table size for an alphabet size of 704, max code length 15 and root
-	///     table bits 8.
-	/// </summary>
-	internal const int HuffmanMaxTableSize = 1080;
+    /// <summary>
+    ///     Maximum possible Huffman table size for an alphabet size of 704, max code length 15 and root
+    ///     table bits 8.
+    /// </summary>
+    internal const int HuffmanMaxTableSize = 1080;
 
     const int MaxLength = 15;
 
     /// <summary>Returns reverse(reverse(key, len) + 1, len).</summary>
     /// <remarks>
-    ///     Returns reverse(reverse(key, len) + 1, len).
-    ///     <p> reverse(key, len) is the bit-wise reversal of the len least significant bits of key.
+    ///     <p>
+    ///         Returns reverse(reverse(key, len) + 1, len).
+    ///     </p>
+    ///     reverse(key, len) is the bit-wise reversal of the len least significant bits of key.
     /// </remarks>
     static int GetNextKey(int key, int len)
     {
@@ -33,12 +35,14 @@ sealed class Huffman
     }
 
     /// <summary>
-    ///     Stores
-    ///     <paramref name="item" />
-    ///     in
-    ///     <c>table[0], table[step], table[2 * step] .., table[end]</c>
-    ///     .
-    ///     <p> Assumes that end is an integer multiple of step.
+    ///     <p>
+    ///         Stores
+    ///         <paramref name="item" />
+    ///         in
+    ///         <c>table[0], table[step], table[2 * step] .., table[end]</c>
+    ///         .
+    ///     </p>
+    ///     Assumes that end is an integer multiple of step.
     /// </summary>
     static void ReplicateValue(int[] table, int offset, int step, int end, int item)
     {

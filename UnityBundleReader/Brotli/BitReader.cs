@@ -9,11 +9,11 @@ namespace UnityBundleReader.Brotli;
 /// <summary>Bit reading helpers.</summary>
 sealed class BitReader
 {
-	/// <summary>
-	///     Input byte buffer, consist of a ring-buffer and a "slack" region where bytes from the start of
-	///     the ring-buffer are copied.
-	/// </summary>
-	const int Capacity = 1024;
+    /// <summary>
+    ///     Input byte buffer, consist of a ring-buffer and a "slack" region where bytes from the start of
+    ///     the ring-buffer are copied.
+    /// </summary>
+    const int Capacity = 1024;
 
     const int Slack = 16;
 
@@ -51,9 +51,9 @@ sealed class BitReader
     ///     Fills up the input buffer.
     ///     <p>
     ///         No-op if there are at least 36 bytes present after current position.
-    ///         <p>
-    ///             After encountering the end of the input stream, 64 additional zero bytes are copied to the
-    ///             buffer.
+    ///     </p>
+    ///     After encountering the end of the input stream, 64 additional zero bytes are copied to the
+    ///     buffer.
     /// </remarks>
     internal static void ReadMoreInput(BitReader br)
     {
@@ -139,6 +139,7 @@ sealed class BitReader
     ///     <p>
     ///         Initialisation turns bit reader to a ready state. Also a number of bytes is prefetched to
     ///         accumulator. Because of that this method may block until enough data could be read from input.
+    ///     </p>
     /// </remarks>
     /// <param name="br">BitReader POJO</param>
     /// <param name="input">data source</param>

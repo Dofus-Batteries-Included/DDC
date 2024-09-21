@@ -21,6 +21,7 @@ sealed class Utils
     ///         <see cref="System.Array.Copy(object, int, object, int, int)" />
     ///         , so it should be used for length not
     ///         less than 16.
+    ///     </p>
     /// </remarks>
     /// <param name="dest">array to fill with zeroes</param>
     /// <param name="offset">the first byte to fill</param>
@@ -44,6 +45,7 @@ sealed class Utils
     ///         <see cref="System.Array.Copy(object, int, object, int, int)" />
     ///         , so it should be used for length not
     ///         less than 16.
+    ///     </p>
     /// </remarks>
     /// <param name="dest">array to fill with zeroes</param>
     /// <param name="offset">the first item to fill</param>

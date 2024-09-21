@@ -12,7 +12,8 @@ namespace UnityBundleReader.Brotli;
 ///     <p>
 ///         This is used during decoding of the block lengths, literal insertion lengths and copy
 ///         lengths.
-///         <p> Range represents values: [offset, offset + 2 ^ n_bits)
+///     </p>
+///     Range represents values: [offset, offset + 2 ^ n_bits)
 /// </remarks>
 sealed class Prefix
 {
