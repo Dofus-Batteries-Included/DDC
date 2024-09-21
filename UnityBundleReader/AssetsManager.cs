@@ -48,12 +48,10 @@ public class AssetsManager
             _importFilesHash.Add(Path.GetFileName(file));
         }
 
-        Progress.Reset();
         //use a for loop because list size can change
         for (int i = 0; i < _importFiles.Count; i++)
         {
             LoadFile(_importFiles[i]);
-            Progress.Report(i + 1, _importFiles.Count);
         }
 
         _importFiles.Clear();
@@ -368,7 +366,6 @@ public class AssetsManager
 
         int progressCount = AssetsFileList.Sum(x => x.ObjectInfos.Count);
         int i = 0;
-        Progress.Reset();
         foreach (SerializedFile assetsFile in AssetsFileList)
         {
             _logger.LogInformation("Reading assets from {Name}...", assetsFile.FileName);
@@ -401,8 +398,6 @@ public class AssetsManager
                         objectInfo.PathId
                     );
                 }
-
-                Progress.Report(++i, progressCount);
             }
         }
     }
