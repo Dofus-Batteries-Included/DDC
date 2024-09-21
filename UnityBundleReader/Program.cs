@@ -29,11 +29,10 @@ SerilogLoggerFactory loggerFactory = new(logger);
 ILogger globalLogger = loggerFactory.CreateLogger("Global");
 UnityBundleReader.Logger.Configure(globalLogger);
 
-JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
+JsonSerializerOptions jsonSerializerOptions = new() { NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
 
 try
 {
-
     Parser parser = new(
         with =>
         {
@@ -95,6 +94,7 @@ void ExtractCommand(ExtractArgs args)
     ILogger log = loggerFactory.CreateLogger("Extract");
     string[] behaviourNames = args.Behaviours.SelectMany(s => s.Split(',')).ToArray();
     string[] fieldNames = args.Fields.SelectMany(s => s.Split(',')).ToArray();
+    string[] removeFieldPrefixes = args.RemoveFieldPrefixes.SelectMany(s => s.Split(',')).ToArray();
 
     log.LogInformation("Loading bundles from paths: {Paths}.", args.BundlePaths);
     MonoBehaviour[] behaviours = GetMonoBehaviors(args.BundlePaths).Where(b => behaviourNames.Any(p => Like(b.Name, p))).ToArray();
@@ -118,7 +118,7 @@ void ExtractCommand(ExtractArgs args)
         string json;
         try
         {
-            json = ExtractPropertiesOfBehaviour(behaviour, fieldNames);
+            json = ExtractPropertiesOfBehaviour(behaviour, fieldNames, removeFieldPrefixes);
         }
         catch (Exception exn)
         {
@@ -176,7 +176,7 @@ IEnumerable<MonoBehaviour> GetMonoBehaviors(IEnumerable<string> inputs)
     }
 }
 
-string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields)
+string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields, string[] removeFieldPrefixes)
 {
     Dictionary<string, object?> properties = monoBehaviour.ToType()?.ToDictionary(k => k as string ?? "", v => v) ?? [];
 
@@ -193,7 +193,76 @@ string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields
         }
     }
 
+    if (removeFieldPrefixes.Length > 0)
+    {
+        properties = RemovePrefixes(properties, removeFieldPrefixes);
+    }
+
     return JsonSerializer.Serialize(properties, jsonSerializerOptions);
+}
+
+Dictionary<string, object?> ExtractPropertiesOfDictionary(Dictionary<string, object?> properties, string[] fields)
+{
+    Dictionary<string, object?> result = new();
+
+    foreach (string key in properties.Keys.Where(key => fields.Any(f => Like(key, f))))
+    {
+        result[key] = properties[key];
+    }
+
+    return result;
+}
+
+T RemovePrefixes<T>(T obj, string[] prefixesToRemove)
+{
+    switch (obj)
+    {
+        case IDictionary dictionary:
+            object[] keys = dictionary.Keys.Cast<object>().ToArray();
+            foreach (object key in keys)
+            {
+                object? newValue = RemovePrefixes(dictionary[key], prefixesToRemove);
+
+                if (key is string str)
+                {
+                    string newKey = RemoveFieldPrefixes(str, prefixesToRemove);
+                    dictionary[newKey] = newValue;
+                    dictionary.Remove(key);
+                }
+                else
+                {
+                    dictionary[key] = newValue;
+                }
+            }
+            break;
+        case IList list:
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i] = RemovePrefixes(list[i], prefixesToRemove);
+            }
+            break;
+    }
+
+    return obj;
+}
+
+string RemoveFieldPrefixes(string fieldName, string[] prefixesToRemove)
+{
+    bool atLeastOne;
+    string result = fieldName;
+    do
+    {
+        atLeastOne = false;
+        foreach (string prefix in prefixesToRemove)
+        {
+            if (result.StartsWith(prefix))
+            {
+                result = result[prefix.Length..];
+            }
+        }
+    } while (atLeastOne);
+
+    return result;
 }
 
 bool TryConvertWeirdDictionary(object? obj, [NotNullWhen(true)] out IReadOnlyCollection<object>? result)
@@ -237,18 +306,6 @@ bool TryConvertWeirdDictionary(object? obj, [NotNullWhen(true)] out IReadOnlyCol
     return true;
 }
 
-Dictionary<string, object?> ExtractPropertiesOfDictionary(Dictionary<string, object?> properties, string[] fields)
-{
-    Dictionary<string, object?> result = new();
-
-    foreach (string key in properties.Keys.Where(key => fields.Any(f => Like(key, f))))
-    {
-        result[key] = properties[key];
-    }
-
-    return result;
-}
-
 bool Like(string? str, string pattern)
 {
     if (str == null)
@@ -278,11 +335,14 @@ namespace UnityBundleReader
         [Value(0, Min = 1, MetaName = "bundles", HelpText = "Bundle files.")]
         public IEnumerable<string> BundlePaths { get; set; } = [];
 
-        [Option('b', "behaviours", HelpText = "If set, behaviours to extract. Glob patterns are accepted.")]
+        [Option('b', "behaviours", HelpText = "Behaviours to export. If not set, all behaviours will be exported. Glob patterns are accepted.")]
         public IEnumerable<string> Behaviours { get; set; } = [];
 
-        [Option('f', "field", HelpText = "If set, fields to extract. Glob patterns are accepted.")]
+        [Option('f', "field", HelpText = "Fields to export. If not set, all fields will be exported. Glob patterns are accepted.")]
         public IEnumerable<string> Fields { get; set; } = [];
+
+        [Option("remove-field-prefix", HelpText = "Prefixes to remove from field names.")]
+        public IEnumerable<string> RemoveFieldPrefixes { get; set; } = [];
 
         [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
         public string OutputPath { get; set; } = "";
