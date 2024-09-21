@@ -4,7 +4,7 @@ namespace UnityBundleReader.Classes;
 
 public sealed class BuildSettings : Object
 {
-    public string MVersion;
+    public string Version;
 
     public BuildSettings(ObjectReader reader) : base(reader)
     {
@@ -15,6 +15,6 @@ public sealed class BuildSettings : Object
         bool hasPublishingRights = reader.ReadBoolean();
         bool hasShadows = reader.ReadBoolean();
 
-        MVersion = reader.ReadAlignedString();
+        Version = reader.ReadAlignedString();
     }
 }

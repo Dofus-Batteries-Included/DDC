@@ -1,30 +1,32 @@
-﻿namespace UnityBundleReader.Classes;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace UnityBundleReader.Classes;
 
 public sealed class PPtr<T> where T: Object
 {
-    public int MFileID;
-    public long MPathID;
+    int _fileId;
+    long _pathId;
 
     readonly SerializedFile _assetsFile;
     int _index = -2; //-2 - Prepare, -1 - Missing
 
     public PPtr(ObjectReader reader)
     {
-        MFileID = reader.ReadInt32();
-        MPathID = reader.MVersion < SerializedFileFormatVersion.Unknown14 ? reader.ReadInt32() : reader.ReadInt64();
+        _fileId = reader.ReadInt32();
+        _pathId = reader.MVersion < SerializedFileFormatVersion.Unknown14 ? reader.ReadInt32() : reader.ReadInt64();
         _assetsFile = reader.AssetsFile;
     }
 
-    bool TryGetAssetsFile(out SerializedFile result)
+    bool TryGetAssetsFile([NotNullWhen(true)] out SerializedFile? result)
     {
         result = null;
-        if (MFileID == 0)
+        if (_fileId == 0)
         {
             result = _assetsFile;
             return true;
         }
 
-        if (MFileID > 0 && MFileID - 1 < _assetsFile.MExternals.Count)
+        if (_fileId > 0 && _fileId - 1 < _assetsFile.MExternals.Count)
         {
             AssetsManager assetsManager = _assetsFile.AssetsManager;
             List<SerializedFile> assetsFileList = assetsManager.AssetsFileList;
@@ -32,7 +34,7 @@ public sealed class PPtr<T> where T: Object
 
             if (_index == -2)
             {
-                FileIdentifier mExternal = _assetsFile.MExternals[MFileID - 1];
+                FileIdentifier mExternal = _assetsFile.MExternals[_fileId - 1];
                 string name = mExternal.FileName;
                 if (!assetsFileIndexCache.TryGetValue(name, out _index))
                 {
@@ -51,11 +53,11 @@ public sealed class PPtr<T> where T: Object
         return false;
     }
 
-    public bool TryGet(out T result)
+    public bool TryGet([NotNullWhen(true)] out T? result)
     {
         if (TryGetAssetsFile(out SerializedFile? sourceFile))
         {
-            if (sourceFile.ObjectsDic.TryGetValue(MPathID, out Object? obj))
+            if (sourceFile.ObjectsDic.TryGetValue(_pathId, out Object? obj))
             {
                 if (obj is T variable)
                 {
@@ -69,13 +71,13 @@ public sealed class PPtr<T> where T: Object
         return false;
     }
 
-    public bool TryGet<T2>(out T2 result) where T2: Object
+    public bool TryGet<TCast>([NotNullWhen(true)] out TCast? result) where TCast: Object
     {
         if (TryGetAssetsFile(out SerializedFile? sourceFile))
         {
-            if (sourceFile.ObjectsDic.TryGetValue(MPathID, out Object? obj))
+            if (sourceFile.ObjectsDic.TryGetValue(_pathId, out Object? obj))
             {
-                if (obj is T2 variable)
+                if (obj is TCast variable)
                 {
                     result = variable;
                     return true;
@@ -92,12 +94,12 @@ public sealed class PPtr<T> where T: Object
         string name = mObject.AssetsFile.FileName;
         if (string.Equals(_assetsFile.FileName, name, StringComparison.OrdinalIgnoreCase))
         {
-            MFileID = 0;
+            _fileId = 0;
         }
         else
         {
-            MFileID = _assetsFile.MExternals.FindIndex(x => string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase));
-            if (MFileID == -1)
+            _fileId = _assetsFile.MExternals.FindIndex(x => string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase));
+            if (_fileId == -1)
             {
                 _assetsFile.MExternals.Add(
                     new FileIdentifier
@@ -105,11 +107,11 @@ public sealed class PPtr<T> where T: Object
                         FileName = mObject.AssetsFile.FileName
                     }
                 );
-                MFileID = _assetsFile.MExternals.Count;
+                _fileId = _assetsFile.MExternals.Count;
             }
             else
             {
-                MFileID += 1;
+                _fileId += 1;
             }
         }
 
@@ -123,8 +125,8 @@ public sealed class PPtr<T> where T: Object
             assetsFileIndexCache.Add(name, _index);
         }
 
-        MPathID = mObject.MPathID;
+        _pathId = mObject.PathId;
     }
 
-    public bool IsNull => MPathID == 0 || MFileID < 0;
+    public bool IsNull => _pathId == 0 || _fileId < 0;
 }

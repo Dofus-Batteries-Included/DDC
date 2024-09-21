@@ -4,37 +4,37 @@ namespace UnityBundleReader.Classes;
 
 public sealed class MonoScript : NamedObject
 {
-    public string MClassName;
-    public string MNamespace;
-    public string MAssemblyName;
+    public string ClassName;
+    public string? Namespace;
+    public string AssemblyName;
 
     public MonoScript(ObjectReader reader) : base(reader)
     {
-        if (Version[0] > 3 || Version[0] == 3 && Version[1] >= 4) //3.4 and up
+        if (Versions[0] > 3 || Versions[0] == 3 && Versions[1] >= 4) //3.4 and up
         {
-            int mExecutionOrder = reader.ReadInt32();
+            int executionOrder = reader.ReadInt32();
         }
-        if (Version[0] < 5) //5.0 down
+        if (Versions[0] < 5) //5.0 down
         {
-            uint mPropertiesHash = reader.ReadUInt32();
+            uint propertiesHash = reader.ReadUInt32();
         }
         else
         {
-            byte[] mPropertiesHash = reader.ReadBytes(16);
+            byte[] propertiesHash = reader.ReadBytes(16);
         }
-        if (Version[0] < 3) //3.0 down
+        if (Versions[0] < 3) //3.0 down
         {
-            string mPathName = reader.ReadAlignedString();
+            string pathName = reader.ReadAlignedString();
         }
-        MClassName = reader.ReadAlignedString();
-        if (Version[0] >= 3) //3.0 and up
+        ClassName = reader.ReadAlignedString();
+        if (Versions[0] >= 3) //3.0 and up
         {
-            MNamespace = reader.ReadAlignedString();
+            Namespace = reader.ReadAlignedString();
         }
-        MAssemblyName = reader.ReadAlignedString();
-        if (Version[0] < 2018 || Version[0] == 2018 && Version[1] < 2) //2018.2 down
+        AssemblyName = reader.ReadAlignedString();
+        if (Versions[0] < 2018 || Versions[0] == 2018 && Versions[1] < 2) //2018.2 down
         {
-            bool mIsEditorScript = reader.ReadBoolean();
+            bool isEditorScript = reader.ReadBoolean();
         }
     }
 }

@@ -4,10 +4,10 @@ namespace UnityBundleReader.Classes;
 
 public class NamedObject : EditorExtension
 {
-    public string MName;
+    public string Name;
 
     protected NamedObject(ObjectReader reader) : base(reader)
     {
-        MName = reader.ReadAlignedString();
+        Name = reader.ReadAlignedString();
     }
 }

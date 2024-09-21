@@ -2,10 +2,10 @@
 
 public abstract class Component : EditorExtension
 {
-    public PPtr<GameObject> MGameObject;
+    public PPtr<GameObject> GameObject;
 
     protected Component(ObjectReader reader) : base(reader)
     {
-        MGameObject = new PPtr<GameObject>(reader);
+        GameObject = new PPtr<GameObject>(reader);
     }
 }

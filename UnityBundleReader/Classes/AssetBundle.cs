@@ -18,23 +18,20 @@ public class AssetInfo
 
 public sealed class AssetBundle : NamedObject
 {
-    public readonly PPtr<Object>[] MPreloadTable;
-    public readonly KeyValuePair<string, AssetInfo>[] MContainer;
-
     public AssetBundle(ObjectReader reader) : base(reader)
     {
         int mPreloadTableSize = reader.ReadInt32();
-        MPreloadTable = new PPtr<Object>[mPreloadTableSize];
+        PPtr<Object>[] preloadTable = new PPtr<Object>[mPreloadTableSize];
         for (int i = 0; i < mPreloadTableSize; i++)
         {
-            MPreloadTable[i] = new PPtr<Object>(reader);
+            preloadTable[i] = new PPtr<Object>(reader);
         }
 
         int mContainerSize = reader.ReadInt32();
-        MContainer = new KeyValuePair<string, AssetInfo>[mContainerSize];
+        KeyValuePair<string, AssetInfo>[] container = new KeyValuePair<string, AssetInfo>[mContainerSize];
         for (int i = 0; i < mContainerSize; i++)
         {
-            MContainer[i] = new KeyValuePair<string, AssetInfo>(reader.ReadAlignedString(), new AssetInfo(reader));
+            container[i] = new KeyValuePair<string, AssetInfo>(reader.ReadAlignedString(), new AssetInfo(reader));
         }
     }
 }

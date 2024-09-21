@@ -4,11 +4,11 @@ namespace UnityBundleReader.Classes;
 
 public abstract class Behaviour : Component
 {
-    public byte MEnabled;
+    public byte Enabled;
 
     protected Behaviour(ObjectReader reader) : base(reader)
     {
-        MEnabled = reader.ReadByte();
+        Enabled = reader.ReadByte();
         reader.AlignStream();
     }
 }

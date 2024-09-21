@@ -6,8 +6,8 @@ public class Object
 {
     public readonly SerializedFile AssetsFile;
     public readonly ObjectReader Reader;
-    public readonly long MPathID;
-    public readonly int[] Version;
+    public readonly long PathId;
+    public readonly int[] Versions;
     protected readonly BuildType BuildType;
     public readonly BuildTarget Platform;
     public ClassIDType Type;
@@ -20,8 +20,8 @@ public class Object
         reader.Reset();
         AssetsFile = reader.AssetsFile;
         Type = reader.Type;
-        MPathID = reader.MPathID;
-        Version = reader.Version;
+        PathId = reader.MPathID;
+        Versions = reader.Version;
         BuildType = reader.BuildType;
         Platform = reader.Platform;
         SerializedType = reader.SerializedType;

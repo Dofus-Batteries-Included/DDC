@@ -376,7 +376,7 @@ public class SerializedFile
     public void AddObject(Object obj)
     {
         Objects.Add(obj);
-        ObjectsDic.Add(obj.MPathID, obj);
+        ObjectsDic.Add(obj.PathId, obj);
     }
 
     public bool IsVersionStripped => UnityVersion == StrippedVersion;
