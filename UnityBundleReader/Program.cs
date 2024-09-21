@@ -166,7 +166,7 @@ IEnumerable<MonoBehaviour> GetMonoBehaviors(IEnumerable<string> inputs)
 
 string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields)
 {
-    OrderedDictionary properties = monoBehaviour.ToType();
+    OrderedDictionary? properties = monoBehaviour.ToType();
 
     string json1;
     if (fields.Length > 0)
@@ -181,7 +181,7 @@ string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields
     return json1;
 }
 
-Dictionary<string, object?> ExtractPropertiesOfDictionary(OrderedDictionary properties, string[] fields)
+Dictionary<string, object?> ExtractPropertiesOfDictionary(OrderedDictionary? properties, string[] fields)
 {
     Dictionary<string, object?> result = new();
 

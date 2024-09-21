@@ -1,15 +1,14 @@
-﻿namespace UnityBundleReader
-{
-    public class ObjectInfo
-    {
-        public long ByteStart;
-        public uint ByteSize;
-        public int TypeID;
-        public int ClassID;
-        public ushort IsDestroyed;
-        public byte Stripped;
+﻿namespace UnityBundleReader;
 
-        public long MPathID;
-        public SerializedType SerializedType;
-    }
+public class ObjectInfo
+{
+    public long ByteStart;
+    public uint ByteSize;
+    public int TypeID;
+    public int ClassID;
+    public ushort IsDestroyed;
+    public byte Stripped;
+
+    public long MPathID;
+    public SerializedType? SerializedType;
 }
