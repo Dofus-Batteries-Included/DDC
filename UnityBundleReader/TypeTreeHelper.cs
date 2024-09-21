@@ -167,16 +167,16 @@ public static class TypeTreeHelper
         }
     }
 
-    public static OrderedDictionary ReadType(TypeTree mTypes, ObjectReader reader)
+    public static OrderedDictionary ReadType(TypeTree types, ObjectReader reader)
     {
         reader.Reset();
         OrderedDictionary obj = new();
-        List<TypeTreeNode> mNodes = mTypes.Nodes;
-        for (int i = 1; i < mNodes.Count; i++)
+        List<TypeTreeNode> nodes = types.Nodes;
+        for (int i = 1; i < nodes.Count; i++)
         {
-            TypeTreeNode node = mNodes[i];
+            TypeTreeNode node = nodes[i];
             string? varNameStr = node.Name;
-            object value = ReadValue(mNodes, reader, ref i);
+            object value = ReadValue(nodes, reader, ref i);
 
             if (varNameStr != null)
             {

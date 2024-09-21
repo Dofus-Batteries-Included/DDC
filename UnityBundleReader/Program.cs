@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -10,6 +11,7 @@ using Serilog.Events;
 using Serilog.Extensions.Logging;
 using UnityBundleReader;
 using UnityBundleReader.Classes;
+using UnityBundleReader.Extensions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Logger = Serilog.Core.Logger;
 using Object = UnityBundleReader.Classes.Object;
@@ -27,8 +29,11 @@ SerilogLoggerFactory loggerFactory = new(logger);
 ILogger globalLogger = loggerFactory.CreateLogger("Global");
 UnityBundleReader.Logger.Configure(globalLogger);
 
+JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
+
 try
 {
+
     Parser parser = new(
         with =>
         {
@@ -173,35 +178,72 @@ IEnumerable<MonoBehaviour> GetMonoBehaviors(IEnumerable<string> inputs)
 
 string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields)
 {
-    JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
-    OrderedDictionary? properties = monoBehaviour.ToType();
+    Dictionary<string, object?> properties = monoBehaviour.ToType()?.ToDictionary(k => k as string ?? "", v => v) ?? [];
 
     if (fields.Length > 0)
     {
-        Dictionary<string, object?> toWrite = ExtractPropertiesOfDictionary(properties, fields);
-        return JsonSerializer.Serialize(toWrite, jsonSerializerOptions);
+        properties = ExtractPropertiesOfDictionary(properties, fields);
+    }
+
+    foreach (KeyValuePair<string, object?> entry in properties)
+    {
+        if (TryConvertWeirdDictionary(entry.Value, out IReadOnlyCollection<object>? dict))
+        {
+            properties[entry.Key] = dict;
+        }
     }
 
     return JsonSerializer.Serialize(properties, jsonSerializerOptions);
 }
 
-Dictionary<string, object?> ExtractPropertiesOfDictionary(OrderedDictionary? properties, string[] fields)
+bool TryConvertWeirdDictionary(object? obj, [NotNullWhen(true)] out IReadOnlyCollection<object>? result)
 {
-    if (properties == null)
+    result = null;
+
+    if (obj is not IDictionary { Keys.Count: 2 } dictionary || !dictionary.Contains("m_keys") || !dictionary.Contains("m_values"))
     {
-        return [];
+        return false;
     }
 
-    Dictionary<string, object?> result = new();
-
-    foreach (object? key in properties.Keys)
+    object? keysObj = dictionary["m_keys"];
+    object? valuesObj = dictionary["m_values"];
+    if (keysObj is not IList keys || valuesObj is not IList values || keys.Count != values.Count)
     {
-        if (key is not string propName || fields.All(f => !Like(propName, f)))
+        return false;
+    }
+
+    List<object> list = [];
+
+    for (int i = 0; i < keys.Count; i++)
+    {
+        object? key = keys[i];
+        if (key == null)
         {
             continue;
         }
 
-        result[propName] = properties[propName];
+        object? value = values[i];
+        if (TryConvertWeirdDictionary(value, out IReadOnlyCollection<object>? innerValues))
+        {
+            list.AddRange(innerValues);
+        }
+        else if (value is not null)
+        {
+            list.Add(value);
+        }
+    }
+
+    result = list;
+    return true;
+}
+
+Dictionary<string, object?> ExtractPropertiesOfDictionary(Dictionary<string, object?> properties, string[] fields)
+{
+    Dictionary<string, object?> result = new();
+
+    foreach (string key in properties.Keys.Where(key => fields.Any(f => Like(key, f))))
+    {
+        result[key] = properties[key];
     }
 
     return result;
