@@ -88,7 +88,9 @@ void ExtractCommand(ExtractArgs args)
     string[] fields = args.Fields.SelectMany(s => s.Split(',')).ToArray();
 
     log.LogInformation("Loading bundles from paths: {Paths}.", args.BundlePaths);
-    IEnumerable<MonoBehaviour> behaviours = GetMonoBehaviors(args.BundlePaths);
+    MonoBehaviour[] behaviours = GetMonoBehaviors(args.BundlePaths).ToArray();
+
+    log.LogInformation("- Found {Count} behaviours in bundle", behaviours.Length);
 
     int count = 0;
     foreach (MonoBehaviour behaviour in behaviours)
@@ -117,7 +119,7 @@ void ExtractCommand(ExtractArgs args)
         count++;
     }
 
-    log.LogInformation("Extracted a total of {Count} behaviours.", count);
+    log.LogInformation("Extracted {Count}/{TotalCount} behaviours.", count, behaviours.Length);
 }
 
 string[] GetBundlePaths(IEnumerable<string> inputs)
