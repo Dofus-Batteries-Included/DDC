@@ -1,8 +1,7 @@
-﻿namespace UnityBundleReader
+﻿namespace UnityBundleReader;
+
+public enum EndianType
 {
-    public enum EndianType
-    {
-        LittleEndian,
-        BigEndian
-    }
+    LittleEndian,
+    BigEndian
 }

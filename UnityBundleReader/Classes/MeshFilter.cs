@@ -1,12 +1,11 @@
-﻿namespace UnityBundleReader.Classes
-{
-    public sealed class MeshFilter : Component
-    {
-        public PPtr<Mesh> MMesh;
+﻿namespace UnityBundleReader.Classes;
 
-        public MeshFilter(ObjectReader reader) : base(reader)
-        {
-            MMesh = new PPtr<Mesh>(reader);
-        }
+public sealed class MeshFilter : Component
+{
+    public PPtr<Mesh> MMesh;
+
+    public MeshFilter(ObjectReader reader) : base(reader)
+    {
+        MMesh = new PPtr<Mesh>(reader);
     }
 }

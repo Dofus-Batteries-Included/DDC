@@ -1,13 +1,12 @@
-﻿namespace UnityBundleReader
+﻿namespace UnityBundleReader;
+
+public enum FileType
 {
-    public enum FileType
-    {
-        AssetsFile,
-        BundleFile,
-        WebFile,
-        ResourceFile,
-        GZipFile,
-        BrotliFile,
-        ZipFile
-    }
+    AssetsFile,
+    BundleFile,
+    WebFile,
+    ResourceFile,
+    GZipFile,
+    BrotliFile,
+    ZipFile
 }

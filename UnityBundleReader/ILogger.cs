@@ -1,21 +1,20 @@
-﻿namespace UnityBundleReader
+﻿namespace UnityBundleReader;
+
+public enum LoggerEvent
 {
-    public enum LoggerEvent
-    {
-        Verbose,
-        Debug,
-        Info,
-        Warning,
-        Error,
-    }
+    Verbose,
+    Debug,
+    Info,
+    Warning,
+    Error
+}
 
-    public interface ILogger
-    {
-        void Log(LoggerEvent loggerEvent, string message);
-    }
+public interface ILogger
+{
+    void Log(LoggerEvent loggerEvent, string message);
+}
 
-    public sealed class DummyLogger : ILogger
-    {
-        public void Log(LoggerEvent loggerEvent, string message) { }
-    }
+public sealed class DummyLogger : ILogger
+{
+    public void Log(LoggerEvent loggerEvent, string message) { }
 }

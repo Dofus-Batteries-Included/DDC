@@ -1,8 +1,7 @@
-﻿namespace UnityBundleReader
+﻿namespace UnityBundleReader;
+
+public class LocalSerializedObjectIdentifier
 {
-    public class LocalSerializedObjectIdentifier
-    {
-        public int LocalSerializedFileIndex;
-        public long LocalIdentifierInFile;
-    }
+    public int LocalSerializedFileIndex;
+    public long LocalIdentifierInFile;
 }
