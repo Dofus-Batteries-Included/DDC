@@ -7,7 +7,7 @@ public class OutBuffer
     readonly byte[] _mBuffer;
     uint _mPos;
     readonly uint _mBufferSize;
-    Stream _mStream;
+    Stream? _mStream;
     ulong _mProcessedSize;
 
     public OutBuffer(uint bufferSize)
@@ -17,8 +17,8 @@ public class OutBuffer
     }
 
     public void SetStream(Stream stream) => _mStream = stream;
-    public void FlushStream() => _mStream.Flush();
-    public void CloseStream() => _mStream.Close();
+    public void FlushStream() => _mStream?.Flush();
+    public void CloseStream() => _mStream?.Close();
     public void ReleaseStream() => _mStream = null;
 
     public void Init()
@@ -42,7 +42,7 @@ public class OutBuffer
         {
             return;
         }
-        _mStream.Write(_mBuffer, 0, (int)_mPos);
+        _mStream?.Write(_mBuffer, 0, (int)_mPos);
         _mPos = 0;
     }
 
