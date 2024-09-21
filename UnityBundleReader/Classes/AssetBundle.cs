@@ -7,37 +7,37 @@ namespace AssetStudio
 {
     public class AssetInfo
     {
-        public int preloadIndex;
-        public int preloadSize;
-        public PPtr<Object> asset;
+        public int PreloadIndex;
+        public int PreloadSize;
+        public PPtr<Object> Asset;
 
         public AssetInfo(ObjectReader reader)
         {
-            preloadIndex = reader.ReadInt32();
-            preloadSize = reader.ReadInt32();
-            asset = new PPtr<Object>(reader);
+            PreloadIndex = reader.ReadInt32();
+            PreloadSize = reader.ReadInt32();
+            Asset = new PPtr<Object>(reader);
         }
     }
 
     public sealed class AssetBundle : NamedObject
     {
-        public PPtr<Object>[] m_PreloadTable;
-        public KeyValuePair<string, AssetInfo>[] m_Container;
+        public PPtr<Object>[] MPreloadTable;
+        public KeyValuePair<string, AssetInfo>[] MContainer;
 
         public AssetBundle(ObjectReader reader) : base(reader)
         {
-            var m_PreloadTableSize = reader.ReadInt32();
-            m_PreloadTable = new PPtr<Object>[m_PreloadTableSize];
-            for (int i = 0; i < m_PreloadTableSize; i++)
+            var mPreloadTableSize = reader.ReadInt32();
+            MPreloadTable = new PPtr<Object>[mPreloadTableSize];
+            for (int i = 0; i < mPreloadTableSize; i++)
             {
-                m_PreloadTable[i] = new PPtr<Object>(reader);
+                MPreloadTable[i] = new PPtr<Object>(reader);
             }
 
-            var m_ContainerSize = reader.ReadInt32();
-            m_Container = new KeyValuePair<string, AssetInfo>[m_ContainerSize];
-            for (int i = 0; i < m_ContainerSize; i++)
+            var mContainerSize = reader.ReadInt32();
+            MContainer = new KeyValuePair<string, AssetInfo>[mContainerSize];
+            for (int i = 0; i < mContainerSize; i++)
             {
-                m_Container[i] = new KeyValuePair<string, AssetInfo>(reader.ReadAlignedString(), new AssetInfo(reader));
+                MContainer[i] = new KeyValuePair<string, AssetInfo>(reader.ReadAlignedString(), new AssetInfo(reader));
             }
         }
     }

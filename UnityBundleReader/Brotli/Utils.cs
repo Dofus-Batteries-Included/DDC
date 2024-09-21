@@ -28,8 +28,8 @@ namespace Org.Brotli.Dec
 			int cursor = 0;
 			while (cursor < length)
 			{
-				int step = System.Math.Min(cursor + 1024, length) - cursor;
-				System.Array.Copy(ByteZeroes, 0, dest, offset + cursor, step);
+				int step = Math.Min(cursor + 1024, length) - cursor;
+				Array.Copy(ByteZeroes, 0, dest, offset + cursor, step);
 				cursor += step;
 			}
 		}
@@ -50,8 +50,8 @@ namespace Org.Brotli.Dec
 			int cursor = 0;
 			while (cursor < length)
 			{
-				int step = System.Math.Min(cursor + 1024, length) - cursor;
-				System.Array.Copy(IntZeroes, 0, dest, offset + cursor, step);
+				int step = Math.Min(cursor + 1024, length) - cursor;
+				Array.Copy(IntZeroes, 0, dest, offset + cursor, step);
 				cursor += step;
 			}
 		}

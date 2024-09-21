@@ -7,7 +7,7 @@ namespace AssetStudio
 {
     public class LocalSerializedObjectIdentifier
     {
-        public int localSerializedFileIndex;
-        public long localIdentifierInFile;
+        public int LocalSerializedFileIndex;
+        public long LocalIdentifierInFile;
     }
 }

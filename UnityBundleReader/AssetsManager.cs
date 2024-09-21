@@ -11,15 +11,15 @@ namespace AssetStudio
     public class AssetsManager
     {
         public string SpecifyUnityVersion;
-        public List<SerializedFile> assetsFileList = new List<SerializedFile>();
+        public List<SerializedFile> AssetsFileList = new List<SerializedFile>();
 
-        internal Dictionary<string, int> assetsFileIndexCache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        internal Dictionary<string, BinaryReader> resourceFileReaders = new Dictionary<string, BinaryReader>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, int> AssetsFileIndexCache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, BinaryReader> ResourceFileReaders = new Dictionary<string, BinaryReader>(StringComparer.OrdinalIgnoreCase);
 
-        private List<string> importFiles = new List<string>();
-        private HashSet<string> importFilesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> noexistFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> assetsFileListHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private List<string> _importFiles = new List<string>();
+        private HashSet<string> _importFilesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private HashSet<string> _noexistFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private HashSet<string> _assetsFileListHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public void LoadFiles(params string[] files)
         {
@@ -41,22 +41,22 @@ namespace AssetStudio
         {
             foreach (var file in files)
             {
-                importFiles.Add(file);
-                importFilesHash.Add(Path.GetFileName(file));
+                _importFiles.Add(file);
+                _importFilesHash.Add(Path.GetFileName(file));
             }
 
             Progress.Reset();
             //use a for loop because list size can change
-            for (var i = 0; i < importFiles.Count; i++)
+            for (var i = 0; i < _importFiles.Count; i++)
             {
-                LoadFile(importFiles[i]);
-                Progress.Report(i + 1, importFiles.Count);
+                LoadFile(_importFiles[i]);
+                Progress.Report(i + 1, _importFiles.Count);
             }
 
-            importFiles.Clear();
-            importFilesHash.Clear();
-            noexistFiles.Clear();
-            assetsFileListHash.Clear();
+            _importFiles.Clear();
+            _importFilesHash.Clear();
+            _noexistFiles.Clear();
+            _assetsFileListHash.Clear();
 
             ReadAssets();
             ProcessAssets();
@@ -95,24 +95,24 @@ namespace AssetStudio
 
         private void LoadAssetsFile(FileReader reader)
         {
-            if (!assetsFileListHash.Contains(reader.FileName))
+            if (!_assetsFileListHash.Contains(reader.FileName))
             {
                 Logger.Info($"Loading {reader.FullPath}");
                 try
                 {
                     var assetsFile = new SerializedFile(reader, this);
                     CheckStrippedVersion(assetsFile);
-                    assetsFileList.Add(assetsFile);
-                    assetsFileListHash.Add(assetsFile.fileName);
+                    AssetsFileList.Add(assetsFile);
+                    _assetsFileListHash.Add(assetsFile.FileName);
 
-                    foreach (var sharedFile in assetsFile.m_Externals)
+                    foreach (var sharedFile in assetsFile.MExternals)
                     {
-                        var sharedFileName = sharedFile.fileName;
+                        var sharedFileName = sharedFile.FileName;
 
-                        if (!importFilesHash.Contains(sharedFileName))
+                        if (!_importFilesHash.Contains(sharedFileName))
                         {
                             var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
-                            if (!noexistFiles.Contains(sharedFilePath))
+                            if (!_noexistFiles.Contains(sharedFilePath))
                             {
                                 if (!File.Exists(sharedFilePath))
                                 {
@@ -124,12 +124,12 @@ namespace AssetStudio
                                 }
                                 if (File.Exists(sharedFilePath))
                                 {
-                                    importFiles.Add(sharedFilePath);
-                                    importFilesHash.Add(sharedFileName);
+                                    _importFiles.Add(sharedFilePath);
+                                    _importFilesHash.Add(sharedFileName);
                                 }
                                 else
                                 {
-                                    noexistFiles.Add(sharedFilePath);
+                                    _noexistFiles.Add(sharedFilePath);
                                 }
                             }
                         }
@@ -150,24 +150,24 @@ namespace AssetStudio
 
         private void LoadAssetsFromMemory(FileReader reader, string originalPath, string unityVersion = null)
         {
-            if (!assetsFileListHash.Contains(reader.FileName))
+            if (!_assetsFileListHash.Contains(reader.FileName))
             {
                 try
                 {
                     var assetsFile = new SerializedFile(reader, this);
-                    assetsFile.originalPath = originalPath;
-                    if (!string.IsNullOrEmpty(unityVersion) && assetsFile.header.m_Version < SerializedFileFormatVersion.Unknown_7)
+                    assetsFile.OriginalPath = originalPath;
+                    if (!string.IsNullOrEmpty(unityVersion) && assetsFile.Header.MVersion < SerializedFileFormatVersion.Unknown7)
                     {
                         assetsFile.SetVersion(unityVersion);
                     }
                     CheckStrippedVersion(assetsFile);
-                    assetsFileList.Add(assetsFile);
-                    assetsFileListHash.Add(assetsFile.fileName);
+                    AssetsFileList.Add(assetsFile);
+                    _assetsFileListHash.Add(assetsFile.FileName);
                 }
                 catch (Exception e)
                 {
                     Logger.Error($"Error while reading assets file {reader.FullPath} from {Path.GetFileName(originalPath)}", e);
-                    resourceFileReaders.Add(reader.FileName, reader);
+                    ResourceFileReaders.Add(reader.FileName, reader);
                 }
             }
             else
@@ -180,17 +180,17 @@ namespace AssetStudio
             try
             {
                 var bundleFile = new BundleFile(reader);
-                foreach (var file in bundleFile.fileList)
+                foreach (var file in bundleFile.FileList)
                 {
                     var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
                     var subReader = new FileReader(dummyPath, file.stream);
                     if (subReader.FileType == FileType.AssetsFile)
                     {
-                        LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.m_Header.unityRevision);
+                        LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.MHeader.UnityRevision);
                     }
                     else
                     {
-                        resourceFileReaders[file.fileName] = subReader; //TODO
+                        ResourceFileReaders[file.fileName] = subReader; //TODO
                     }
                 }
             }
@@ -215,7 +215,7 @@ namespace AssetStudio
             try
             {
                 var webFile = new WebFile(reader);
-                foreach (var file in webFile.fileList)
+                foreach (var file in webFile.FileList)
                 {
                     var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
                     var subReader = new FileReader(dummyPath, file.stream);
@@ -231,7 +231,7 @@ namespace AssetStudio
                             LoadWebFile(subReader);
                             break;
                         case FileType.ResourceFile:
-                            resourceFileReaders[file.fileName] = subReader; //TODO
+                            ResourceFileReaders[file.fileName] = subReader; //TODO
                             break;
                     }
                 }
@@ -265,12 +265,12 @@ namespace AssetStudio
                             if (!splitFiles.Contains(basePath))
                             {
                                 splitFiles.Add(basePath);
-                                importFilesHash.Add(baseName);
+                                _importFilesHash.Add(baseName);
                             }
                         }
                         else
                         {
-                            importFilesHash.Add(entry.Name);
+                            _importFilesHash.Add(entry.Name);
                         }
                     }
 
@@ -323,9 +323,9 @@ namespace AssetStudio
                             if (entryReader.FileType == FileType.ResourceFile)
                             {
                                 entryReader.Position = 0;
-                                if (!resourceFileReaders.ContainsKey(entry.Name))
+                                if (!ResourceFileReaders.ContainsKey(entry.Name))
                                 {
-                                    resourceFileReaders.Add(entry.Name, entryReader);
+                                    ResourceFileReaders.Add(entry.Name, entryReader);
                                 }
                             }
                         }
@@ -360,38 +360,38 @@ namespace AssetStudio
 
         public void Clear()
         {
-            foreach (var assetsFile in assetsFileList)
+            foreach (var assetsFile in AssetsFileList)
             {
                 assetsFile.Objects.Clear();
-                assetsFile.reader.Close();
+                assetsFile.Reader.Close();
             }
-            assetsFileList.Clear();
+            AssetsFileList.Clear();
 
-            foreach (var resourceFileReader in resourceFileReaders)
+            foreach (var resourceFileReader in ResourceFileReaders)
             {
                 resourceFileReader.Value.Close();
             }
-            resourceFileReaders.Clear();
+            ResourceFileReaders.Clear();
 
-            assetsFileIndexCache.Clear();
+            AssetsFileIndexCache.Clear();
         }
 
         private void ReadAssets()
         {
             Logger.Info("Read assets...");
 
-            var progressCount = assetsFileList.Sum(x => x.m_Objects.Count);
+            var progressCount = AssetsFileList.Sum(x => x.MObjects.Count);
             int i = 0;
             Progress.Reset();
-            foreach (var assetsFile in assetsFileList)
+            foreach (var assetsFile in AssetsFileList)
             {
-                foreach (var objectInfo in assetsFile.m_Objects)
+                foreach (var objectInfo in assetsFile.MObjects)
                 {
-                    var objectReader = new ObjectReader(assetsFile.reader, assetsFile, objectInfo);
+                    var objectReader = new ObjectReader(assetsFile.Reader, assetsFile, objectInfo);
                     try
                     {
                         Object obj;
-                        switch (objectReader.type)
+                        switch (objectReader.Type)
                         {
                             case ClassIDType.Animation:
                                 obj = new Animation(objectReader);
@@ -487,10 +487,10 @@ namespace AssetStudio
                     {
                         var sb = new StringBuilder();
                         sb.AppendLine("Unable to load object")
-                            .AppendLine($"Assets {assetsFile.fileName}")
-                            .AppendLine($"Path {assetsFile.originalPath}")
-                            .AppendLine($"Type {objectReader.type}")
-                            .AppendLine($"PathID {objectInfo.m_PathID}")
+                            .AppendLine($"Assets {assetsFile.FileName}")
+                            .AppendLine($"Path {assetsFile.OriginalPath}")
+                            .AppendLine($"Type {objectReader.Type}")
+                            .AppendLine($"PathID {objectInfo.MPathID}")
                             .Append(e);
                         Logger.Error(sb.ToString());
                     }
@@ -504,56 +504,56 @@ namespace AssetStudio
         {
             Logger.Info("Process Assets...");
 
-            foreach (var assetsFile in assetsFileList)
+            foreach (var assetsFile in AssetsFileList)
             {
                 foreach (var obj in assetsFile.Objects)
                 {
-                    if (obj is GameObject m_GameObject)
+                    if (obj is GameObject mGameObject)
                     {
-                        foreach (var pptr in m_GameObject.m_Components)
+                        foreach (var pptr in mGameObject.MComponents)
                         {
-                            if (pptr.TryGet(out var m_Component))
+                            if (pptr.TryGet(out var mComponent))
                             {
-                                switch (m_Component)
+                                switch (mComponent)
                                 {
-                                    case Transform m_Transform:
-                                        m_GameObject.m_Transform = m_Transform;
+                                    case Transform mTransform:
+                                        mGameObject.MTransform = mTransform;
                                         break;
-                                    case MeshRenderer m_MeshRenderer:
-                                        m_GameObject.m_MeshRenderer = m_MeshRenderer;
+                                    case MeshRenderer mMeshRenderer:
+                                        mGameObject.MMeshRenderer = mMeshRenderer;
                                         break;
-                                    case MeshFilter m_MeshFilter:
-                                        m_GameObject.m_MeshFilter = m_MeshFilter;
+                                    case MeshFilter mMeshFilter:
+                                        mGameObject.MMeshFilter = mMeshFilter;
                                         break;
-                                    case SkinnedMeshRenderer m_SkinnedMeshRenderer:
-                                        m_GameObject.m_SkinnedMeshRenderer = m_SkinnedMeshRenderer;
+                                    case SkinnedMeshRenderer mSkinnedMeshRenderer:
+                                        mGameObject.MSkinnedMeshRenderer = mSkinnedMeshRenderer;
                                         break;
-                                    case Animator m_Animator:
-                                        m_GameObject.m_Animator = m_Animator;
+                                    case Animator mAnimator:
+                                        mGameObject.MAnimator = mAnimator;
                                         break;
-                                    case Animation m_Animation:
-                                        m_GameObject.m_Animation = m_Animation;
+                                    case Animation mAnimation:
+                                        mGameObject.MAnimation = mAnimation;
                                         break;
                                 }
                             }
                         }
                     }
-                    else if (obj is SpriteAtlas m_SpriteAtlas)
+                    else if (obj is SpriteAtlas mSpriteAtlas)
                     {
-                        foreach (var m_PackedSprite in m_SpriteAtlas.m_PackedSprites)
+                        foreach (var mPackedSprite in mSpriteAtlas.MPackedSprites)
                         {
-                            if (m_PackedSprite.TryGet(out var m_Sprite))
+                            if (mPackedSprite.TryGet(out var mSprite))
                             {
-                                if (m_Sprite.m_SpriteAtlas.IsNull)
+                                if (mSprite.MSpriteAtlas.IsNull)
                                 {
-                                    m_Sprite.m_SpriteAtlas.Set(m_SpriteAtlas);
+                                    mSprite.MSpriteAtlas.Set(mSpriteAtlas);
                                 }
                                 else
                                 {
-                                    m_Sprite.m_SpriteAtlas.TryGet(out var m_SpriteAtlaOld);
-                                    if (m_SpriteAtlaOld.m_IsVariant)
+                                    mSprite.MSpriteAtlas.TryGet(out var mSpriteAtlaOld);
+                                    if (mSpriteAtlaOld.MIsVariant)
                                     {
-                                        m_Sprite.m_SpriteAtlas.Set(m_SpriteAtlas);
+                                        mSprite.MSpriteAtlas.Set(mSpriteAtlas);
                                     }
                                 }
                             }

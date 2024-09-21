@@ -5,37 +5,37 @@ namespace AssetStudio
 {
     public class SpriteAtlasData
     {
-        public PPtr<Texture2D> texture;
-        public PPtr<Texture2D> alphaTexture;
-        public Rectf textureRect;
-        public Vector2 textureRectOffset;
-        public Vector2 atlasRectOffset;
-        public Vector4 uvTransform;
-        public float downscaleMultiplier;
-        public SpriteSettings settingsRaw;
-        public SecondarySpriteTexture[] secondaryTextures;
+        public PPtr<Texture2D> Texture;
+        public PPtr<Texture2D> AlphaTexture;
+        public Rectf TextureRect;
+        public Vector2 TextureRectOffset;
+        public Vector2 AtlasRectOffset;
+        public Vector4 UVTransform;
+        public float DownscaleMultiplier;
+        public SpriteSettings SettingsRaw;
+        public SecondarySpriteTexture[] SecondaryTextures;
 
         public SpriteAtlasData(ObjectReader reader)
         {
-            var version = reader.version;
-            texture = new PPtr<Texture2D>(reader);
-            alphaTexture = new PPtr<Texture2D>(reader);
-            textureRect = new Rectf(reader);
-            textureRectOffset = reader.ReadVector2();
+            var version = reader.Version;
+            Texture = new PPtr<Texture2D>(reader);
+            AlphaTexture = new PPtr<Texture2D>(reader);
+            TextureRect = new Rectf(reader);
+            TextureRectOffset = reader.ReadVector2();
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 2)) //2017.2 and up
             {
-                atlasRectOffset = reader.ReadVector2();
+                AtlasRectOffset = reader.ReadVector2();
             }
-            uvTransform = reader.ReadVector4();
-            downscaleMultiplier = reader.ReadSingle();
-            settingsRaw = new SpriteSettings(reader);
+            UVTransform = reader.ReadVector4();
+            DownscaleMultiplier = reader.ReadSingle();
+            SettingsRaw = new SpriteSettings(reader);
             if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
             {
                 var secondaryTexturesSize = reader.ReadInt32();
-                secondaryTextures = new SecondarySpriteTexture[secondaryTexturesSize];
+                SecondaryTextures = new SecondarySpriteTexture[secondaryTexturesSize];
                 for (int i = 0; i < secondaryTexturesSize; i++)
                 {
-                    secondaryTextures[i] = new SecondarySpriteTexture(reader);
+                    SecondaryTextures[i] = new SecondarySpriteTexture(reader);
                 }
                 reader.AlignStream();
             }
@@ -44,32 +44,32 @@ namespace AssetStudio
 
     public sealed class SpriteAtlas : NamedObject
     {
-        public PPtr<Sprite>[] m_PackedSprites;
-        public Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData> m_RenderDataMap;
-        public bool m_IsVariant;
+        public PPtr<Sprite>[] MPackedSprites;
+        public Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData> MRenderDataMap;
+        public bool MIsVariant;
 
         public SpriteAtlas(ObjectReader reader) : base(reader)
         {
-            var m_PackedSpritesSize = reader.ReadInt32();
-            m_PackedSprites = new PPtr<Sprite>[m_PackedSpritesSize];
-            for (int i = 0; i < m_PackedSpritesSize; i++)
+            var mPackedSpritesSize = reader.ReadInt32();
+            MPackedSprites = new PPtr<Sprite>[mPackedSpritesSize];
+            for (int i = 0; i < mPackedSpritesSize; i++)
             {
-                m_PackedSprites[i] = new PPtr<Sprite>(reader);
+                MPackedSprites[i] = new PPtr<Sprite>(reader);
             }
 
-            var m_PackedSpriteNamesToIndex = reader.ReadStringArray();
+            var mPackedSpriteNamesToIndex = reader.ReadStringArray();
 
-            var m_RenderDataMapSize = reader.ReadInt32();
-            m_RenderDataMap = new Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData>(m_RenderDataMapSize);
-            for (int i = 0; i < m_RenderDataMapSize; i++)
+            var mRenderDataMapSize = reader.ReadInt32();
+            MRenderDataMap = new Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData>(mRenderDataMapSize);
+            for (int i = 0; i < mRenderDataMapSize; i++)
             {
                 var first = new Guid(reader.ReadBytes(16));
                 var second = reader.ReadInt64();
                 var value = new SpriteAtlasData(reader);
-                m_RenderDataMap.Add(new KeyValuePair<Guid, long>(first, second), value);
+                MRenderDataMap.Add(new KeyValuePair<Guid, long>(first, second), value);
             }
-            var m_Tag = reader.ReadAlignedString();
-            m_IsVariant = reader.ReadBoolean();
+            var mTag = reader.ReadAlignedString();
+            MIsVariant = reader.ReadBoolean();
             reader.AlignStream();
         }
     }

@@ -73,7 +73,7 @@ void ListCommand(LineArgs args)
     ILogger log = loggerFactory.CreateLogger("List");
 
     log.LogInformation("Loading bundles from paths: {Paths}.", args.BundlePaths);
-    string[] behaviourNames = GetMonoBehaviors(args.BundlePaths).Select(m => m.m_Name).ToArray();
+    string[] behaviourNames = GetMonoBehaviors(args.BundlePaths).Select(m => m.MName).ToArray();
 
     log.LogInformation("- Found {Count} behaviours in bundle", behaviourNames.Length);
     foreach (string name in behaviourNames)
@@ -96,8 +96,8 @@ void ExtractCommand(ExtractArgs args)
     foreach (MonoBehaviour behaviour in behaviours)
     {
         string basePath = Path.GetFullPath(args.OutputPath);
-        string directory = Path.Join(basePath, Path.GetFileNameWithoutExtension(behaviour.assetsFile.originalPath));
-        string path = Path.Join(directory, $"{behaviour.m_Name}.json");
+        string directory = Path.Join(basePath, Path.GetFileNameWithoutExtension(behaviour.AssetsFile.OriginalPath));
+        string path = Path.Join(directory, $"{behaviour.MName}.json");
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
@@ -110,12 +110,12 @@ void ExtractCommand(ExtractArgs args)
         }
         catch (Exception exn)
         {
-            log.LogError(exn, "Could not extract properties of behaviour {Name}.", behaviour.m_Name);
+            log.LogError(exn, "Could not extract properties of behaviour {Name}.", behaviour.MName);
             continue;
         }
 
         File.WriteAllText(path, json);
-        log.LogInformation("\t\t- MonoBehaviour {Name} saved at {Path}", behaviour.m_Name, path);
+        log.LogInformation("\t\t- MonoBehaviour {Name} saved at {Path}", behaviour.MName, path);
         count++;
     }
 
@@ -152,7 +152,7 @@ IEnumerable<MonoBehaviour> GetMonoBehaviors(IEnumerable<string> inputs)
     AssetsManager assetsManager = new() { SpecifyUnityVersion = "2022.3.29f1" };
     assetsManager.LoadFiles(bundlePaths);
 
-    foreach (Object obj in assetsManager.assetsFileList.SelectMany(file => file.Objects))
+    foreach (Object obj in assetsManager.AssetsFileList.SelectMany(file => file.Objects))
     {
         switch (obj)
         {

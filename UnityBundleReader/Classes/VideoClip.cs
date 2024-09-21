@@ -4,69 +4,69 @@ namespace AssetStudio
 {
     public class StreamedResource
     {
-        public string m_Source;
-        public long m_Offset; //ulong
-        public long m_Size; //ulong
+        public string MSource;
+        public long MOffset; //ulong
+        public long MSize; //ulong
 
         public StreamedResource(BinaryReader reader)
         {
-            m_Source = reader.ReadAlignedString();
-            m_Offset = reader.ReadInt64();
-            m_Size = reader.ReadInt64();
+            MSource = reader.ReadAlignedString();
+            MOffset = reader.ReadInt64();
+            MSize = reader.ReadInt64();
         }
     }
 
     public sealed class VideoClip : NamedObject
     {
-        public ResourceReader m_VideoData;
-        public string m_OriginalPath;
-        public StreamedResource m_ExternalResources;
+        public ResourceReader MVideoData;
+        public string MOriginalPath;
+        public StreamedResource MExternalResources;
 
         public VideoClip(ObjectReader reader) : base(reader)
         {
-            m_OriginalPath = reader.ReadAlignedString();
-            var m_ProxyWidth = reader.ReadUInt32();
-            var m_ProxyHeight = reader.ReadUInt32();
-            var Width = reader.ReadUInt32();
-            var Height = reader.ReadUInt32();
-            if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 2)) //2017.2 and up
+            MOriginalPath = reader.ReadAlignedString();
+            var mProxyWidth = reader.ReadUInt32();
+            var mProxyHeight = reader.ReadUInt32();
+            var width = reader.ReadUInt32();
+            var height = reader.ReadUInt32();
+            if (Version[0] > 2017 || (Version[0] == 2017 && Version[1] >= 2)) //2017.2 and up
             {
-                var m_PixelAspecRatioNum = reader.ReadUInt32();
-                var m_PixelAspecRatioDen = reader.ReadUInt32();
+                var mPixelAspecRatioNum = reader.ReadUInt32();
+                var mPixelAspecRatioDen = reader.ReadUInt32();
             }
-            var m_FrameRate = reader.ReadDouble();
-            var m_FrameCount = reader.ReadUInt64();
-            var m_Format = reader.ReadInt32();
-            var m_AudioChannelCount = reader.ReadUInt16Array();
+            var mFrameRate = reader.ReadDouble();
+            var mFrameCount = reader.ReadUInt64();
+            var mFormat = reader.ReadInt32();
+            var mAudioChannelCount = reader.ReadUInt16Array();
             reader.AlignStream();
-            var m_AudioSampleRate = reader.ReadUInt32Array();
-            var m_AudioLanguage = reader.ReadStringArray();
-            if (version[0] >= 2020) //2020.1 and up
+            var mAudioSampleRate = reader.ReadUInt32Array();
+            var mAudioLanguage = reader.ReadStringArray();
+            if (Version[0] >= 2020) //2020.1 and up
             {
-                var m_VideoShadersSize = reader.ReadInt32();
-                var m_VideoShaders = new PPtr<Shader>[m_VideoShadersSize];
-                for (int i = 0; i < m_VideoShadersSize; i++)
+                var mVideoShadersSize = reader.ReadInt32();
+                var mVideoShaders = new PPtr<Shader>[mVideoShadersSize];
+                for (int i = 0; i < mVideoShadersSize; i++)
                 {
-                    m_VideoShaders[i] = new PPtr<Shader>(reader);
+                    mVideoShaders[i] = new PPtr<Shader>(reader);
                 }
             }
-            m_ExternalResources = new StreamedResource(reader);
-            var m_HasSplitAlpha = reader.ReadBoolean();
-            if (version[0] >= 2020) //2020.1 and up
+            MExternalResources = new StreamedResource(reader);
+            var mHasSplitAlpha = reader.ReadBoolean();
+            if (Version[0] >= 2020) //2020.1 and up
             {
-                var m_sRGB = reader.ReadBoolean();
+                var mSRGB = reader.ReadBoolean();
             }
 
             ResourceReader resourceReader;
-            if (!string.IsNullOrEmpty(m_ExternalResources.m_Source))
+            if (!string.IsNullOrEmpty(MExternalResources.MSource))
             {
-                resourceReader = new ResourceReader(m_ExternalResources.m_Source, assetsFile, m_ExternalResources.m_Offset, m_ExternalResources.m_Size);
+                resourceReader = new ResourceReader(MExternalResources.MSource, AssetsFile, MExternalResources.MOffset, MExternalResources.MSize);
             }
             else
             {
-                resourceReader = new ResourceReader(reader, reader.BaseStream.Position, m_ExternalResources.m_Size);
+                resourceReader = new ResourceReader(reader, reader.BaseStream.Position, MExternalResources.MSize);
             }
-            m_VideoData = resourceReader;
+            MVideoData = resourceReader;
         }
     }
 }

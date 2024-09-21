@@ -7,37 +7,37 @@ namespace AssetStudio
 {
     public sealed class MonoScript : NamedObject
     {
-        public string m_ClassName;
-        public string m_Namespace;
-        public string m_AssemblyName;
+        public string MClassName;
+        public string MNamespace;
+        public string MAssemblyName;
 
         public MonoScript(ObjectReader reader) : base(reader)
         {
-            if (version[0] > 3 || (version[0] == 3 && version[1] >= 4)) //3.4 and up
+            if (Version[0] > 3 || (Version[0] == 3 && Version[1] >= 4)) //3.4 and up
             {
-                var m_ExecutionOrder = reader.ReadInt32();
+                var mExecutionOrder = reader.ReadInt32();
             }
-            if (version[0] < 5) //5.0 down
+            if (Version[0] < 5) //5.0 down
             {
-                var m_PropertiesHash = reader.ReadUInt32();
+                var mPropertiesHash = reader.ReadUInt32();
             }
             else
             {
-                var m_PropertiesHash = reader.ReadBytes(16);
+                var mPropertiesHash = reader.ReadBytes(16);
             }
-            if (version[0] < 3) //3.0 down
+            if (Version[0] < 3) //3.0 down
             {
-                var m_PathName = reader.ReadAlignedString();
+                var mPathName = reader.ReadAlignedString();
             }
-            m_ClassName = reader.ReadAlignedString();
-            if (version[0] >= 3) //3.0 and up
+            MClassName = reader.ReadAlignedString();
+            if (Version[0] >= 3) //3.0 and up
             {
-                m_Namespace = reader.ReadAlignedString();
+                MNamespace = reader.ReadAlignedString();
             }
-            m_AssemblyName = reader.ReadAlignedString();
-            if (version[0] < 2018 || (version[0] == 2018 && version[1] < 2)) //2018.2 down
+            MAssemblyName = reader.ReadAlignedString();
+            if (Version[0] < 2018 || (Version[0] == 2018 && Version[1] < 2)) //2018.2 down
             {
-                var m_IsEditorScript = reader.ReadBoolean();
+                var mIsEditorScript = reader.ReadBoolean();
             }
         }
     }

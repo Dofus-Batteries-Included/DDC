@@ -5,11 +5,11 @@ namespace AssetStudio
     public static class Progress
     {
         public static IProgress<int> Default = new Progress<int>();
-        private static int preValue;
+        private static int _preValue;
 
         public static void Reset()
         {
-            preValue = 0;
+            _preValue = 0;
             Default.Report(0);
         }
 
@@ -21,9 +21,9 @@ namespace AssetStudio
 
         private static void Report(int value)
         {
-            if (value > preValue)
+            if (value > _preValue)
             {
-                preValue = value;
+                _preValue = value;
                 Default.Report(value);
             }
         }

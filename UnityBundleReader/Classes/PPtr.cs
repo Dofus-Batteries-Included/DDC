@@ -4,48 +4,48 @@ namespace AssetStudio
 {
     public sealed class PPtr<T> where T : Object
     {
-        public int m_FileID;
-        public long m_PathID;
+        public int MFileID;
+        public long MPathID;
 
-        private SerializedFile assetsFile;
-        private int index = -2; //-2 - Prepare, -1 - Missing
+        private SerializedFile _assetsFile;
+        private int _index = -2; //-2 - Prepare, -1 - Missing
 
         public PPtr(ObjectReader reader)
         {
-            m_FileID = reader.ReadInt32();
-            m_PathID = reader.m_Version < SerializedFileFormatVersion.Unknown_14 ? reader.ReadInt32() : reader.ReadInt64();
-            assetsFile = reader.assetsFile;
+            MFileID = reader.ReadInt32();
+            MPathID = reader.MVersion < SerializedFileFormatVersion.Unknown14 ? reader.ReadInt32() : reader.ReadInt64();
+            _assetsFile = reader.AssetsFile;
         }
 
         private bool TryGetAssetsFile(out SerializedFile result)
         {
             result = null;
-            if (m_FileID == 0)
+            if (MFileID == 0)
             {
-                result = assetsFile;
+                result = _assetsFile;
                 return true;
             }
 
-            if (m_FileID > 0 && m_FileID - 1 < assetsFile.m_Externals.Count)
+            if (MFileID > 0 && MFileID - 1 < _assetsFile.MExternals.Count)
             {
-                var assetsManager = assetsFile.assetsManager;
-                var assetsFileList = assetsManager.assetsFileList;
-                var assetsFileIndexCache = assetsManager.assetsFileIndexCache;
+                var assetsManager = _assetsFile.AssetsManager;
+                var assetsFileList = assetsManager.AssetsFileList;
+                var assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
 
-                if (index == -2)
+                if (_index == -2)
                 {
-                    var m_External = assetsFile.m_Externals[m_FileID - 1];
-                    var name = m_External.fileName;
-                    if (!assetsFileIndexCache.TryGetValue(name, out index))
+                    var mExternal = _assetsFile.MExternals[MFileID - 1];
+                    var name = mExternal.FileName;
+                    if (!assetsFileIndexCache.TryGetValue(name, out _index))
                     {
-                        index = assetsFileList.FindIndex(x => x.fileName.Equals(name, StringComparison.OrdinalIgnoreCase));
-                        assetsFileIndexCache.Add(name, index);
+                        _index = assetsFileList.FindIndex(x => x.FileName.Equals(name, StringComparison.OrdinalIgnoreCase));
+                        assetsFileIndexCache.Add(name, _index);
                     }
                 }
 
-                if (index >= 0)
+                if (_index >= 0)
                 {
-                    result = assetsFileList[index];
+                    result = assetsFileList[_index];
                     return true;
                 }
             }
@@ -57,7 +57,7 @@ namespace AssetStudio
         {
             if (TryGetAssetsFile(out var sourceFile))
             {
-                if (sourceFile.ObjectsDic.TryGetValue(m_PathID, out var obj))
+                if (sourceFile.ObjectsDic.TryGetValue(MPathID, out var obj))
                 {
                     if (obj is T variable)
                     {
@@ -75,7 +75,7 @@ namespace AssetStudio
         {
             if (TryGetAssetsFile(out var sourceFile))
             {
-                if (sourceFile.ObjectsDic.TryGetValue(m_PathID, out var obj))
+                if (sourceFile.ObjectsDic.TryGetValue(MPathID, out var obj))
                 {
                     if (obj is T2 variable)
                     {
@@ -89,43 +89,43 @@ namespace AssetStudio
             return false;
         }
 
-        public void Set(T m_Object)
+        public void Set(T mObject)
         {
-            var name = m_Object.assetsFile.fileName;
-            if (string.Equals(assetsFile.fileName, name, StringComparison.OrdinalIgnoreCase))
+            var name = mObject.AssetsFile.FileName;
+            if (string.Equals(_assetsFile.FileName, name, StringComparison.OrdinalIgnoreCase))
             {
-                m_FileID = 0;
+                MFileID = 0;
             }
             else
             {
-                m_FileID = assetsFile.m_Externals.FindIndex(x => string.Equals(x.fileName, name, StringComparison.OrdinalIgnoreCase));
-                if (m_FileID == -1)
+                MFileID = _assetsFile.MExternals.FindIndex(x => string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase));
+                if (MFileID == -1)
                 {
-                    assetsFile.m_Externals.Add(new FileIdentifier
+                    _assetsFile.MExternals.Add(new FileIdentifier
                     {
-                        fileName = m_Object.assetsFile.fileName
+                        FileName = mObject.AssetsFile.FileName
                     });
-                    m_FileID = assetsFile.m_Externals.Count;
+                    MFileID = _assetsFile.MExternals.Count;
                 }
                 else
                 {
-                    m_FileID += 1;
+                    MFileID += 1;
                 }
             }
 
-            var assetsManager = assetsFile.assetsManager;
-            var assetsFileList = assetsManager.assetsFileList;
-            var assetsFileIndexCache = assetsManager.assetsFileIndexCache;
+            var assetsManager = _assetsFile.AssetsManager;
+            var assetsFileList = assetsManager.AssetsFileList;
+            var assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
 
-            if (!assetsFileIndexCache.TryGetValue(name, out index))
+            if (!assetsFileIndexCache.TryGetValue(name, out _index))
             {
-                index = assetsFileList.FindIndex(x => x.fileName.Equals(name, StringComparison.OrdinalIgnoreCase));
-                assetsFileIndexCache.Add(name, index);
+                _index = assetsFileList.FindIndex(x => x.FileName.Equals(name, StringComparison.OrdinalIgnoreCase));
+                assetsFileIndexCache.Add(name, _index);
             }
 
-            m_PathID = m_Object.m_PathID;
+            MPathID = mObject.MPathID;
         }
 
-        public bool IsNull => m_PathID == 0 || m_FileID < 0;
+        public bool IsNull => MPathID == 0 || MFileID < 0;
     }
 }

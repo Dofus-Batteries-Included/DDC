@@ -74,7 +74,7 @@ namespace AssetStudio
         public void Normalize()
         {
             var length = Length();
-            if (length > kEpsilon)
+            if (length > KEpsilon)
             {
                 var invNorm = 1.0f / length;
                 X *= invNorm;
@@ -135,7 +135,7 @@ namespace AssetStudio
 
         public static bool operator ==(Vector4 lhs, Vector4 rhs)
         {
-            return (lhs - rhs).LengthSquared() < kEpsilon * kEpsilon;
+            return (lhs - rhs).LengthSquared() < KEpsilon * KEpsilon;
         }
 
         public static bool operator !=(Vector4 lhs, Vector4 rhs)
@@ -158,6 +158,6 @@ namespace AssetStudio
             return new Color(v.X, v.Y, v.Z, v.W);
         }
 
-        private const float kEpsilon = 0.00001F;
+        private const float KEpsilon = 0.00001F;
     }
 }

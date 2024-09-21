@@ -7,25 +7,25 @@ namespace AssetStudio
 {
     public class Transform : Component
     {
-        public Quaternion m_LocalRotation;
-        public Vector3 m_LocalPosition;
-        public Vector3 m_LocalScale;
-        public PPtr<Transform>[] m_Children;
-        public PPtr<Transform> m_Father;
+        public Quaternion MLocalRotation;
+        public Vector3 MLocalPosition;
+        public Vector3 MLocalScale;
+        public PPtr<Transform>[] MChildren;
+        public PPtr<Transform> MFather;
 
         public Transform(ObjectReader reader) : base(reader)
         {
-            m_LocalRotation = reader.ReadQuaternion();
-            m_LocalPosition = reader.ReadVector3();
-            m_LocalScale = reader.ReadVector3();
+            MLocalRotation = reader.ReadQuaternion();
+            MLocalPosition = reader.ReadVector3();
+            MLocalScale = reader.ReadVector3();
 
-            int m_ChildrenCount = reader.ReadInt32();
-            m_Children = new PPtr<Transform>[m_ChildrenCount];
-            for (int i = 0; i < m_ChildrenCount; i++)
+            int mChildrenCount = reader.ReadInt32();
+            MChildren = new PPtr<Transform>[mChildrenCount];
+            for (int i = 0; i < mChildrenCount; i++)
             {
-                m_Children[i] = new PPtr<Transform>(reader);
+                MChildren[i] = new PPtr<Transform>(reader);
             }
-            m_Father = new PPtr<Transform>(reader);
+            MFather = new PPtr<Transform>(reader);
         }
     }
 }

@@ -8,32 +8,32 @@ namespace AssetStudio
 {
     public static class TypeTreeHelper
     {
-        public static string ReadTypeString(TypeTree m_Type, ObjectReader reader)
+        public static string ReadTypeString(TypeTree mType, ObjectReader reader)
         {
             reader.Reset();
             var sb = new StringBuilder();
-            var m_Nodes = m_Type.m_Nodes;
-            for (int i = 0; i < m_Nodes.Count; i++)
+            var mNodes = mType.m_Nodes;
+            for (int i = 0; i < mNodes.Count; i++)
             {
-                ReadStringValue(sb, m_Nodes, reader, ref i);
+                ReadStringValue(sb, mNodes, reader, ref i);
             }
-            var readed = reader.Position - reader.byteStart;
-            if (readed != reader.byteSize)
+            var readed = reader.Position - reader.ByteStart;
+            if (readed != reader.ByteSize)
             {
-                Logger.Info($"Error while read type, read {readed} bytes but expected {reader.byteSize} bytes");
+                Logger.Info($"Error while read type, read {readed} bytes but expected {reader.ByteSize} bytes");
             }
             return sb.ToString();
         }
 
-        private static void ReadStringValue(StringBuilder sb, List<TypeTreeNode> m_Nodes, BinaryReader reader, ref int i)
+        private static void ReadStringValue(StringBuilder sb, List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
         {
-            var m_Node = m_Nodes[i];
-            var level = m_Node.m_Level;
-            var varTypeStr = m_Node.m_Type;
-            var varNameStr = m_Node.m_Name;
+            var mNode = mNodes[i];
+            var level = mNode.MLevel;
+            var varTypeStr = mNode.MType;
+            var varNameStr = mNode.MName;
             object value = null;
             var append = true;
-            var align = (m_Node.m_MetaFlag & 0x4000) != 0;
+            var align = (mNode.MMetaFlag & 0x4000) != 0;
             switch (varTypeStr)
             {
                 case "SInt8":
@@ -84,19 +84,19 @@ namespace AssetStudio
                     append = false;
                     var str = reader.ReadAlignedString();
                     sb.AppendFormat("{0}{1} {2} = \"{3}\"\r\n", (new string('\t', level)), varTypeStr, varNameStr, str);
-                    var toSkip = GetNodes(m_Nodes, i);
+                    var toSkip = GetNodes(mNodes, i);
                     i += toSkip.Count - 1;
                     break;
                 case "map":
                     {
-                        if ((m_Nodes[i + 1].m_MetaFlag & 0x4000) != 0)
+                        if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
                             align = true;
                         append = false;
                         sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
                         sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level + 1)), "Array", "Array");
                         var size = reader.ReadInt32();
                         sb.AppendFormat("{0}{1} {2} = {3}\r\n", (new string('\t', level + 1)), "int", "size", size);
-                        var map = GetNodes(m_Nodes, i);
+                        var map = GetNodes(mNodes, i);
                         i += map.Count - 1;
                         var first = GetNodes(map, 4);
                         var next = 4 + first.Count;
@@ -124,16 +124,16 @@ namespace AssetStudio
                     }
                 default:
                     {
-                        if (i < m_Nodes.Count - 1 && m_Nodes[i + 1].m_Type == "Array") //Array
+                        if (i < mNodes.Count - 1 && mNodes[i + 1].MType == "Array") //Array
                         {
-                            if ((m_Nodes[i + 1].m_MetaFlag & 0x4000) != 0)
+                            if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
                                 align = true;
                             append = false;
                             sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
                             sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level + 1)), "Array", "Array");
                             var size = reader.ReadInt32();
                             sb.AppendFormat("{0}{1} {2} = {3}\r\n", (new string('\t', level + 1)), "int", "size", size);
-                            var vector = GetNodes(m_Nodes, i);
+                            var vector = GetNodes(mNodes, i);
                             i += vector.Count - 1;
                             for (int j = 0; j < size; j++)
                             {
@@ -147,7 +147,7 @@ namespace AssetStudio
                         {
                             append = false;
                             sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
-                            var @class = GetNodes(m_Nodes, i);
+                            var @class = GetNodes(mNodes, i);
                             i += @class.Count - 1;
                             for (int j = 1; j < @class.Count; j++)
                             {
@@ -163,31 +163,31 @@ namespace AssetStudio
                 reader.AlignStream();
         }
 
-        public static OrderedDictionary ReadType(TypeTree m_Types, ObjectReader reader)
+        public static OrderedDictionary ReadType(TypeTree mTypes, ObjectReader reader)
         {
             reader.Reset();
             var obj = new OrderedDictionary();
-            var m_Nodes = m_Types.m_Nodes;
-            for (int i = 1; i < m_Nodes.Count; i++)
+            var mNodes = mTypes.m_Nodes;
+            for (int i = 1; i < mNodes.Count; i++)
             {
-                var m_Node = m_Nodes[i];
-                var varNameStr = m_Node.m_Name;
-                obj[varNameStr] = ReadValue(m_Nodes, reader, ref i);
+                var mNode = mNodes[i];
+                var varNameStr = mNode.MName;
+                obj[varNameStr] = ReadValue(mNodes, reader, ref i);
             }
-            var readed = reader.Position - reader.byteStart;
-            if (readed != reader.byteSize)
+            var readed = reader.Position - reader.ByteStart;
+            if (readed != reader.ByteSize)
             {
-                Logger.Info($"Error while read type, read {readed} bytes but expected {reader.byteSize} bytes");
+                Logger.Info($"Error while read type, read {readed} bytes but expected {reader.ByteSize} bytes");
             }
             return obj;
         }
 
-        private static object ReadValue(List<TypeTreeNode> m_Nodes, BinaryReader reader, ref int i)
+        private static object ReadValue(List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
         {
-            var m_Node = m_Nodes[i];
-            var varTypeStr = m_Node.m_Type;
+            var mNode = mNodes[i];
+            var varTypeStr = mNode.MType;
             object value;
-            var align = (m_Node.m_MetaFlag & 0x4000) != 0;
+            var align = (mNode.MMetaFlag & 0x4000) != 0;
             switch (varTypeStr)
             {
                 case "SInt8":
@@ -236,14 +236,14 @@ namespace AssetStudio
                     break;
                 case "string":
                     value = reader.ReadAlignedString();
-                    var toSkip = GetNodes(m_Nodes, i);
+                    var toSkip = GetNodes(mNodes, i);
                     i += toSkip.Count - 1;
                     break;
                 case "map":
                     {
-                        if ((m_Nodes[i + 1].m_MetaFlag & 0x4000) != 0)
+                        if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
                             align = true;
-                        var map = GetNodes(m_Nodes, i);
+                        var map = GetNodes(mNodes, i);
                         i += map.Count - 1;
                         var first = GetNodes(map, 4);
                         var next = 4 + first.Count;
@@ -268,11 +268,11 @@ namespace AssetStudio
                     }
                 default:
                     {
-                        if (i < m_Nodes.Count - 1 && m_Nodes[i + 1].m_Type == "Array") //Array
+                        if (i < mNodes.Count - 1 && mNodes[i + 1].MType == "Array") //Array
                         {
-                            if ((m_Nodes[i + 1].m_MetaFlag & 0x4000) != 0)
+                            if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
                                 align = true;
-                            var vector = GetNodes(m_Nodes, i);
+                            var vector = GetNodes(mNodes, i);
                             i += vector.Count - 1;
                             var size = reader.ReadInt32();
                             var list = new List<object>(size);
@@ -286,13 +286,13 @@ namespace AssetStudio
                         }
                         else //Class
                         {
-                            var @class = GetNodes(m_Nodes, i);
+                            var @class = GetNodes(mNodes, i);
                             i += @class.Count - 1;
                             var obj = new OrderedDictionary();
                             for (int j = 1; j < @class.Count; j++)
                             {
                                 var classmember = @class[j];
-                                var name = classmember.m_Name;
+                                var name = classmember.MName;
                                 obj[name] = ReadValue(@class, reader, ref j);
                             }
                             value = obj;
@@ -305,15 +305,15 @@ namespace AssetStudio
             return value;
         }
 
-        private static List<TypeTreeNode> GetNodes(List<TypeTreeNode> m_Nodes, int index)
+        private static List<TypeTreeNode> GetNodes(List<TypeTreeNode> mNodes, int index)
         {
             var nodes = new List<TypeTreeNode>();
-            nodes.Add(m_Nodes[index]);
-            var level = m_Nodes[index].m_Level;
-            for (int i = index + 1; i < m_Nodes.Count; i++)
+            nodes.Add(mNodes[index]);
+            var level = mNodes[index].MLevel;
+            for (int i = index + 1; i < mNodes.Count; i++)
             {
-                var member = m_Nodes[i];
-                var level2 = member.m_Level;
+                var member = mNodes[i];
+                var level2 = member.MLevel;
                 if (level2 <= level)
                 {
                     return nodes;

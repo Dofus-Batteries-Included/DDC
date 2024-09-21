@@ -9,32 +9,32 @@ namespace AssetStudio
     public enum SerializedFileFormatVersion
     {
         Unsupported = 1,
-        Unknown_2 = 2,
-        Unknown_3 = 3,
+        Unknown2 = 2,
+        Unknown3 = 3,
         /// <summary>
         /// 1.2.0 to 2.0.0
         /// </summary>
-        Unknown_5 = 5,
+        Unknown5 = 5,
         /// <summary>
         /// 2.1.0 to 2.6.1
         /// </summary>
-        Unknown_6 = 6,
+        Unknown6 = 6,
         /// <summary>
         /// 3.0.0b
         /// </summary>
-        Unknown_7 = 7,
+        Unknown7 = 7,
         /// <summary>
         /// 3.0.0 to 3.4.2
         /// </summary>
-        Unknown_8 = 8,
+        Unknown8 = 8,
         /// <summary>
         /// 3.5.0 to 4.7.2
         /// </summary>
-        Unknown_9 = 9,
+        Unknown9 = 9,
         /// <summary>
         /// 5.0.0aunk1
         /// </summary>
-        Unknown_10 = 10,
+        Unknown10 = 10,
         /// <summary>
         /// 5.0.0aunk2
         /// </summary>
@@ -42,7 +42,7 @@ namespace AssetStudio
         /// <summary>
         /// 5.0.0aunk3
         /// </summary>
-        Unknown_12 = 12,
+        Unknown12 = 12,
         /// <summary>
         /// 5.0.0aunk4
         /// </summary>
@@ -50,7 +50,7 @@ namespace AssetStudio
         /// <summary>
         /// 5.0.0unk
         /// </summary>
-        Unknown_14 = 14,
+        Unknown14 = 14,
         /// <summary>
         /// 5.0.1 to 5.4.0
         /// </summary>

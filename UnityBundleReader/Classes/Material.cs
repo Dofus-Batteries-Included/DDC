@@ -4,104 +4,104 @@ namespace AssetStudio
 {
     public class UnityTexEnv
     {
-        public PPtr<Texture> m_Texture;
-        public Vector2 m_Scale;
-        public Vector2 m_Offset;
+        public PPtr<Texture> MTexture;
+        public Vector2 MScale;
+        public Vector2 MOffset;
 
         public UnityTexEnv(ObjectReader reader)
         {
-            m_Texture = new PPtr<Texture>(reader);
-            m_Scale = reader.ReadVector2();
-            m_Offset = reader.ReadVector2();
+            MTexture = new PPtr<Texture>(reader);
+            MScale = reader.ReadVector2();
+            MOffset = reader.ReadVector2();
         }
     }
 
     public class UnityPropertySheet
     {
-        public KeyValuePair<string, UnityTexEnv>[] m_TexEnvs;
-        public KeyValuePair<string, int>[] m_Ints;
-        public KeyValuePair<string, float>[] m_Floats;
-        public KeyValuePair<string, Color>[] m_Colors;
+        public KeyValuePair<string, UnityTexEnv>[] MTexEnvs;
+        public KeyValuePair<string, int>[] MInts;
+        public KeyValuePair<string, float>[] MFloats;
+        public KeyValuePair<string, Color>[] MColors;
 
         public UnityPropertySheet(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            int m_TexEnvsSize = reader.ReadInt32();
-            m_TexEnvs = new KeyValuePair<string, UnityTexEnv>[m_TexEnvsSize];
-            for (int i = 0; i < m_TexEnvsSize; i++)
+            int mTexEnvsSize = reader.ReadInt32();
+            MTexEnvs = new KeyValuePair<string, UnityTexEnv>[mTexEnvsSize];
+            for (int i = 0; i < mTexEnvsSize; i++)
             {
-                m_TexEnvs[i] = new KeyValuePair<string, UnityTexEnv>(reader.ReadAlignedString(), new UnityTexEnv(reader));
+                MTexEnvs[i] = new KeyValuePair<string, UnityTexEnv>(reader.ReadAlignedString(), new UnityTexEnv(reader));
             }
 
             if (version[0] >= 2021) //2021.1 and up
             {
-                int m_IntsSize = reader.ReadInt32();
-                m_Ints = new KeyValuePair<string, int>[m_IntsSize];
-                for (int i = 0; i < m_IntsSize; i++)
+                int mIntsSize = reader.ReadInt32();
+                MInts = new KeyValuePair<string, int>[mIntsSize];
+                for (int i = 0; i < mIntsSize; i++)
                 {
-                    m_Ints[i] = new KeyValuePair<string, int>(reader.ReadAlignedString(), reader.ReadInt32());
+                    MInts[i] = new KeyValuePair<string, int>(reader.ReadAlignedString(), reader.ReadInt32());
                 }
             }
 
-            int m_FloatsSize = reader.ReadInt32();
-            m_Floats = new KeyValuePair<string, float>[m_FloatsSize];
-            for (int i = 0; i < m_FloatsSize; i++)
+            int mFloatsSize = reader.ReadInt32();
+            MFloats = new KeyValuePair<string, float>[mFloatsSize];
+            for (int i = 0; i < mFloatsSize; i++)
             {
-                m_Floats[i] = new KeyValuePair<string, float>(reader.ReadAlignedString(), reader.ReadSingle());
+                MFloats[i] = new KeyValuePair<string, float>(reader.ReadAlignedString(), reader.ReadSingle());
             }
 
-            int m_ColorsSize = reader.ReadInt32();
-            m_Colors = new KeyValuePair<string, Color>[m_ColorsSize];
-            for (int i = 0; i < m_ColorsSize; i++)
+            int mColorsSize = reader.ReadInt32();
+            MColors = new KeyValuePair<string, Color>[mColorsSize];
+            for (int i = 0; i < mColorsSize; i++)
             {
-                m_Colors[i] = new KeyValuePair<string, Color>(reader.ReadAlignedString(), reader.ReadColor4());
+                MColors[i] = new KeyValuePair<string, Color>(reader.ReadAlignedString(), reader.ReadColor4());
             }
         }
     }
 
     public sealed class Material : NamedObject
     {
-        public PPtr<Shader> m_Shader;
-        public UnityPropertySheet m_SavedProperties;
+        public PPtr<Shader> MShader;
+        public UnityPropertySheet MSavedProperties;
 
         public Material(ObjectReader reader) : base(reader)
         {
-            m_Shader = new PPtr<Shader>(reader);
+            MShader = new PPtr<Shader>(reader);
 
-            if (version[0] == 4 && version[1] >= 1) //4.x
+            if (Version[0] == 4 && Version[1] >= 1) //4.x
             {
-                var m_ShaderKeywords = reader.ReadStringArray();
+                var mShaderKeywords = reader.ReadStringArray();
             }
 
-            if (version[0] > 2021 || (version[0] == 2021 && version[1] >= 3)) //2021.3 and up
+            if (Version[0] > 2021 || (Version[0] == 2021 && Version[1] >= 3)) //2021.3 and up
             {
-                var m_ValidKeywords = reader.ReadStringArray();
-                var m_InvalidKeywords = reader.ReadStringArray();
+                var mValidKeywords = reader.ReadStringArray();
+                var mInvalidKeywords = reader.ReadStringArray();
             }
-            else if (version[0] >= 5) //5.0 ~ 2021.2
+            else if (Version[0] >= 5) //5.0 ~ 2021.2
             {
-                var m_ShaderKeywords = reader.ReadAlignedString();
-            }
-
-            if (version[0] >= 5) //5.0 and up
-            {
-                var m_LightmapFlags = reader.ReadUInt32();
+                var mShaderKeywords = reader.ReadAlignedString();
             }
 
-            if (version[0] > 5 || (version[0] == 5 && version[1] >= 6)) //5.6 and up
+            if (Version[0] >= 5) //5.0 and up
             {
-                var m_EnableInstancingVariants = reader.ReadBoolean();
+                var mLightmapFlags = reader.ReadUInt32();
+            }
+
+            if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 6)) //5.6 and up
+            {
+                var mEnableInstancingVariants = reader.ReadBoolean();
                 //var m_DoubleSidedGI = a_Stream.ReadBoolean(); //2017 and up
                 reader.AlignStream();
             }
 
-            if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
+            if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 3)) //4.3 and up
             {
-                var m_CustomRenderQueue = reader.ReadInt32();
+                var mCustomRenderQueue = reader.ReadInt32();
             }
 
-            if (version[0] > 5 || (version[0] == 5 && version[1] >= 1)) //5.1 and up
+            if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 1)) //5.1 and up
             {
                 var stringTagMapSize = reader.ReadInt32();
                 for (int i = 0; i < stringTagMapSize; i++)
@@ -111,12 +111,12 @@ namespace AssetStudio
                 }
             }
 
-            if (version[0] > 5 || (version[0] == 5 && version[1] >= 6)) //5.6 and up
+            if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 6)) //5.6 and up
             {
                 var disabledShaderPasses = reader.ReadStringArray();
             }
 
-            m_SavedProperties = new UnityPropertySheet(reader);
+            MSavedProperties = new UnityPropertySheet(reader);
 
             //vector m_BuildTextureStacks 2020 and up
         }

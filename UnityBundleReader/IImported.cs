@@ -22,11 +22,11 @@ namespace AssetStudio
         public Vector3 LocalScale { get; set; }
         public ImportedFrame Parent { get; set; }
 
-        private List<ImportedFrame> children;
+        private List<ImportedFrame> _children;
 
-        public ImportedFrame this[int i] => children[i];
+        public ImportedFrame this[int i] => _children[i];
 
-        public int Count => children.Count;
+        public int Count => _children.Count;
 
         public string Path
         {
@@ -45,19 +45,19 @@ namespace AssetStudio
 
         public ImportedFrame(int childrenCount = 0)
         {
-            children = new List<ImportedFrame>(childrenCount);
+            _children = new List<ImportedFrame>(childrenCount);
         }
 
         public void AddChild(ImportedFrame obj)
         {
-            children.Add(obj);
+            _children.Add(obj);
             obj.Parent?.Remove(obj);
             obj.Parent = this;
         }
 
         public void Remove(ImportedFrame frame)
         {
-            children.Remove(frame);
+            _children.Remove(frame);
         }
 
         public ImportedFrame FindFrameByPath(string path)
@@ -76,7 +76,7 @@ namespace AssetStudio
         public ImportedFrame FindRelativeFrameWithPath(string path)
         {
             var subs = path.Split(new[] { '/' }, 2);
-            foreach (var child in children)
+            foreach (var child in _children)
             {
                 if (child.Name == subs[0])
                 {
@@ -101,7 +101,7 @@ namespace AssetStudio
             {
                 return this;
             }
-            foreach (var child in children)
+            foreach (var child in _children)
             {
                 var frame = child.FindFrame(name);
                 if (frame != null)
@@ -114,7 +114,7 @@ namespace AssetStudio
 
         public ImportedFrame FindChild(string name, bool recursive = true)
         {
-            foreach (var child in children)
+            foreach (var child in _children)
             {
                 if (recursive)
                 {
@@ -141,7 +141,7 @@ namespace AssetStudio
             {
                 yield return this;
             }
-            foreach (var child in children)
+            foreach (var child in _children)
             {
                 foreach (var item in child.FindChilds(name))
                 {
@@ -157,10 +157,10 @@ namespace AssetStudio
         public List<ImportedVertex> VertexList { get; set; }
         public List<ImportedSubmesh> SubmeshList { get; set; }
         public List<ImportedBone> BoneList { get; set; }
-        public bool hasNormal { get; set; }
-        public bool[] hasUV { get; set; }
-        public bool hasTangent { get; set; }
-        public bool hasColor { get; set; }
+        public bool HasNormal { get; set; }
+        public bool[] HasUV { get; set; }
+        public bool HasTangent { get; set; }
+        public bool HasColor { get; set; }
     }
 
     public class ImportedSubmesh
@@ -189,7 +189,7 @@ namespace AssetStudio
     public class ImportedBone
     {
         public string Path { get; set; }
-        public Matrix4x4 Matrix { get; set; }
+        public Matrix4X4 Matrix { get; set; }
     }
 
     public class ImportedMaterial
@@ -255,13 +255,13 @@ namespace AssetStudio
 
     public class ImportedKeyframe<T>
     {
-        public float time { get; set; }
-        public T value { get; set; }
+        public float Time { get; set; }
+        public T Value { get; set; }
 
         public ImportedKeyframe(float time, T value)
         {
-            this.time = time;
-            this.value = value;
+            Time = time;
+            Value = value;
         }
     }
 
@@ -285,8 +285,8 @@ namespace AssetStudio
 
     public class ImportedMorphKeyframe
     {
-        public bool hasNormals { get; set; }
-        public bool hasTangents { get; set; }
+        public bool HasNormals { get; set; }
+        public bool HasTangents { get; set; }
         public float Weight { get; set; }
         public List<ImportedMorphVertex> VertexList { get; set; }
     }

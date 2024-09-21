@@ -9,41 +9,41 @@ namespace Org.Brotli.Dec
 	internal sealed class HuffmanTreeGroup
 	{
 		/// <summary>The maximal alphabet size in this group.</summary>
-		private int alphabetSize;
+		private int _alphabetSize;
 
 		/// <summary>Storage for Huffman lookup tables.</summary>
-		internal int[] codes;
+		internal int[] Codes;
 
 		/// <summary>
 		/// Offsets of distinct lookup tables in
-		/// <see cref="codes"/>
+		/// <see cref="Codes"/>
 		/// storage.
 		/// </summary>
-		internal int[] trees;
+		internal int[] Trees;
 
 		/// <summary>Initializes the Huffman tree group.</summary>
 		/// <param name="group">POJO to be initialised</param>
 		/// <param name="alphabetSize">the maximal alphabet size in this group</param>
 		/// <param name="n">number of Huffman codes</param>
-		internal static void Init(Org.Brotli.Dec.HuffmanTreeGroup group, int alphabetSize, int n)
+		internal static void Init(HuffmanTreeGroup group, int alphabetSize, int n)
 		{
-			group.alphabetSize = alphabetSize;
-			group.codes = new int[n * Org.Brotli.Dec.Huffman.HuffmanMaxTableSize];
-			group.trees = new int[n];
+			group._alphabetSize = alphabetSize;
+			group.Codes = new int[n * Huffman.HuffmanMaxTableSize];
+			group.Trees = new int[n];
 		}
 
 		/// <summary>Decodes Huffman trees from input stream and constructs lookup tables.</summary>
 		/// <param name="group">target POJO</param>
 		/// <param name="br">data source</param>
-		internal static void Decode(Org.Brotli.Dec.HuffmanTreeGroup group, Org.Brotli.Dec.BitReader br)
+		internal static void Decode(HuffmanTreeGroup group, BitReader br)
 		{
 			int next = 0;
-			int n = group.trees.Length;
+			int n = group.Trees.Length;
 			for (int i = 0; i < n; i++)
 			{
-				group.trees[i] = next;
-				Org.Brotli.Dec.Decode.ReadHuffmanCode(group.alphabetSize, group.codes, next, br);
-				next += Org.Brotli.Dec.Huffman.HuffmanMaxTableSize;
+				group.Trees[i] = next;
+				Dec.Decode.ReadHuffmanCode(group._alphabetSize, group.Codes, next, br);
+				next += Huffman.HuffmanMaxTableSize;
 			}
 		}
 	}

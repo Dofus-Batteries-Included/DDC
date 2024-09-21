@@ -7,14 +7,14 @@ namespace AssetStudio
 {
     public class BuildType
     {
-        private string buildType;
+        private string _buildType;
 
         public BuildType(string type)
         {
-            buildType = type;
+            _buildType = type;
         }
 
-        public bool IsAlpha => buildType == "a";
-        public bool IsPatch => buildType == "p";
+        public bool IsAlpha => _buildType == "a";
+        public bool IsPatch => _buildType == "p";
     }
 }

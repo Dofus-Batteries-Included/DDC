@@ -10,21 +10,21 @@ namespace Org.Brotli.Dec
 	/// decorator that decompresses brotli data.
 	/// <p> Not thread-safe.
 	/// </summary>
-	public class BrotliInputStream : System.IO.Stream
+	public class BrotliInputStream : Stream
 	{
 		public const int DefaultInternalBufferSize = 16384;
 
 		/// <summary>Internal buffer used for efficient byte-by-byte reading.</summary>
-		private byte[] buffer;
+		private byte[] _buffer;
 
 		/// <summary>Number of decoded but still unused bytes in internal buffer.</summary>
-		private int remainingBufferBytes;
+		private int _remainingBufferBytes;
 
 		/// <summary>Next unused byte offset.</summary>
-		private int bufferOffset;
+		private int _bufferOffset;
 
 		/// <summary>Decoder state.</summary>
-		private readonly Org.Brotli.Dec.State state = new Org.Brotli.Dec.State();
+		private readonly State _state = new State();
 
 		/// <summary>
 		/// Creates a
@@ -39,7 +39,7 @@ namespace Org.Brotli.Dec
 		/// </summary>
 		/// <param name="source">underlying data source</param>
 		/// <exception cref="System.IO.IOException">in case of corrupted data or source stream problems</exception>
-		public BrotliInputStream(System.IO.Stream source)
+		public BrotliInputStream(Stream source)
 			: this(source, DefaultInternalBufferSize, null)
 		{
 		}
@@ -60,7 +60,7 @@ namespace Org.Brotli.Dec
 		/// byte-by-byte reading
 		/// </param>
 		/// <exception cref="System.IO.IOException">in case of corrupted data or source stream problems</exception>
-		public BrotliInputStream(System.IO.Stream source, int byteReadBufferSize)
+		public BrotliInputStream(Stream source, int byteReadBufferSize)
 			: this(source, byteReadBufferSize, null)
 		{
 		}
@@ -86,30 +86,30 @@ namespace Org.Brotli.Dec
 		/// if not used
 		/// </param>
 		/// <exception cref="System.IO.IOException">in case of corrupted data or source stream problems</exception>
-		public BrotliInputStream(System.IO.Stream source, int byteReadBufferSize, byte[] customDictionary)
+		public BrotliInputStream(Stream source, int byteReadBufferSize, byte[] customDictionary)
 		{
 			if (byteReadBufferSize <= 0)
 			{
-				throw new System.ArgumentException("Bad buffer size:" + byteReadBufferSize);
+				throw new ArgumentException("Bad buffer size:" + byteReadBufferSize);
 			}
 			else if (source == null)
 			{
-				throw new System.ArgumentException("source is null");
+				throw new ArgumentException("source is null");
 			}
-			this.buffer = new byte[byteReadBufferSize];
-			this.remainingBufferBytes = 0;
-			this.bufferOffset = 0;
+			_buffer = new byte[byteReadBufferSize];
+			_remainingBufferBytes = 0;
+			_bufferOffset = 0;
 			try
 			{
-				Org.Brotli.Dec.State.SetInput(state, source);
+				State.SetInput(_state, source);
 			}
-			catch (Org.Brotli.Dec.BrotliRuntimeException ex)
+			catch (BrotliRuntimeException ex)
 			{
-				throw new System.IO.IOException("Brotli decoder initialization failed", ex);
+				throw new IOException("Brotli decoder initialization failed", ex);
 			}
 			if (customDictionary != null)
 			{
-				Org.Brotli.Dec.Decode.SetCustomDictionary(state, customDictionary);
+				Decode.SetCustomDictionary(_state, customDictionary);
 			}
 		}
 
@@ -117,23 +117,23 @@ namespace Org.Brotli.Dec
 		/// <exception cref="System.IO.IOException"/>
 		public override void Close()
 		{
-			Org.Brotli.Dec.State.Close(state);
+			State.Close(_state);
 		}
 
 		/// <summary><inheritDoc/></summary>
 		/// <exception cref="System.IO.IOException"/>
 		public override int ReadByte()
 		{
-			if (bufferOffset >= remainingBufferBytes)
+			if (_bufferOffset >= _remainingBufferBytes)
 			{
-				remainingBufferBytes = Read(buffer, 0, buffer.Length);
-				bufferOffset = 0;
-				if (remainingBufferBytes == -1)
+				_remainingBufferBytes = Read(_buffer, 0, _buffer.Length);
+				_bufferOffset = 0;
+				if (_remainingBufferBytes == -1)
 				{
 					return -1;
 				}
 			}
-			return buffer[bufferOffset++] & unchecked((int)(0xFF));
+			return _buffer[_bufferOffset++] & unchecked((int)(0xFF));
 		}
 
 		/// <summary><inheritDoc/></summary>
@@ -142,26 +142,26 @@ namespace Org.Brotli.Dec
 		{
 			if (destOffset < 0)
 			{
-				throw new System.ArgumentException("Bad offset: " + destOffset);
+				throw new ArgumentException("Bad offset: " + destOffset);
 			}
 			else if (destLen < 0)
 			{
-				throw new System.ArgumentException("Bad length: " + destLen);
+				throw new ArgumentException("Bad length: " + destLen);
 			}
 			else if (destOffset + destLen > destBuffer.Length)
 			{
-				throw new System.ArgumentException("Buffer overflow: " + (destOffset + destLen) + " > " + destBuffer.Length);
+				throw new ArgumentException("Buffer overflow: " + (destOffset + destLen) + " > " + destBuffer.Length);
 			}
 			else if (destLen == 0)
 			{
 				return 0;
 			}
-			int copyLen = System.Math.Max(remainingBufferBytes - bufferOffset, 0);
+			int copyLen = Math.Max(_remainingBufferBytes - _bufferOffset, 0);
 			if (copyLen != 0)
 			{
-				copyLen = System.Math.Min(copyLen, destLen);
-				System.Array.Copy(buffer, bufferOffset, destBuffer, destOffset, copyLen);
-				bufferOffset += copyLen;
+				copyLen = Math.Min(copyLen, destLen);
+				Array.Copy(_buffer, _bufferOffset, destBuffer, destOffset, copyLen);
+				_bufferOffset += copyLen;
 				destOffset += copyLen;
 				destLen -= copyLen;
 				if (destLen == 0)
@@ -171,20 +171,20 @@ namespace Org.Brotli.Dec
 			}
 			try
 			{
-				state.output = destBuffer;
-				state.outputOffset = destOffset;
-				state.outputLength = destLen;
-				state.outputUsed = 0;
-				Org.Brotli.Dec.Decode.Decompress(state);
-				if (state.outputUsed == 0)
+				_state.Output = destBuffer;
+				_state.OutputOffset = destOffset;
+				_state.OutputLength = destLen;
+				_state.OutputUsed = 0;
+				Decode.Decompress(_state);
+				if (_state.OutputUsed == 0)
 				{
 					return 0;
 				}
-				return state.outputUsed + copyLen;
+				return _state.OutputUsed + copyLen;
 			}
-			catch (Org.Brotli.Dec.BrotliRuntimeException ex)
+			catch (BrotliRuntimeException ex)
 			{
-				throw new System.IO.IOException("Brotli stream decoding failed", ex);
+				throw new IOException("Brotli stream decoding failed", ex);
 			}
 		}
 		// <{[INJECTED CODE]}>
@@ -196,26 +196,26 @@ namespace Org.Brotli.Dec
 			get {return false;}
 		}
 		public override long Length {
-			get {throw new System.NotSupportedException();}
+			get {throw new NotSupportedException();}
 		}
 		public override long Position {
-			get {throw new System.NotSupportedException();}
-			set {throw new System.NotSupportedException();}
+			get {throw new NotSupportedException();}
+			set {throw new NotSupportedException();}
 		}
-		public override long Seek(long offset, System.IO.SeekOrigin origin) {
-			throw new System.NotSupportedException();
+		public override long Seek(long offset, SeekOrigin origin) {
+			throw new NotSupportedException();
 		}
 		public override void SetLength(long value){
-			throw new System.NotSupportedException();
+			throw new NotSupportedException();
 		}
 
 		public override bool CanWrite{get{return false;}}
-		public override System.IAsyncResult BeginWrite(byte[] buffer, int offset,
-				int count, System.AsyncCallback callback, object state) {
-			throw new System.NotSupportedException();
+		public override IAsyncResult BeginWrite(byte[] buffer, int offset,
+				int count, AsyncCallback callback, object state) {
+			throw new NotSupportedException();
 		}
 		public override void Write(byte[] buffer, int offset, int count) {
-			throw new System.NotSupportedException();
+			throw new NotSupportedException();
 		}
 
 		public override void Flush() {}

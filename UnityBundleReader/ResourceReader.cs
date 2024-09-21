@@ -4,42 +4,42 @@ namespace AssetStudio
 {
     public class ResourceReader
     {
-        private bool needSearch;
-        private string path;
-        private SerializedFile assetsFile;
-        private long offset;
-        private long size;
-        private BinaryReader reader;
+        private bool _needSearch;
+        private string _path;
+        private SerializedFile _assetsFile;
+        private long _offset;
+        private long _size;
+        private BinaryReader _reader;
 
-        public int Size { get => (int)size; }
+        public int Size { get => (int)_size; }
 
         public ResourceReader(string path, SerializedFile assetsFile, long offset, long size)
         {
-            needSearch = true;
-            this.path = path;
-            this.assetsFile = assetsFile;
-            this.offset = offset;
-            this.size = size;
+            _needSearch = true;
+            _path = path;
+            _assetsFile = assetsFile;
+            _offset = offset;
+            _size = size;
         }
 
         public ResourceReader(BinaryReader reader, long offset, long size)
         {
-            this.reader = reader;
-            this.offset = offset;
-            this.size = size;
+            _reader = reader;
+            _offset = offset;
+            _size = size;
         }
 
         private BinaryReader GetReader()
         {
-            if (needSearch)
+            if (_needSearch)
             {
-                var resourceFileName = Path.GetFileName(path);
-                if (assetsFile.assetsManager.resourceFileReaders.TryGetValue(resourceFileName, out reader))
+                var resourceFileName = Path.GetFileName(_path);
+                if (_assetsFile.AssetsManager.ResourceFileReaders.TryGetValue(resourceFileName, out _reader))
                 {
-                    needSearch = false;
-                    return reader;
+                    _needSearch = false;
+                    return _reader;
                 }
-                var assetsFileDirectory = Path.GetDirectoryName(assetsFile.fullName);
+                var assetsFileDirectory = Path.GetDirectoryName(_assetsFile.FullName);
                 var resourceFilePath = Path.Combine(assetsFileDirectory, resourceFileName);
                 if (!File.Exists(resourceFilePath))
                 {
@@ -51,40 +51,40 @@ namespace AssetStudio
                 }
                 if (File.Exists(resourceFilePath))
                 {
-                    needSearch = false;
-                    reader = new BinaryReader(File.OpenRead(resourceFilePath));
-                    assetsFile.assetsManager.resourceFileReaders.Add(resourceFileName, reader);
-                    return reader;
+                    _needSearch = false;
+                    _reader = new BinaryReader(File.OpenRead(resourceFilePath));
+                    _assetsFile.AssetsManager.ResourceFileReaders.Add(resourceFileName, _reader);
+                    return _reader;
                 }
                 throw new FileNotFoundException($"Can't find the resource file {resourceFileName}");
             }
             else
             {
-                return reader;
+                return _reader;
             }
         }
 
         public byte[] GetData()
         {
             var binaryReader = GetReader();
-            binaryReader.BaseStream.Position = offset;
-            return binaryReader.ReadBytes((int)size);
+            binaryReader.BaseStream.Position = _offset;
+            return binaryReader.ReadBytes((int)_size);
         }
 
         public void GetData(byte[] buff)
         {
             var binaryReader = GetReader();
-            binaryReader.BaseStream.Position = offset;
-            binaryReader.Read(buff, 0, (int)size);
+            binaryReader.BaseStream.Position = _offset;
+            binaryReader.Read(buff, 0, (int)_size);
         }
 
         public void WriteData(string path)
         {
             var binaryReader = GetReader();
-            binaryReader.BaseStream.Position = offset;
+            binaryReader.BaseStream.Position = _offset;
             using (var writer = File.OpenWrite(path))
             {
-                binaryReader.BaseStream.CopyTo(writer, size);
+                binaryReader.BaseStream.CopyTo(writer, _size);
             }
         }
     }

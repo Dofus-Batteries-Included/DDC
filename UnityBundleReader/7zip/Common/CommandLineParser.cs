@@ -112,7 +112,7 @@ namespace SevenZip.CommandLineParser
 								matchedSwitch.WithMinus = false;
 							else
 							{
-								matchedSwitch.WithMinus = (srcString[pos] == kSwitchMinus);
+								matchedSwitch.WithMinus = (srcString[pos] == KSwitchMinus);
 								if (matchedSwitch.WithMinus)
 									pos++;
 							}
@@ -178,7 +178,7 @@ namespace SevenZip.CommandLineParser
 				if (stopSwitch)
 					NonSwitchStrings.Add(s);
 				else
-					if (s == kStopSwitchParsing)
+					if (s == KStopSwitchParsing)
 					stopSwitch = true;
 				else
 					if (!ParseString(s, switchForms))
@@ -243,15 +243,15 @@ namespace SevenZip.CommandLineParser
 			}
 			return (numUsedChars == commandString.Length);
 		}
-		const char kSwitchID1 = '-';
-		const char kSwitchID2 = '/';
+		const char KSwitchID1 = '-';
+		const char KSwitchID2 = '/';
 
-		const char kSwitchMinus = '-';
-		const string kStopSwitchParsing = "--";
+		const char KSwitchMinus = '-';
+		const string KStopSwitchParsing = "--";
 
 		static bool IsItSwitchChar(char c)
 		{
-			return (c == kSwitchID1 || c == kSwitchID2);
+			return (c == KSwitchID1 || c == KSwitchID2);
 		}
 	}
 

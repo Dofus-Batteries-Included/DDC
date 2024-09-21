@@ -6,13 +6,13 @@ namespace AssetStudio
 {
     public class WebFile
     {
-        public StreamFile[] fileList;
+        public StreamFile[] FileList;
 
         private class WebData
         {
-            public int dataOffset;
-            public int dataLength;
-            public string path;
+            public int DataOffset;
+            public int DataLength;
+            public string Path;
         }
 
         public WebFile(EndianBinaryReader reader)
@@ -24,22 +24,22 @@ namespace AssetStudio
             while (reader.BaseStream.Position < headLength)
             {
                 var data = new WebData();
-                data.dataOffset = reader.ReadInt32();
-                data.dataLength = reader.ReadInt32();
+                data.DataOffset = reader.ReadInt32();
+                data.DataLength = reader.ReadInt32();
                 var pathLength = reader.ReadInt32();
-                data.path = Encoding.UTF8.GetString(reader.ReadBytes(pathLength));
+                data.Path = Encoding.UTF8.GetString(reader.ReadBytes(pathLength));
                 dataList.Add(data);
             }
-            fileList = new StreamFile[dataList.Count];
+            FileList = new StreamFile[dataList.Count];
             for (int i = 0; i < dataList.Count; i++)
             {
                 var data = dataList[i];
                 var file = new StreamFile();
-                file.path = data.path;
-                file.fileName = Path.GetFileName(data.path);
-                reader.BaseStream.Position = data.dataOffset;
-                file.stream = new MemoryStream(reader.ReadBytes(data.dataLength));
-                fileList[i] = file;
+                file.path = data.Path;
+                file.fileName = Path.GetFileName(data.Path);
+                reader.BaseStream.Position = data.DataOffset;
+                file.stream = new MemoryStream(reader.ReadBytes(data.DataLength));
+                FileList[i] = file;
             }
         }
     }

@@ -8,40 +8,40 @@ namespace AssetStudio
 {
     public class ObjectReader : EndianBinaryReader
     {
-        public SerializedFile assetsFile;
-        public long m_PathID;
-        public long byteStart;
-        public uint byteSize;
-        public ClassIDType type;
-        public SerializedType serializedType;
-        public BuildTarget platform;
-        public SerializedFileFormatVersion m_Version;
+        public SerializedFile AssetsFile;
+        public long MPathID;
+        public long ByteStart;
+        public uint ByteSize;
+        public ClassIDType Type;
+        public SerializedType SerializedType;
+        public BuildTarget Platform;
+        public SerializedFileFormatVersion MVersion;
 
-        public int[] version => assetsFile.version;
-        public BuildType buildType => assetsFile.buildType;
+        public int[] Version => AssetsFile.Version;
+        public BuildType BuildType => AssetsFile.BuildType;
 
         public ObjectReader(EndianBinaryReader reader, SerializedFile assetsFile, ObjectInfo objectInfo) : base(reader.BaseStream, reader.Endian)
         {
-            this.assetsFile = assetsFile;
-            m_PathID = objectInfo.m_PathID;
-            byteStart = objectInfo.byteStart;
-            byteSize = objectInfo.byteSize;
-            if (Enum.IsDefined(typeof(ClassIDType), objectInfo.classID))
+            AssetsFile = assetsFile;
+            MPathID = objectInfo.MPathID;
+            ByteStart = objectInfo.ByteStart;
+            ByteSize = objectInfo.ByteSize;
+            if (Enum.IsDefined(typeof(ClassIDType), objectInfo.ClassID))
             {
-                type = (ClassIDType)objectInfo.classID;
+                Type = (ClassIDType)objectInfo.ClassID;
             }
             else
             {
-                type = ClassIDType.UnknownType;
+                Type = ClassIDType.UnknownType;
             }
-            serializedType = objectInfo.serializedType;
-            platform = assetsFile.m_TargetPlatform;
-            m_Version = assetsFile.header.m_Version;
+            SerializedType = objectInfo.SerializedType;
+            Platform = assetsFile.MTargetPlatform;
+            MVersion = assetsFile.Header.MVersion;
         }
 
         public void Reset()
         {
-            Position = byteStart;
+            Position = ByteStart;
         }
     }
 }

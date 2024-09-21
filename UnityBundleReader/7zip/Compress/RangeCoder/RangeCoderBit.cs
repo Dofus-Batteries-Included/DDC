@@ -4,96 +4,96 @@ namespace SevenZip.Compression.RangeCoder
 {
 	struct BitEncoder
 	{
-		public const int kNumBitModelTotalBits = 11;
-		public const uint kBitModelTotal = (1 << kNumBitModelTotalBits);
-		const int kNumMoveBits = 5;
-		const int kNumMoveReducingBits = 2;
-		public const int kNumBitPriceShiftBits = 6;
+		public const int KNumBitModelTotalBits = 11;
+		public const uint KBitModelTotal = (1 << KNumBitModelTotalBits);
+		const int KNumMoveBits = 5;
+		const int KNumMoveReducingBits = 2;
+		public const int KNumBitPriceShiftBits = 6;
 
-		uint Prob;
+		uint _prob;
 
-		public void Init() { Prob = kBitModelTotal >> 1; }
+		public void Init() { _prob = KBitModelTotal >> 1; }
 
 		public void UpdateModel(uint symbol)
 		{
 			if (symbol == 0)
-				Prob += (kBitModelTotal - Prob) >> kNumMoveBits;
+				_prob += (KBitModelTotal - _prob) >> KNumMoveBits;
 			else
-				Prob -= (Prob) >> kNumMoveBits;
+				_prob -= (_prob) >> KNumMoveBits;
 		}
 
 		public void Encode(Encoder encoder, uint symbol)
 		{
 			// encoder.EncodeBit(Prob, kNumBitModelTotalBits, symbol);
 			// UpdateModel(symbol);
-			uint newBound = (encoder.Range >> kNumBitModelTotalBits) * Prob;
+			uint newBound = (encoder.Range >> KNumBitModelTotalBits) * _prob;
 			if (symbol == 0)
 			{
 				encoder.Range = newBound;
-				Prob += (kBitModelTotal - Prob) >> kNumMoveBits;
+				_prob += (KBitModelTotal - _prob) >> KNumMoveBits;
 			}
 			else
 			{
 				encoder.Low += newBound;
 				encoder.Range -= newBound;
-				Prob -= (Prob) >> kNumMoveBits;
+				_prob -= (_prob) >> KNumMoveBits;
 			}
-			if (encoder.Range < Encoder.kTopValue)
+			if (encoder.Range < Encoder.KTopValue)
 			{
 				encoder.Range <<= 8;
 				encoder.ShiftLow();
 			}
 		}
 
-		private static UInt32[] ProbPrices = new UInt32[kBitModelTotal >> kNumMoveReducingBits];
+		private static UInt32[] _probPrices = new UInt32[KBitModelTotal >> KNumMoveReducingBits];
 
 		static BitEncoder()
 		{
-			const int kNumBits = (kNumBitModelTotalBits - kNumMoveReducingBits);
+			const int kNumBits = (KNumBitModelTotalBits - KNumMoveReducingBits);
 			for (int i = kNumBits - 1; i >= 0; i--)
 			{
 				UInt32 start = (UInt32)1 << (kNumBits - i - 1);
 				UInt32 end = (UInt32)1 << (kNumBits - i);
 				for (UInt32 j = start; j < end; j++)
-					ProbPrices[j] = ((UInt32)i << kNumBitPriceShiftBits) +
-						(((end - j) << kNumBitPriceShiftBits) >> (kNumBits - i - 1));
+					_probPrices[j] = ((UInt32)i << KNumBitPriceShiftBits) +
+						(((end - j) << KNumBitPriceShiftBits) >> (kNumBits - i - 1));
 			}
 		}
 
 		public uint GetPrice(uint symbol)
 		{
-			return ProbPrices[(((Prob - symbol) ^ ((-(int)symbol))) & (kBitModelTotal - 1)) >> kNumMoveReducingBits];
+			return _probPrices[(((_prob - symbol) ^ ((-(int)symbol))) & (KBitModelTotal - 1)) >> KNumMoveReducingBits];
 		}
-	  public uint GetPrice0() { return ProbPrices[Prob >> kNumMoveReducingBits]; }
-		public uint GetPrice1() { return ProbPrices[(kBitModelTotal - Prob) >> kNumMoveReducingBits]; }
+	  public uint GetPrice0() { return _probPrices[_prob >> KNumMoveReducingBits]; }
+		public uint GetPrice1() { return _probPrices[(KBitModelTotal - _prob) >> KNumMoveReducingBits]; }
 	}
 
 	struct BitDecoder
 	{
-		public const int kNumBitModelTotalBits = 11;
-		public const uint kBitModelTotal = (1 << kNumBitModelTotalBits);
-		const int kNumMoveBits = 5;
+		public const int KNumBitModelTotalBits = 11;
+		public const uint KBitModelTotal = (1 << KNumBitModelTotalBits);
+		const int KNumMoveBits = 5;
 
-		uint Prob;
+		uint _prob;
 
 		public void UpdateModel(int numMoveBits, uint symbol)
 		{
 			if (symbol == 0)
-				Prob += (kBitModelTotal - Prob) >> numMoveBits;
+				_prob += (KBitModelTotal - _prob) >> numMoveBits;
 			else
-				Prob -= (Prob) >> numMoveBits;
+				_prob -= (_prob) >> numMoveBits;
 		}
 
-		public void Init() { Prob = kBitModelTotal >> 1; }
+		public void Init() { _prob = KBitModelTotal >> 1; }
 
-		public uint Decode(RangeCoder.Decoder rangeDecoder)
+		public uint Decode(Decoder rangeDecoder)
 		{
-			uint newBound = (uint)(rangeDecoder.Range >> kNumBitModelTotalBits) * (uint)Prob;
+			uint newBound = (uint)(rangeDecoder.Range >> KNumBitModelTotalBits) * (uint)_prob;
 			if (rangeDecoder.Code < newBound)
 			{
 				rangeDecoder.Range = newBound;
-				Prob += (kBitModelTotal - Prob) >> kNumMoveBits;
-				if (rangeDecoder.Range < Decoder.kTopValue)
+				_prob += (KBitModelTotal - _prob) >> KNumMoveBits;
+				if (rangeDecoder.Range < Decoder.KTopValue)
 				{
 					rangeDecoder.Code = (rangeDecoder.Code << 8) | (byte)rangeDecoder.Stream.ReadByte();
 					rangeDecoder.Range <<= 8;
@@ -104,8 +104,8 @@ namespace SevenZip.Compression.RangeCoder
 			{
 				rangeDecoder.Range -= newBound;
 				rangeDecoder.Code -= newBound;
-				Prob -= (Prob) >> kNumMoveBits;
-				if (rangeDecoder.Range < Decoder.kTopValue)
+				_prob -= (_prob) >> KNumMoveBits;
+				if (rangeDecoder.Range < Decoder.KTopValue)
 				{
 					rangeDecoder.Code = (rangeDecoder.Code << 8) | (byte)rangeDecoder.Stream.ReadByte();
 					rangeDecoder.Range <<= 8;

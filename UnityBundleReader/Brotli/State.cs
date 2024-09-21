@@ -7,124 +7,124 @@ namespace Org.Brotli.Dec
 {
 	internal sealed class State
 	{
-		internal int runningState = Org.Brotli.Dec.RunningState.Uninitialized;
+		internal int RunningState = Org.Brotli.Dec.RunningState.Uninitialized;
 
-		internal int nextRunningState;
+		internal int NextRunningState;
 
-		internal readonly Org.Brotli.Dec.BitReader br = new Org.Brotli.Dec.BitReader();
+		internal readonly BitReader BR = new BitReader();
 
-		internal byte[] ringBuffer;
+		internal byte[] RingBuffer;
 
-		internal readonly int[] blockTypeTrees = new int[3 * Org.Brotli.Dec.Huffman.HuffmanMaxTableSize];
+		internal readonly int[] BlockTypeTrees = new int[3 * Huffman.HuffmanMaxTableSize];
 
-		internal readonly int[] blockLenTrees = new int[3 * Org.Brotli.Dec.Huffman.HuffmanMaxTableSize];
+		internal readonly int[] BlockLenTrees = new int[3 * Huffman.HuffmanMaxTableSize];
 
-		internal int metaBlockLength;
+		internal int MetaBlockLength;
 
-		internal bool inputEnd;
+		internal bool InputEnd;
 
-		internal bool isUncompressed;
+		internal bool IsUncompressed;
 
-		internal bool isMetadata;
+		internal bool IsMetadata;
 
-		internal readonly Org.Brotli.Dec.HuffmanTreeGroup hGroup0 = new Org.Brotli.Dec.HuffmanTreeGroup();
+		internal readonly HuffmanTreeGroup HGroup0 = new HuffmanTreeGroup();
 
-		internal readonly Org.Brotli.Dec.HuffmanTreeGroup hGroup1 = new Org.Brotli.Dec.HuffmanTreeGroup();
+		internal readonly HuffmanTreeGroup HGroup1 = new HuffmanTreeGroup();
 
-		internal readonly Org.Brotli.Dec.HuffmanTreeGroup hGroup2 = new Org.Brotli.Dec.HuffmanTreeGroup();
+		internal readonly HuffmanTreeGroup HGroup2 = new HuffmanTreeGroup();
 
-		internal readonly int[] blockLength = new int[3];
+		internal readonly int[] BlockLength = new int[3];
 
-		internal readonly int[] numBlockTypes = new int[3];
+		internal readonly int[] NumBlockTypes = new int[3];
 
-		internal readonly int[] blockTypeRb = new int[6];
+		internal readonly int[] BlockTypeRb = new int[6];
 
-		internal readonly int[] distRb = new int[] { 16, 15, 11, 4 };
+		internal readonly int[] DistRb = new int[] { 16, 15, 11, 4 };
 
-		internal int pos = 0;
+		internal int Pos = 0;
 
-		internal int maxDistance = 0;
+		internal int MaxDistance = 0;
 
-		internal int distRbIdx = 0;
+		internal int DistRbIdx = 0;
 
-		internal bool trivialLiteralContext = false;
+		internal bool TrivialLiteralContext = false;
 
-		internal int literalTreeIndex = 0;
+		internal int LiteralTreeIndex = 0;
 
-		internal int literalTree;
+		internal int LiteralTree;
 
-		internal int j;
+		internal int J;
 
-		internal int insertLength;
+		internal int InsertLength;
 
-		internal byte[] contextModes;
+		internal byte[] ContextModes;
 
-		internal byte[] contextMap;
+		internal byte[] ContextMap;
 
-		internal int contextMapSlice;
+		internal int ContextMapSlice;
 
-		internal int distContextMapSlice;
+		internal int DistContextMapSlice;
 
-		internal int contextLookupOffset1;
+		internal int ContextLookupOffset1;
 
-		internal int contextLookupOffset2;
+		internal int ContextLookupOffset2;
 
-		internal int treeCommandOffset;
+		internal int TreeCommandOffset;
 
-		internal int distanceCode;
+		internal int DistanceCode;
 
-		internal byte[] distContextMap;
+		internal byte[] DistContextMap;
 
-		internal int numDirectDistanceCodes;
+		internal int NumDirectDistanceCodes;
 
-		internal int distancePostfixMask;
+		internal int DistancePostfixMask;
 
-		internal int distancePostfixBits;
+		internal int DistancePostfixBits;
 
-		internal int distance;
+		internal int Distance;
 
-		internal int copyLength;
+		internal int CopyLength;
 
-		internal int copyDst;
+		internal int CopyDst;
 
-		internal int maxBackwardDistance;
+		internal int MaxBackwardDistance;
 
-		internal int maxRingBufferSize;
+		internal int MaxRingBufferSize;
 
-		internal int ringBufferSize = 0;
+		internal int RingBufferSize = 0;
 
-		internal long expectedTotalSize = 0;
+		internal long ExpectedTotalSize = 0;
 
-		internal byte[] customDictionary = new byte[0];
+		internal byte[] CustomDictionary = new byte[0];
 
-		internal int bytesToIgnore = 0;
+		internal int BytesToIgnore = 0;
 
-		internal int outputOffset;
+		internal int OutputOffset;
 
-		internal int outputLength;
+		internal int OutputLength;
 
-		internal int outputUsed;
+		internal int OutputUsed;
 
-		internal int bytesWritten;
+		internal int BytesWritten;
 
-		internal int bytesToWrite;
+		internal int BytesToWrite;
 
-		internal byte[] output;
+		internal byte[] Output;
 
 		// Current meta-block header information.
 		// TODO: Update to current spec.
-		private static int DecodeWindowBits(Org.Brotli.Dec.BitReader br)
+		private static int DecodeWindowBits(BitReader br)
 		{
-			if (Org.Brotli.Dec.BitReader.ReadBits(br, 1) == 0)
+			if (BitReader.ReadBits(br, 1) == 0)
 			{
 				return 16;
 			}
-			int n = Org.Brotli.Dec.BitReader.ReadBits(br, 3);
+			int n = BitReader.ReadBits(br, 3);
 			if (n != 0)
 			{
 				return 17 + n;
 			}
-			n = Org.Brotli.Dec.BitReader.ReadBits(br, 3);
+			n = BitReader.ReadBits(br, 3);
 			if (n != 0)
 			{
 				return 8 + n;
@@ -135,37 +135,37 @@ namespace Org.Brotli.Dec
 		/// <summary>Associate input with decoder state.</summary>
 		/// <param name="state">uninitialized state without associated input</param>
 		/// <param name="input">compressed data source</param>
-		internal static void SetInput(Org.Brotli.Dec.State state, System.IO.Stream input)
+		internal static void SetInput(State state, Stream input)
 		{
-			if (state.runningState != Org.Brotli.Dec.RunningState.Uninitialized)
+			if (state.RunningState != Org.Brotli.Dec.RunningState.Uninitialized)
 			{
-				throw new System.InvalidOperationException("State MUST be uninitialized");
+				throw new InvalidOperationException("State MUST be uninitialized");
 			}
-			Org.Brotli.Dec.BitReader.Init(state.br, input);
-			int windowBits = DecodeWindowBits(state.br);
+			BitReader.Init(state.BR, input);
+			int windowBits = DecodeWindowBits(state.BR);
 			if (windowBits == 9)
 			{
 				/* Reserved case for future expansion. */
-				throw new Org.Brotli.Dec.BrotliRuntimeException("Invalid 'windowBits' code");
+				throw new BrotliRuntimeException("Invalid 'windowBits' code");
 			}
-			state.maxRingBufferSize = 1 << windowBits;
-			state.maxBackwardDistance = state.maxRingBufferSize - 16;
-			state.runningState = Org.Brotli.Dec.RunningState.BlockStart;
+			state.MaxRingBufferSize = 1 << windowBits;
+			state.MaxBackwardDistance = state.MaxRingBufferSize - 16;
+			state.RunningState = Org.Brotli.Dec.RunningState.BlockStart;
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		internal static void Close(Org.Brotli.Dec.State state)
+		internal static void Close(State state)
 		{
-			if (state.runningState == Org.Brotli.Dec.RunningState.Uninitialized)
+			if (state.RunningState == Org.Brotli.Dec.RunningState.Uninitialized)
 			{
-				throw new System.InvalidOperationException("State MUST be initialized");
+				throw new InvalidOperationException("State MUST be initialized");
 			}
-			if (state.runningState == Org.Brotli.Dec.RunningState.Closed)
+			if (state.RunningState == Org.Brotli.Dec.RunningState.Closed)
 			{
 				return;
 			}
-			state.runningState = Org.Brotli.Dec.RunningState.Closed;
-			Org.Brotli.Dec.BitReader.Close(state.br);
+			state.RunningState = Org.Brotli.Dec.RunningState.Closed;
+			BitReader.Close(state.BR);
 		}
 	}
 }

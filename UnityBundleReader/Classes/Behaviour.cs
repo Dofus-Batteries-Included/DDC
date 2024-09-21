@@ -7,11 +7,11 @@ namespace AssetStudio
 {
     public abstract class Behaviour : Component
     {
-        public byte m_Enabled;
+        public byte MEnabled;
 
         protected Behaviour(ObjectReader reader) : base(reader)
         {
-            m_Enabled = reader.ReadByte();
+            MEnabled = reader.ReadByte();
             reader.AlignStream();
         }
     }

@@ -7,26 +7,26 @@ namespace AssetStudio
 {
     public class TypeTreeNode
     {
-        public string m_Type;
-        public string m_Name;
-        public int m_ByteSize;
-        public int m_Index;
-        public int m_TypeFlags; //m_IsArray
-        public int m_Version;
-        public int m_MetaFlag;
-        public int m_Level;
-        public uint m_TypeStrOffset;
-        public uint m_NameStrOffset;
-        public ulong m_RefTypeHash;
+        public string MType;
+        public string MName;
+        public int MByteSize;
+        public int MIndex;
+        public int MTypeFlags; //m_IsArray
+        public int MVersion;
+        public int MMetaFlag;
+        public int MLevel;
+        public uint MTypeStrOffset;
+        public uint MNameStrOffset;
+        public ulong MRefTypeHash;
 
         public TypeTreeNode() { }
 
         public TypeTreeNode(string type, string name, int level, bool align)
         {
-            m_Type = type;
-            m_Name = name;
-            m_Level = level;
-            m_MetaFlag = align ? 0x4000 : 0;
+            MType = type;
+            MName = name;
+            MLevel = level;
+            MMetaFlag = align ? 0x4000 : 0;
         }
     }
 }

@@ -29,33 +29,33 @@ namespace AssetStudio
         /// Internal representation of the half-precision floating-point number.
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        internal ushort value;
+        internal ushort Value;
 
         #region Constants
         /// <summary>
         /// Represents the smallest positive System.Half value greater than zero. This field is constant.
         /// </summary>
-        public static readonly Half Epsilon = Half.ToHalf(0x0001);
+        public static readonly Half Epsilon = ToHalf(0x0001);
         /// <summary>
         /// Represents the largest possible value of System.Half. This field is constant.
         /// </summary>
-        public static readonly Half MaxValue = Half.ToHalf(0x7bff);
+        public static readonly Half MaxValue = ToHalf(0x7bff);
         /// <summary>
         /// Represents the smallest possible value of System.Half. This field is constant.
         /// </summary>
-        public static readonly Half MinValue = Half.ToHalf(0xfbff);
+        public static readonly Half MinValue = ToHalf(0xfbff);
         /// <summary>
         /// Represents not a number (NaN). This field is constant.
         /// </summary>
-        public static readonly Half NaN = Half.ToHalf(0xfe00);
+        public static readonly Half NaN = ToHalf(0xfe00);
         /// <summary>
         /// Represents negative infinity. This field is constant.
         /// </summary>
-        public static readonly Half NegativeInfinity = Half.ToHalf(0xfc00);
+        public static readonly Half NegativeInfinity = ToHalf(0xfc00);
         /// <summary>
         /// Represents positive infinity. This field is constant.
         /// </summary>
-        public static readonly Half PositiveInfinity = Half.ToHalf(0x7c00);
+        public static readonly Half PositiveInfinity = ToHalf(0x7c00);
         #endregion
 
         #region Constructors
@@ -192,14 +192,14 @@ namespace AssetStudio
         /// <param name="half1">A System.Half.</param>
         /// <param name="half2">A System.Half.</param>
         /// <returns>true if half1 and half2 are equal; otherwise, false.</returns>
-        public static bool operator ==(Half half1, Half half2) { return (!IsNaN(half1) && (half1.value == half2.value)); }
+        public static bool operator ==(Half half1, Half half2) { return (!IsNaN(half1) && (half1.Value == half2.Value)); }
         /// <summary>
         /// Returns a value indicating whether two instances of System.Half are not equal.
         /// </summary>
         /// <param name="half1">A System.Half.</param>
         /// <param name="half2">A System.Half.</param>
         /// <returns>true if half1 and half2 are not equal; otherwise, false.</returns>
-        public static bool operator !=(Half half1, Half half2) { return !(half1.value == half2.value); }
+        public static bool operator !=(Half half1, Half half2) { return !(half1.Value == half2.Value); }
         /// <summary>
         /// Returns a value indicating whether a specified System.Half is less than another specified System.Half.
         /// </summary>
@@ -478,7 +478,7 @@ namespace AssetStudio
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
         /// <summary>
         /// Returns the System.TypeCode for value type System.Half.
@@ -497,7 +497,7 @@ namespace AssetStudio
         /// <returns>An array of bytes with length 2.</returns>
         public static byte[] GetBytes(Half value)
         {
-            return BitConverter.GetBytes(value.value);
+            return BitConverter.GetBytes(value.Value);
         }
         /// <summary>
         /// Converts the value of a specified instance of System.Half to its equivalent binary representation.
@@ -506,7 +506,7 @@ namespace AssetStudio
         /// <returns>A 16-bit unsigned integer that contain the binary representation of value.</returns>        
         public static ushort GetBits(Half value)
         {
-            return value.value;
+            return value.Value;
         }
         /// <summary>
         /// Returns a half-precision floating point number converted from two bytes
@@ -523,7 +523,7 @@ namespace AssetStudio
         /// <exception cref="System.ArgumentOutOfRangeException">startIndex is less than zero or greater than the length of value minus 1.</exception>
         public static Half ToHalf(byte[] value, int startIndex)
         {
-            return Half.ToHalf((ushort)BitConverter.ToInt16(value, startIndex));
+            return ToHalf((ushort)BitConverter.ToInt16(value, startIndex));
         }
         /// <summary>
         /// Returns a half-precision floating point number converted from its binary representation.
@@ -532,7 +532,7 @@ namespace AssetStudio
         /// <returns>A half-precision floating point number formed by its binary representation.</returns>
         public static Half ToHalf(ushort bits)
         {
-            return new Half { value = bits };
+            return new Half { Value = bits };
         }
 
         /// <summary>

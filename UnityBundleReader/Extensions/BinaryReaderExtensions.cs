@@ -77,9 +77,9 @@ namespace AssetStudio
             return new Color(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
-        public static Matrix4x4 ReadMatrix(this BinaryReader reader)
+        public static Matrix4X4 ReadMatrix(this BinaryReader reader)
         {
-            return new Matrix4x4(reader.ReadSingleArray(16));
+            return new Matrix4X4(reader.ReadSingleArray(16));
         }
 
         private static T[] ReadArray<T>(Func<T> del, int length)
@@ -157,7 +157,7 @@ namespace AssetStudio
             return ReadArray(reader.ReadVector4, reader.ReadInt32());
         }
 
-        public static Matrix4x4[] ReadMatrixArray(this BinaryReader reader)
+        public static Matrix4X4[] ReadMatrixArray(this BinaryReader reader)
         {
             return ReadArray(reader.ReadMatrix, reader.ReadInt32());
         }

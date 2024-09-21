@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace AssetStudio
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct Matrix4x4 : IEquatable<Matrix4x4>
+    public struct Matrix4X4 : IEquatable<Matrix4X4>
     {
         public float M00;
         public float M10;
@@ -26,7 +26,7 @@ namespace AssetStudio
         public float M23;
         public float M33;
 
-        public Matrix4x4(float[] values)
+        public Matrix4X4(float[] values)
         {
             if (values == null)
                 throw new ArgumentNullException(nameof(values));
@@ -119,12 +119,12 @@ namespace AssetStudio
 
         public override bool Equals(object other)
         {
-            if (!(other is Matrix4x4))
+            if (!(other is Matrix4X4))
                 return false;
-            return Equals((Matrix4x4)other);
+            return Equals((Matrix4X4)other);
         }
 
-        public bool Equals(Matrix4x4 other)
+        public bool Equals(Matrix4X4 other)
         {
             return GetColumn(0).Equals(other.GetColumn(0))
                    && GetColumn(1).Equals(other.GetColumn(1))
@@ -156,9 +156,9 @@ namespace AssetStudio
             }
         }
 
-        public static Matrix4x4 operator *(Matrix4x4 lhs, Matrix4x4 rhs)
+        public static Matrix4X4 operator *(Matrix4X4 lhs, Matrix4X4 rhs)
         {
-            Matrix4x4 res;
+            Matrix4X4 res;
             res.M00 = lhs.M00 * rhs.M00 + lhs.M01 * rhs.M10 + lhs.M02 * rhs.M20 + lhs.M03 * rhs.M30;
             res.M01 = lhs.M00 * rhs.M01 + lhs.M01 * rhs.M11 + lhs.M02 * rhs.M21 + lhs.M03 * rhs.M31;
             res.M02 = lhs.M00 * rhs.M02 + lhs.M01 * rhs.M12 + lhs.M02 * rhs.M22 + lhs.M03 * rhs.M32;
@@ -182,7 +182,7 @@ namespace AssetStudio
             return res;
         }
 
-        public static bool operator ==(Matrix4x4 lhs, Matrix4x4 rhs)
+        public static bool operator ==(Matrix4X4 lhs, Matrix4X4 rhs)
         {
             return lhs.GetColumn(0) == rhs.GetColumn(0)
                 && lhs.GetColumn(1) == rhs.GetColumn(1)
@@ -190,14 +190,14 @@ namespace AssetStudio
                 && lhs.GetColumn(3) == rhs.GetColumn(3);
         }
 
-        public static bool operator !=(Matrix4x4 lhs, Matrix4x4 rhs)
+        public static bool operator !=(Matrix4X4 lhs, Matrix4X4 rhs)
         {
             return !(lhs == rhs);
         }
 
-        public static Matrix4x4 Scale(Vector3 vector)
+        public static Matrix4X4 Scale(Vector3 vector)
         {
-            Matrix4x4 m;
+            Matrix4X4 m;
             m.M00 = vector.X; m.M01 = 0F; m.M02 = 0F; m.M03 = 0F;
             m.M10 = 0F; m.M11 = vector.Y; m.M12 = 0F; m.M13 = 0F;
             m.M20 = 0F; m.M21 = 0F; m.M22 = vector.Z; m.M23 = 0F;
@@ -205,9 +205,9 @@ namespace AssetStudio
             return m;
         }
 
-        public static Matrix4x4 Translate(Vector3 vector)
+        public static Matrix4X4 Translate(Vector3 vector)
         {
-            Matrix4x4 m;
+            Matrix4X4 m;
             m.M00 = 1F; m.M01 = 0F; m.M02 = 0F; m.M03 = vector.X;
             m.M10 = 0F; m.M11 = 1F; m.M12 = 0F; m.M13 = vector.Y;
             m.M20 = 0F; m.M21 = 0F; m.M22 = 1F; m.M23 = vector.Z;
@@ -215,7 +215,7 @@ namespace AssetStudio
             return m;
         }
 
-        public static Matrix4x4 Rotate(Quaternion q)
+        public static Matrix4X4 Rotate(Quaternion q)
         {
             float x = q.X * 2.0F;
             float y = q.Y * 2.0F;
@@ -230,7 +230,7 @@ namespace AssetStudio
             float wy = q.W * y;
             float wz = q.W * z;
 
-            Matrix4x4 m;
+            Matrix4X4 m;
             m.M00 = 1.0f - (yy + zz); m.M10 = xy + wz; m.M20 = xz - wy; m.M30 = 0.0F;
             m.M01 = xy - wz; m.M11 = 1.0f - (xx + zz); m.M21 = yz + wx; m.M31 = 0.0F;
             m.M02 = xz + wy; m.M12 = yz - wx; m.M22 = 1.0f - (xx + yy); m.M32 = 0.0F;

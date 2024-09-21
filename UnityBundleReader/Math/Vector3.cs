@@ -62,7 +62,7 @@ namespace AssetStudio
         public void Normalize()
         {
             var length = Length();
-            if (length > kEpsilon)
+            if (length > KEpsilon)
             {
                 var invNorm = 1.0f / length;
                 X *= invNorm;
@@ -123,7 +123,7 @@ namespace AssetStudio
 
         public static bool operator ==(Vector3 lhs, Vector3 rhs)
         {
-            return (lhs - rhs).LengthSquared() < kEpsilon * kEpsilon;
+            return (lhs - rhs).LengthSquared() < KEpsilon * KEpsilon;
         }
 
         public static bool operator !=(Vector3 lhs, Vector3 rhs)
@@ -141,6 +141,6 @@ namespace AssetStudio
             return new Vector4(v.X, v.Y, v.Z, 0.0F);
         }
 
-        private const float kEpsilon = 0.00001F;
+        private const float KEpsilon = 0.00001F;
     }
 }

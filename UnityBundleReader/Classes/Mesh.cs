@@ -8,62 +8,62 @@ namespace AssetStudio
 {
     public class MinMaxAABB
     {
-        public Vector3 m_Min;
-        public Vector3 m_Max;
+        public Vector3 MMin;
+        public Vector3 MMax;
 
         public MinMaxAABB(BinaryReader reader)
         {
-            m_Min = reader.ReadVector3();
-            m_Max = reader.ReadVector3();
+            MMin = reader.ReadVector3();
+            MMax = reader.ReadVector3();
         }
     }
 
     public class CompressedMesh
     {
-        public PackedFloatVector m_Vertices;
-        public PackedFloatVector m_UV;
-        public PackedFloatVector m_BindPoses;
-        public PackedFloatVector m_Normals;
-        public PackedFloatVector m_Tangents;
-        public PackedIntVector m_Weights;
-        public PackedIntVector m_NormalSigns;
-        public PackedIntVector m_TangentSigns;
-        public PackedFloatVector m_FloatColors;
-        public PackedIntVector m_BoneIndices;
-        public PackedIntVector m_Triangles;
-        public PackedIntVector m_Colors;
-        public uint m_UVInfo;
+        public PackedFloatVector MVertices;
+        public PackedFloatVector MUV;
+        public PackedFloatVector MBindPoses;
+        public PackedFloatVector MNormals;
+        public PackedFloatVector MTangents;
+        public PackedIntVector MWeights;
+        public PackedIntVector MNormalSigns;
+        public PackedIntVector MTangentSigns;
+        public PackedFloatVector MFloatColors;
+        public PackedIntVector MBoneIndices;
+        public PackedIntVector MTriangles;
+        public PackedIntVector MColors;
+        public uint MUVInfo;
 
         public CompressedMesh(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_Vertices = new PackedFloatVector(reader);
-            m_UV = new PackedFloatVector(reader);
+            MVertices = new PackedFloatVector(reader);
+            MUV = new PackedFloatVector(reader);
             if (version[0] < 5)
             {
-                m_BindPoses = new PackedFloatVector(reader);
+                MBindPoses = new PackedFloatVector(reader);
             }
-            m_Normals = new PackedFloatVector(reader);
-            m_Tangents = new PackedFloatVector(reader);
-            m_Weights = new PackedIntVector(reader);
-            m_NormalSigns = new PackedIntVector(reader);
-            m_TangentSigns = new PackedIntVector(reader);
+            MNormals = new PackedFloatVector(reader);
+            MTangents = new PackedFloatVector(reader);
+            MWeights = new PackedIntVector(reader);
+            MNormalSigns = new PackedIntVector(reader);
+            MTangentSigns = new PackedIntVector(reader);
             if (version[0] >= 5)
             {
-                m_FloatColors = new PackedFloatVector(reader);
+                MFloatColors = new PackedFloatVector(reader);
             }
-            m_BoneIndices = new PackedIntVector(reader);
-            m_Triangles = new PackedIntVector(reader);
+            MBoneIndices = new PackedIntVector(reader);
+            MTriangles = new PackedIntVector(reader);
             if (version[0] > 3 || (version[0] == 3 && version[1] >= 5)) //3.5 and up
             {
                 if (version[0] < 5)
                 {
-                    m_Colors = new PackedIntVector(reader);
+                    MColors = new PackedIntVector(reader);
                 }
                 else
                 {
-                    m_UVInfo = reader.ReadUInt32();
+                    MUVInfo = reader.ReadUInt32();
                 }
             }
         }
@@ -71,80 +71,80 @@ namespace AssetStudio
 
     public class StreamInfo
     {
-        public uint channelMask;
-        public uint offset;
-        public uint stride;
-        public uint align;
-        public byte dividerOp;
-        public ushort frequency;
+        public uint ChannelMask;
+        public uint Offset;
+        public uint Stride;
+        public uint Align;
+        public byte DividerOp;
+        public ushort Frequency;
 
         public StreamInfo() { }
 
         public StreamInfo(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            channelMask = reader.ReadUInt32();
-            offset = reader.ReadUInt32();
+            ChannelMask = reader.ReadUInt32();
+            Offset = reader.ReadUInt32();
 
             if (version[0] < 4) //4.0 down
             {
-                stride = reader.ReadUInt32();
-                align = reader.ReadUInt32();
+                Stride = reader.ReadUInt32();
+                Align = reader.ReadUInt32();
             }
             else
             {
-                stride = reader.ReadByte();
-                dividerOp = reader.ReadByte();
-                frequency = reader.ReadUInt16();
+                Stride = reader.ReadByte();
+                DividerOp = reader.ReadByte();
+                Frequency = reader.ReadUInt16();
             }
         }
     }
 
     public class ChannelInfo
     {
-        public byte stream;
-        public byte offset;
-        public byte format;
-        public byte dimension;
+        public byte Stream;
+        public byte Offset;
+        public byte Format;
+        public byte Dimension;
 
         public ChannelInfo() { }
 
         public ChannelInfo(ObjectReader reader)
         {
-            stream = reader.ReadByte();
-            offset = reader.ReadByte();
-            format = reader.ReadByte();
-            dimension = (byte)(reader.ReadByte() & 0xF);
+            Stream = reader.ReadByte();
+            Offset = reader.ReadByte();
+            Format = reader.ReadByte();
+            Dimension = (byte)(reader.ReadByte() & 0xF);
         }
     }
 
     public class VertexData
     {
-        public uint m_CurrentChannels;
-        public uint m_VertexCount;
-        public ChannelInfo[] m_Channels;
-        public StreamInfo[] m_Streams;
-        public byte[] m_DataSize;
+        public uint MCurrentChannels;
+        public uint MVertexCount;
+        public ChannelInfo[] MChannels;
+        public StreamInfo[] MStreams;
+        public byte[] MDataSize;
 
         public VertexData(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
             if (version[0] < 2018)//2018 down
             {
-                m_CurrentChannels = reader.ReadUInt32();
+                MCurrentChannels = reader.ReadUInt32();
             }
 
-            m_VertexCount = reader.ReadUInt32();
+            MVertexCount = reader.ReadUInt32();
 
             if (version[0] >= 4) //4.0 and up
             {
-                var m_ChannelsSize = reader.ReadInt32();
-                m_Channels = new ChannelInfo[m_ChannelsSize];
-                for (int i = 0; i < m_ChannelsSize; i++)
+                var mChannelsSize = reader.ReadInt32();
+                MChannels = new ChannelInfo[mChannelsSize];
+                for (int i = 0; i < mChannelsSize; i++)
                 {
-                    m_Channels[i] = new ChannelInfo(reader);
+                    MChannels[i] = new ChannelInfo(reader);
                 }
             }
 
@@ -152,16 +152,16 @@ namespace AssetStudio
             {
                 if (version[0] < 4)
                 {
-                    m_Streams = new StreamInfo[4];
+                    MStreams = new StreamInfo[4];
                 }
                 else
                 {
-                    m_Streams = new StreamInfo[reader.ReadInt32()];
+                    MStreams = new StreamInfo[reader.ReadInt32()];
                 }
 
-                for (int i = 0; i < m_Streams.Length; i++)
+                for (int i = 0; i < MStreams.Length; i++)
                 {
-                    m_Streams[i] = new StreamInfo(reader);
+                    MStreams[i] = new StreamInfo(reader);
                 }
 
                 if (version[0] < 4) //4.0 down
@@ -174,40 +174,40 @@ namespace AssetStudio
                 GetStreams(version);
             }
 
-            m_DataSize = reader.ReadUInt8Array();
+            MDataSize = reader.ReadUInt8Array();
             reader.AlignStream();
         }
 
         private void GetStreams(int[] version)
         {
-            var streamCount = m_Channels.Max(x => x.stream) + 1;
-            m_Streams = new StreamInfo[streamCount];
+            var streamCount = MChannels.Max(x => x.Stream) + 1;
+            MStreams = new StreamInfo[streamCount];
             uint offset = 0;
             for (int s = 0; s < streamCount; s++)
             {
                 uint chnMask = 0;
                 uint stride = 0;
-                for (int chn = 0; chn < m_Channels.Length; chn++)
+                for (int chn = 0; chn < MChannels.Length; chn++)
                 {
-                    var m_Channel = m_Channels[chn];
-                    if (m_Channel.stream == s)
+                    var mChannel = MChannels[chn];
+                    if (mChannel.Stream == s)
                     {
-                        if (m_Channel.dimension > 0)
+                        if (mChannel.Dimension > 0)
                         {
                             chnMask |= 1u << chn;
-                            stride += m_Channel.dimension * MeshHelper.GetFormatSize(MeshHelper.ToVertexFormat(m_Channel.format, version));
+                            stride += mChannel.Dimension * MeshHelper.GetFormatSize(MeshHelper.ToVertexFormat(mChannel.Format, version));
                         }
                     }
                 }
-                m_Streams[s] = new StreamInfo
+                MStreams[s] = new StreamInfo
                 {
-                    channelMask = chnMask,
-                    offset = offset,
-                    stride = stride,
-                    dividerOp = 0,
-                    frequency = 0
+                    ChannelMask = chnMask,
+                    Offset = offset,
+                    Stride = stride,
+                    DividerOp = 0,
+                    Frequency = 0
                 };
-                offset += m_VertexCount * stride;
+                offset += MVertexCount * stride;
                 //static size_t AlignStreamSize (size_t size) { return (size + (kVertexStreamAlign-1)) & ~(kVertexStreamAlign-1); }
                 offset = (offset + (16u - 1u)) & ~(16u - 1u);
             }
@@ -215,45 +215,45 @@ namespace AssetStudio
 
         private void GetChannels(int[] version)
         {
-            m_Channels = new ChannelInfo[6];
+            MChannels = new ChannelInfo[6];
             for (int i = 0; i < 6; i++)
             {
-                m_Channels[i] = new ChannelInfo();
+                MChannels[i] = new ChannelInfo();
             }
-            for (var s = 0; s < m_Streams.Length; s++)
+            for (var s = 0; s < MStreams.Length; s++)
             {
-                var m_Stream = m_Streams[s];
-                var channelMask = new BitArray(new[] { (int)m_Stream.channelMask });
+                var mStream = MStreams[s];
+                var channelMask = new BitArray(new[] { (int)mStream.ChannelMask });
                 byte offset = 0;
                 for (int i = 0; i < 6; i++)
                 {
                     if (channelMask.Get(i))
                     {
-                        var m_Channel = m_Channels[i];
-                        m_Channel.stream = (byte)s;
-                        m_Channel.offset = offset;
+                        var mChannel = MChannels[i];
+                        mChannel.Stream = (byte)s;
+                        mChannel.Offset = offset;
                         switch (i)
                         {
                             case 0: //kShaderChannelVertex
                             case 1: //kShaderChannelNormal
-                                m_Channel.format = 0; //kChannelFormatFloat
-                                m_Channel.dimension = 3;
+                                mChannel.Format = 0; //kChannelFormatFloat
+                                mChannel.Dimension = 3;
                                 break;
                             case 2: //kShaderChannelColor
-                                m_Channel.format = 2; //kChannelFormatColor
-                                m_Channel.dimension = 4;
+                                mChannel.Format = 2; //kChannelFormatColor
+                                mChannel.Dimension = 4;
                                 break;
                             case 3: //kShaderChannelTexCoord0
                             case 4: //kShaderChannelTexCoord1
-                                m_Channel.format = 0; //kChannelFormatFloat
-                                m_Channel.dimension = 2;
+                                mChannel.Format = 0; //kChannelFormatFloat
+                                mChannel.Dimension = 2;
                                 break;
                             case 5: //kShaderChannelTangent
-                                m_Channel.format = 0; //kChannelFormatFloat
-                                m_Channel.dimension = 4;
+                                mChannel.Format = 0; //kChannelFormatFloat
+                                mChannel.Dimension = 4;
                                 break;
                         }
-                        offset += (byte)(m_Channel.dimension * MeshHelper.GetFormatSize(MeshHelper.ToVertexFormat(m_Channel.format, version)));
+                        offset += (byte)(mChannel.Dimension * MeshHelper.GetFormatSize(MeshHelper.ToVertexFormat(mChannel.Format, version)));
                     }
                 }
             }
@@ -262,62 +262,62 @@ namespace AssetStudio
 
     public class BoneWeights4
     {
-        public float[] weight;
-        public int[] boneIndex;
+        public float[] Weight;
+        public int[] BoneIndex;
 
         public BoneWeights4()
         {
-            weight = new float[4];
-            boneIndex = new int[4];
+            Weight = new float[4];
+            BoneIndex = new int[4];
         }
 
         public BoneWeights4(ObjectReader reader)
         {
-            weight = reader.ReadSingleArray(4);
-            boneIndex = reader.ReadInt32Array(4);
+            Weight = reader.ReadSingleArray(4);
+            BoneIndex = reader.ReadInt32Array(4);
         }
     }
 
     public class BlendShapeVertex
     {
-        public Vector3 vertex;
-        public Vector3 normal;
-        public Vector3 tangent;
-        public uint index;
+        public Vector3 Vertex;
+        public Vector3 Normal;
+        public Vector3 Tangent;
+        public uint Index;
 
         public BlendShapeVertex(ObjectReader reader)
         {
-            vertex = reader.ReadVector3();
-            normal = reader.ReadVector3();
-            tangent = reader.ReadVector3();
-            index = reader.ReadUInt32();
+            Vertex = reader.ReadVector3();
+            Normal = reader.ReadVector3();
+            Tangent = reader.ReadVector3();
+            Index = reader.ReadUInt32();
         }
     }
 
     public class MeshBlendShape
     {
-        public uint firstVertex;
-        public uint vertexCount;
-        public bool hasNormals;
-        public bool hasTangents;
+        public uint FirstVertex;
+        public uint VertexCount;
+        public bool HasNormals;
+        public bool HasTangents;
 
         public MeshBlendShape(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
             if (version[0] == 4 && version[1] < 3) //4.3 down
             {
                 var name = reader.ReadAlignedString();
             }
-            firstVertex = reader.ReadUInt32();
-            vertexCount = reader.ReadUInt32();
+            FirstVertex = reader.ReadUInt32();
+            VertexCount = reader.ReadUInt32();
             if (version[0] == 4 && version[1] < 3) //4.3 down
             {
                 var aabbMinDelta = reader.ReadVector3();
                 var aabbMaxDelta = reader.ReadVector3();
             }
-            hasNormals = reader.ReadBoolean();
-            hasTangents = reader.ReadBoolean();
+            HasNormals = reader.ReadBoolean();
+            HasTangents = reader.ReadBoolean();
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
             {
                 reader.AlignStream();
@@ -327,70 +327,70 @@ namespace AssetStudio
 
     public class MeshBlendShapeChannel
     {
-        public string name;
-        public uint nameHash;
-        public int frameIndex;
-        public int frameCount;
+        public string Name;
+        public uint NameHash;
+        public int FrameIndex;
+        public int FrameCount;
 
         public MeshBlendShapeChannel(ObjectReader reader)
         {
-            name = reader.ReadAlignedString();
-            nameHash = reader.ReadUInt32();
-            frameIndex = reader.ReadInt32();
-            frameCount = reader.ReadInt32();
+            Name = reader.ReadAlignedString();
+            NameHash = reader.ReadUInt32();
+            FrameIndex = reader.ReadInt32();
+            FrameCount = reader.ReadInt32();
         }
     }
 
     public class BlendShapeData
     {
-        public BlendShapeVertex[] vertices;
-        public MeshBlendShape[] shapes;
-        public MeshBlendShapeChannel[] channels;
-        public float[] fullWeights;
+        public BlendShapeVertex[] Vertices;
+        public MeshBlendShape[] Shapes;
+        public MeshBlendShapeChannel[] Channels;
+        public float[] FullWeights;
 
         public BlendShapeData(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
             {
                 int numVerts = reader.ReadInt32();
-                vertices = new BlendShapeVertex[numVerts];
+                Vertices = new BlendShapeVertex[numVerts];
                 for (int i = 0; i < numVerts; i++)
                 {
-                    vertices[i] = new BlendShapeVertex(reader);
+                    Vertices[i] = new BlendShapeVertex(reader);
                 }
 
                 int numShapes = reader.ReadInt32();
-                shapes = new MeshBlendShape[numShapes];
+                Shapes = new MeshBlendShape[numShapes];
                 for (int i = 0; i < numShapes; i++)
                 {
-                    shapes[i] = new MeshBlendShape(reader);
+                    Shapes[i] = new MeshBlendShape(reader);
                 }
 
                 int numChannels = reader.ReadInt32();
-                channels = new MeshBlendShapeChannel[numChannels];
+                Channels = new MeshBlendShapeChannel[numChannels];
                 for (int i = 0; i < numChannels; i++)
                 {
-                    channels[i] = new MeshBlendShapeChannel(reader);
+                    Channels[i] = new MeshBlendShapeChannel(reader);
                 }
 
-                fullWeights = reader.ReadSingleArray();
+                FullWeights = reader.ReadSingleArray();
             }
             else
             {
-                var m_ShapesSize = reader.ReadInt32();
-                var m_Shapes = new MeshBlendShape[m_ShapesSize];
-                for (int i = 0; i < m_ShapesSize; i++)
+                var mShapesSize = reader.ReadInt32();
+                var mShapes = new MeshBlendShape[mShapesSize];
+                for (int i = 0; i < mShapesSize; i++)
                 {
-                    m_Shapes[i] = new MeshBlendShape(reader);
+                    mShapes[i] = new MeshBlendShape(reader);
                 }
                 reader.AlignStream();
-                var m_ShapeVerticesSize = reader.ReadInt32();
-                var m_ShapeVertices = new BlendShapeVertex[m_ShapeVerticesSize]; //MeshBlendShapeVertex
-                for (int i = 0; i < m_ShapeVerticesSize; i++)
+                var mShapeVerticesSize = reader.ReadInt32();
+                var mShapeVertices = new BlendShapeVertex[mShapeVerticesSize]; //MeshBlendShapeVertex
+                for (int i = 0; i < mShapeVerticesSize; i++)
                 {
-                    m_ShapeVertices[i] = new BlendShapeVertex(reader);
+                    mShapeVertices[i] = new BlendShapeVertex(reader);
                 }
             }
         }
@@ -408,273 +408,273 @@ namespace AssetStudio
 
     public class SubMesh
     {
-        public uint firstByte;
-        public uint indexCount;
-        public GfxPrimitiveType topology;
-        public uint triangleCount;
-        public uint baseVertex;
-        public uint firstVertex;
-        public uint vertexCount;
-        public AABB localAABB;
+        public uint FirstByte;
+        public uint IndexCount;
+        public GfxPrimitiveType Topology;
+        public uint TriangleCount;
+        public uint BaseVertex;
+        public uint FirstVertex;
+        public uint VertexCount;
+        public AABB LocalAABB;
 
         public SubMesh(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            firstByte = reader.ReadUInt32();
-            indexCount = reader.ReadUInt32();
-            topology = (GfxPrimitiveType)reader.ReadInt32();
+            FirstByte = reader.ReadUInt32();
+            IndexCount = reader.ReadUInt32();
+            Topology = (GfxPrimitiveType)reader.ReadInt32();
 
             if (version[0] < 4) //4.0 down
             {
-                triangleCount = reader.ReadUInt32();
+                TriangleCount = reader.ReadUInt32();
             }
 
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 3)) //2017.3 and up
             {
-                baseVertex = reader.ReadUInt32();
+                BaseVertex = reader.ReadUInt32();
             }
 
             if (version[0] >= 3) //3.0 and up
             {
-                firstVertex = reader.ReadUInt32();
-                vertexCount = reader.ReadUInt32();
-                localAABB = new AABB(reader);
+                FirstVertex = reader.ReadUInt32();
+                VertexCount = reader.ReadUInt32();
+                LocalAABB = new AABB(reader);
             }
         }
     }
 
     public sealed class Mesh : NamedObject
     {
-        private bool m_Use16BitIndices = true;
-        public SubMesh[] m_SubMeshes;
-        private uint[] m_IndexBuffer;
-        public BlendShapeData m_Shapes;
-        public Matrix4x4[] m_BindPose;
-        public uint[] m_BoneNameHashes;
-        public int m_VertexCount;
-        public float[] m_Vertices;
-        public BoneWeights4[] m_Skin;
-        public float[] m_Normals;
-        public float[] m_Colors;
-        public float[] m_UV0;
-        public float[] m_UV1;
-        public float[] m_UV2;
-        public float[] m_UV3;
-        public float[] m_UV4;
-        public float[] m_UV5;
-        public float[] m_UV6;
-        public float[] m_UV7;
-        public float[] m_Tangents;
-        private VertexData m_VertexData;
-        private CompressedMesh m_CompressedMesh;
-        private StreamingInfo m_StreamData;
+        private bool _mUse16BitIndices = true;
+        public SubMesh[] MSubMeshes;
+        private uint[] _mIndexBuffer;
+        public BlendShapeData MShapes;
+        public Matrix4X4[] MBindPose;
+        public uint[] MBoneNameHashes;
+        public int MVertexCount;
+        public float[] MVertices;
+        public BoneWeights4[] MSkin;
+        public float[] MNormals;
+        public float[] MColors;
+        public float[] MUV0;
+        public float[] MUV1;
+        public float[] MUV2;
+        public float[] MUV3;
+        public float[] MUV4;
+        public float[] MUV5;
+        public float[] MUV6;
+        public float[] MUV7;
+        public float[] MTangents;
+        private VertexData _mVertexData;
+        private CompressedMesh _mCompressedMesh;
+        private StreamingInfo _mStreamData;
 
-        public List<uint> m_Indices = new List<uint>();
+        public List<uint> MIndices = new List<uint>();
 
         public Mesh(ObjectReader reader) : base(reader)
         {
-            if (version[0] < 3 || (version[0] == 3 && version[1] < 5)) //3.5 down
+            if (Version[0] < 3 || (Version[0] == 3 && Version[1] < 5)) //3.5 down
             {
-                m_Use16BitIndices = reader.ReadInt32() > 0;
+                _mUse16BitIndices = reader.ReadInt32() > 0;
             }
 
-            if (version[0] == 2 && version[1] <= 5) //2.5 and down
+            if (Version[0] == 2 && Version[1] <= 5) //2.5 and down
             {
-                int m_IndexBuffer_size = reader.ReadInt32();
+                int mIndexBufferSize = reader.ReadInt32();
 
-                if (m_Use16BitIndices)
+                if (_mUse16BitIndices)
                 {
-                    m_IndexBuffer = new uint[m_IndexBuffer_size / 2];
-                    for (int i = 0; i < m_IndexBuffer_size / 2; i++)
+                    _mIndexBuffer = new uint[mIndexBufferSize / 2];
+                    for (int i = 0; i < mIndexBufferSize / 2; i++)
                     {
-                        m_IndexBuffer[i] = reader.ReadUInt16();
+                        _mIndexBuffer[i] = reader.ReadUInt16();
                     }
                     reader.AlignStream();
                 }
                 else
                 {
-                    m_IndexBuffer = reader.ReadUInt32Array(m_IndexBuffer_size / 4);
+                    _mIndexBuffer = reader.ReadUInt32Array(mIndexBufferSize / 4);
                 }
             }
 
-            int m_SubMeshesSize = reader.ReadInt32();
-            m_SubMeshes = new SubMesh[m_SubMeshesSize];
-            for (int i = 0; i < m_SubMeshesSize; i++)
+            int mSubMeshesSize = reader.ReadInt32();
+            MSubMeshes = new SubMesh[mSubMeshesSize];
+            for (int i = 0; i < mSubMeshesSize; i++)
             {
-                m_SubMeshes[i] = new SubMesh(reader);
+                MSubMeshes[i] = new SubMesh(reader);
             }
 
-            if (version[0] > 4 || (version[0] == 4 && version[1] >= 1)) //4.1 and up
+            if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 1)) //4.1 and up
             {
-                m_Shapes = new BlendShapeData(reader);
+                MShapes = new BlendShapeData(reader);
             }
 
-            if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
+            if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 3)) //4.3 and up
             {
-                m_BindPose = reader.ReadMatrixArray();
-                m_BoneNameHashes = reader.ReadUInt32Array();
-                var m_RootBoneNameHash = reader.ReadUInt32();
+                MBindPose = reader.ReadMatrixArray();
+                MBoneNameHashes = reader.ReadUInt32Array();
+                var mRootBoneNameHash = reader.ReadUInt32();
             }
 
-            if (version[0] > 2 || (version[0] == 2 && version[1] >= 6)) //2.6.0 and up
+            if (Version[0] > 2 || (Version[0] == 2 && Version[1] >= 6)) //2.6.0 and up
             {
-                if (version[0] >= 2019) //2019 and up
+                if (Version[0] >= 2019) //2019 and up
                 {
-                    var m_BonesAABBSize = reader.ReadInt32();
-                    var m_BonesAABB = new MinMaxAABB[m_BonesAABBSize];
-                    for (int i = 0; i < m_BonesAABBSize; i++)
+                    var mBonesAABBSize = reader.ReadInt32();
+                    var mBonesAABB = new MinMaxAABB[mBonesAABBSize];
+                    for (int i = 0; i < mBonesAABBSize; i++)
                     {
-                        m_BonesAABB[i] = new MinMaxAABB(reader);
+                        mBonesAABB[i] = new MinMaxAABB(reader);
                     }
 
-                    var m_VariableBoneCountWeights = reader.ReadUInt32Array();
+                    var mVariableBoneCountWeights = reader.ReadUInt32Array();
                 }
 
-                var m_MeshCompression = reader.ReadByte();
-                if (version[0] >= 4)
+                var mMeshCompression = reader.ReadByte();
+                if (Version[0] >= 4)
                 {
-                    if (version[0] < 5)
+                    if (Version[0] < 5)
                     {
-                        var m_StreamCompression = reader.ReadByte();
+                        var mStreamCompression = reader.ReadByte();
                     }
-                    var m_IsReadable = reader.ReadBoolean();
-                    var m_KeepVertices = reader.ReadBoolean();
-                    var m_KeepIndices = reader.ReadBoolean();
+                    var mIsReadable = reader.ReadBoolean();
+                    var mKeepVertices = reader.ReadBoolean();
+                    var mKeepIndices = reader.ReadBoolean();
                 }
                 reader.AlignStream();
 
                 //Unity fixed it in 2017.3.1p1 and later versions
-                if ((version[0] > 2017 || (version[0] == 2017 && version[1] >= 4)) || //2017.4
-                    ((version[0] == 2017 && version[1] == 3 && version[2] == 1) && buildType.IsPatch) || //fixed after 2017.3.1px
-                    ((version[0] == 2017 && version[1] == 3) && m_MeshCompression == 0))//2017.3.xfx with no compression
+                if ((Version[0] > 2017 || (Version[0] == 2017 && Version[1] >= 4)) || //2017.4
+                    ((Version[0] == 2017 && Version[1] == 3 && Version[2] == 1) && BuildType.IsPatch) || //fixed after 2017.3.1px
+                    ((Version[0] == 2017 && Version[1] == 3) && mMeshCompression == 0))//2017.3.xfx with no compression
                 {
-                    var m_IndexFormat = reader.ReadInt32();
-                    m_Use16BitIndices = m_IndexFormat == 0;
+                    var mIndexFormat = reader.ReadInt32();
+                    _mUse16BitIndices = mIndexFormat == 0;
                 }
 
-                int m_IndexBuffer_size = reader.ReadInt32();
-                if (m_Use16BitIndices)
+                int mIndexBufferSize = reader.ReadInt32();
+                if (_mUse16BitIndices)
                 {
-                    m_IndexBuffer = new uint[m_IndexBuffer_size / 2];
-                    for (int i = 0; i < m_IndexBuffer_size / 2; i++)
+                    _mIndexBuffer = new uint[mIndexBufferSize / 2];
+                    for (int i = 0; i < mIndexBufferSize / 2; i++)
                     {
-                        m_IndexBuffer[i] = reader.ReadUInt16();
+                        _mIndexBuffer[i] = reader.ReadUInt16();
                     }
                     reader.AlignStream();
                 }
                 else
                 {
-                    m_IndexBuffer = reader.ReadUInt32Array(m_IndexBuffer_size / 4);
+                    _mIndexBuffer = reader.ReadUInt32Array(mIndexBufferSize / 4);
                 }
             }
 
-            if (version[0] < 3 || (version[0] == 3 && version[1] < 5)) //3.4.2 and earlier
+            if (Version[0] < 3 || (Version[0] == 3 && Version[1] < 5)) //3.4.2 and earlier
             {
-                m_VertexCount = reader.ReadInt32();
-                m_Vertices = reader.ReadSingleArray(m_VertexCount * 3); //Vector3
+                MVertexCount = reader.ReadInt32();
+                MVertices = reader.ReadSingleArray(MVertexCount * 3); //Vector3
 
-                m_Skin = new BoneWeights4[reader.ReadInt32()];
-                for (int s = 0; s < m_Skin.Length; s++)
+                MSkin = new BoneWeights4[reader.ReadInt32()];
+                for (int s = 0; s < MSkin.Length; s++)
                 {
-                    m_Skin[s] = new BoneWeights4(reader);
+                    MSkin[s] = new BoneWeights4(reader);
                 }
 
-                m_BindPose = reader.ReadMatrixArray();
+                MBindPose = reader.ReadMatrixArray();
 
-                m_UV0 = reader.ReadSingleArray(reader.ReadInt32() * 2); //Vector2
+                MUV0 = reader.ReadSingleArray(reader.ReadInt32() * 2); //Vector2
 
-                m_UV1 = reader.ReadSingleArray(reader.ReadInt32() * 2); //Vector2
+                MUV1 = reader.ReadSingleArray(reader.ReadInt32() * 2); //Vector2
 
-                if (version[0] == 2 && version[1] <= 5) //2.5 and down
+                if (Version[0] == 2 && Version[1] <= 5) //2.5 and down
                 {
-                    int m_TangentSpace_size = reader.ReadInt32();
-                    m_Normals = new float[m_TangentSpace_size * 3];
-                    m_Tangents = new float[m_TangentSpace_size * 4];
-                    for (int v = 0; v < m_TangentSpace_size; v++)
+                    int mTangentSpaceSize = reader.ReadInt32();
+                    MNormals = new float[mTangentSpaceSize * 3];
+                    MTangents = new float[mTangentSpaceSize * 4];
+                    for (int v = 0; v < mTangentSpaceSize; v++)
                     {
-                        m_Normals[v * 3] = reader.ReadSingle();
-                        m_Normals[v * 3 + 1] = reader.ReadSingle();
-                        m_Normals[v * 3 + 2] = reader.ReadSingle();
-                        m_Tangents[v * 3] = reader.ReadSingle();
-                        m_Tangents[v * 3 + 1] = reader.ReadSingle();
-                        m_Tangents[v * 3 + 2] = reader.ReadSingle();
-                        m_Tangents[v * 3 + 3] = reader.ReadSingle(); //handedness
+                        MNormals[v * 3] = reader.ReadSingle();
+                        MNormals[v * 3 + 1] = reader.ReadSingle();
+                        MNormals[v * 3 + 2] = reader.ReadSingle();
+                        MTangents[v * 3] = reader.ReadSingle();
+                        MTangents[v * 3 + 1] = reader.ReadSingle();
+                        MTangents[v * 3 + 2] = reader.ReadSingle();
+                        MTangents[v * 3 + 3] = reader.ReadSingle(); //handedness
                     }
                 }
                 else //2.6.0 and later
                 {
-                    m_Tangents = reader.ReadSingleArray(reader.ReadInt32() * 4); //Vector4
+                    MTangents = reader.ReadSingleArray(reader.ReadInt32() * 4); //Vector4
 
-                    m_Normals = reader.ReadSingleArray(reader.ReadInt32() * 3); //Vector3
+                    MNormals = reader.ReadSingleArray(reader.ReadInt32() * 3); //Vector3
                 }
             }
             else
             {
-                if (version[0] < 2018 || (version[0] == 2018 && version[1] < 2)) //2018.2 down
+                if (Version[0] < 2018 || (Version[0] == 2018 && Version[1] < 2)) //2018.2 down
                 {
-                    m_Skin = new BoneWeights4[reader.ReadInt32()];
-                    for (int s = 0; s < m_Skin.Length; s++)
+                    MSkin = new BoneWeights4[reader.ReadInt32()];
+                    for (int s = 0; s < MSkin.Length; s++)
                     {
-                        m_Skin[s] = new BoneWeights4(reader);
+                        MSkin[s] = new BoneWeights4(reader);
                     }
                 }
 
-                if (version[0] == 3 || (version[0] == 4 && version[1] <= 2)) //4.2 and down
+                if (Version[0] == 3 || (Version[0] == 4 && Version[1] <= 2)) //4.2 and down
                 {
-                    m_BindPose = reader.ReadMatrixArray();
+                    MBindPose = reader.ReadMatrixArray();
                 }
 
-                m_VertexData = new VertexData(reader);
+                _mVertexData = new VertexData(reader);
             }
 
-            if (version[0] > 2 || (version[0] == 2 && version[1] >= 6)) //2.6.0 and later
+            if (Version[0] > 2 || (Version[0] == 2 && Version[1] >= 6)) //2.6.0 and later
             {
-                m_CompressedMesh = new CompressedMesh(reader);
+                _mCompressedMesh = new CompressedMesh(reader);
             }
 
             reader.Position += 24; //AABB m_LocalAABB
 
-            if (version[0] < 3 || (version[0] == 3 && version[1] <= 4)) //3.4.2 and earlier
+            if (Version[0] < 3 || (Version[0] == 3 && Version[1] <= 4)) //3.4.2 and earlier
             {
-                int m_Colors_size = reader.ReadInt32();
-                m_Colors = new float[m_Colors_size * 4];
-                for (int v = 0; v < m_Colors_size * 4; v++)
+                int mColorsSize = reader.ReadInt32();
+                MColors = new float[mColorsSize * 4];
+                for (int v = 0; v < mColorsSize * 4; v++)
                 {
-                    m_Colors[v] = (float)reader.ReadByte() / 0xFF;
+                    MColors[v] = (float)reader.ReadByte() / 0xFF;
                 }
 
-                int m_CollisionTriangles_size = reader.ReadInt32();
-                reader.Position += m_CollisionTriangles_size * 4; //UInt32 indices
-                int m_CollisionVertexCount = reader.ReadInt32();
+                int mCollisionTrianglesSize = reader.ReadInt32();
+                reader.Position += mCollisionTrianglesSize * 4; //UInt32 indices
+                int mCollisionVertexCount = reader.ReadInt32();
             }
 
-            int m_MeshUsageFlags = reader.ReadInt32();
+            int mMeshUsageFlags = reader.ReadInt32();
 
-            if (version[0] > 2022 || (version[0] == 2022 && version[1] >= 1)) //2022.1 and up
+            if (Version[0] > 2022 || (Version[0] == 2022 && Version[1] >= 1)) //2022.1 and up
             {
-                int m_CookingOptions = reader.ReadInt32();
+                int mCookingOptions = reader.ReadInt32();
             }
 
-            if (version[0] >= 5) //5.0 and up
+            if (Version[0] >= 5) //5.0 and up
             {
-                var m_BakedConvexCollisionMesh = reader.ReadUInt8Array();
+                var mBakedConvexCollisionMesh = reader.ReadUInt8Array();
                 reader.AlignStream();
-                var m_BakedTriangleCollisionMesh = reader.ReadUInt8Array();
+                var mBakedTriangleCollisionMesh = reader.ReadUInt8Array();
                 reader.AlignStream();
             }
 
-            if (version[0] > 2018 || (version[0] == 2018 && version[1] >= 2)) //2018.2 and up
+            if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 2)) //2018.2 and up
             {
-                var m_MeshMetrics = new float[2];
-                m_MeshMetrics[0] = reader.ReadSingle();
-                m_MeshMetrics[1] = reader.ReadSingle();
+                var mMeshMetrics = new float[2];
+                mMeshMetrics[0] = reader.ReadSingle();
+                mMeshMetrics[1] = reader.ReadSingle();
             }
 
-            if (version[0] > 2018 || (version[0] == 2018 && version[1] >= 3)) //2018.3 and up
+            if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 3)) //2018.3 and up
             {
                 reader.AlignStream();
-                m_StreamData = new StreamingInfo(reader);
+                _mStreamData = new StreamingInfo(reader);
             }
 
             ProcessData();
@@ -682,20 +682,20 @@ namespace AssetStudio
 
         private void ProcessData()
         {
-            if (!string.IsNullOrEmpty(m_StreamData?.path))
+            if (!string.IsNullOrEmpty(_mStreamData?.Path))
             {
-                if (m_VertexData.m_VertexCount > 0)
+                if (_mVertexData.MVertexCount > 0)
                 {
-                    var resourceReader = new ResourceReader(m_StreamData.path, assetsFile, m_StreamData.offset, m_StreamData.size);
-                    m_VertexData.m_DataSize = resourceReader.GetData();
+                    var resourceReader = new ResourceReader(_mStreamData.Path, AssetsFile, _mStreamData.Offset, _mStreamData.Size);
+                    _mVertexData.MDataSize = resourceReader.GetData();
                 }
             }
-            if (version[0] > 3 || (version[0] == 3 && version[1] >= 5)) //3.5 and up
+            if (Version[0] > 3 || (Version[0] == 3 && Version[1] >= 5)) //3.5 and up
             {
                 ReadVertexData();
             }
 
-            if (version[0] > 2 || (version[0] == 2 && version[1] >= 6)) //2.6.0 and later
+            if (Version[0] > 2 || (Version[0] == 2 && Version[1] >= 6)) //2.6.0 and later
             {
                 DecompressCompressedMesh();
             }
@@ -705,36 +705,36 @@ namespace AssetStudio
 
         private void ReadVertexData()
         {
-            m_VertexCount = (int)m_VertexData.m_VertexCount;
+            MVertexCount = (int)_mVertexData.MVertexCount;
 
-            for (var chn = 0; chn < m_VertexData.m_Channels.Length; chn++)
+            for (var chn = 0; chn < _mVertexData.MChannels.Length; chn++)
             {
-                var m_Channel = m_VertexData.m_Channels[chn];
-                if (m_Channel.dimension > 0)
+                var mChannel = _mVertexData.MChannels[chn];
+                if (mChannel.Dimension > 0)
                 {
-                    var m_Stream = m_VertexData.m_Streams[m_Channel.stream];
-                    var channelMask = new BitArray(new[] { (int)m_Stream.channelMask });
+                    var mStream = _mVertexData.MStreams[mChannel.Stream];
+                    var channelMask = new BitArray(new[] { (int)mStream.ChannelMask });
                     if (channelMask.Get(chn))
                     {
-                        if (version[0] < 2018 && chn == 2 && m_Channel.format == 2) //kShaderChannelColor && kChannelFormatColor
+                        if (Version[0] < 2018 && chn == 2 && mChannel.Format == 2) //kShaderChannelColor && kChannelFormatColor
                         {
-                            m_Channel.dimension = 4;
+                            mChannel.Dimension = 4;
                         }
 
-                        var vertexFormat = MeshHelper.ToVertexFormat(m_Channel.format, version);
+                        var vertexFormat = MeshHelper.ToVertexFormat(mChannel.Format, Version);
                         var componentByteSize = (int)MeshHelper.GetFormatSize(vertexFormat);
-                        var componentBytes = new byte[m_VertexCount * m_Channel.dimension * componentByteSize];
-                        for (int v = 0; v < m_VertexCount; v++)
+                        var componentBytes = new byte[MVertexCount * mChannel.Dimension * componentByteSize];
+                        for (int v = 0; v < MVertexCount; v++)
                         {
-                            var vertexOffset = (int)m_Stream.offset + m_Channel.offset + (int)m_Stream.stride * v;
-                            for (int d = 0; d < m_Channel.dimension; d++)
+                            var vertexOffset = (int)mStream.Offset + mChannel.Offset + (int)mStream.Stride * v;
+                            for (int d = 0; d < mChannel.Dimension; d++)
                             {
                                 var componentOffset = vertexOffset + componentByteSize * d;
-                                Buffer.BlockCopy(m_VertexData.m_DataSize, componentOffset, componentBytes, componentByteSize * (v * m_Channel.dimension + d), componentByteSize);
+                                Buffer.BlockCopy(_mVertexData.MDataSize, componentOffset, componentBytes, componentByteSize * (v * mChannel.Dimension + d), componentByteSize);
                             }
                         }
 
-                        if (reader.Endian == EndianType.BigEndian && componentByteSize > 1) //swap bytes
+                        if (Reader.Endian == EndianType.BigEndian && componentByteSize > 1) //swap bytes
                         {
                             for (var i = 0; i < componentBytes.Length / componentByteSize; i++)
                             {
@@ -752,70 +752,70 @@ namespace AssetStudio
                         else
                             componentsFloatArray = MeshHelper.BytesToFloatArray(componentBytes, vertexFormat);
 
-                        if (version[0] >= 2018)
+                        if (Version[0] >= 2018)
                         {
                             switch (chn)
                             {
                                 case 0: //kShaderChannelVertex
-                                    m_Vertices = componentsFloatArray;
+                                    MVertices = componentsFloatArray;
                                     break;
                                 case 1: //kShaderChannelNormal
-                                    m_Normals = componentsFloatArray;
+                                    MNormals = componentsFloatArray;
                                     break;
                                 case 2: //kShaderChannelTangent
-                                    m_Tangents = componentsFloatArray;
+                                    MTangents = componentsFloatArray;
                                     break;
                                 case 3: //kShaderChannelColor
-                                    m_Colors = componentsFloatArray;
+                                    MColors = componentsFloatArray;
                                     break;
                                 case 4: //kShaderChannelTexCoord0
-                                    m_UV0 = componentsFloatArray;
+                                    MUV0 = componentsFloatArray;
                                     break;
                                 case 5: //kShaderChannelTexCoord1
-                                    m_UV1 = componentsFloatArray;
+                                    MUV1 = componentsFloatArray;
                                     break;
                                 case 6: //kShaderChannelTexCoord2
-                                    m_UV2 = componentsFloatArray;
+                                    MUV2 = componentsFloatArray;
                                     break;
                                 case 7: //kShaderChannelTexCoord3
-                                    m_UV3 = componentsFloatArray;
+                                    MUV3 = componentsFloatArray;
                                     break;
                                 case 8: //kShaderChannelTexCoord4
-                                    m_UV4 = componentsFloatArray;
+                                    MUV4 = componentsFloatArray;
                                     break;
                                 case 9: //kShaderChannelTexCoord5
-                                    m_UV5 = componentsFloatArray;
+                                    MUV5 = componentsFloatArray;
                                     break;
                                 case 10: //kShaderChannelTexCoord6
-                                    m_UV6 = componentsFloatArray;
+                                    MUV6 = componentsFloatArray;
                                     break;
                                 case 11: //kShaderChannelTexCoord7
-                                    m_UV7 = componentsFloatArray;
+                                    MUV7 = componentsFloatArray;
                                     break;
                                 //2018.2 and up
                                 case 12: //kShaderChannelBlendWeight
-                                    if (m_Skin == null)
+                                    if (MSkin == null)
                                     {
                                         InitMSkin();
                                     }
-                                    for (int i = 0; i < m_VertexCount; i++)
+                                    for (int i = 0; i < MVertexCount; i++)
                                     {
-                                        for (int j = 0; j < m_Channel.dimension; j++)
+                                        for (int j = 0; j < mChannel.Dimension; j++)
                                         {
-                                            m_Skin[i].weight[j] = componentsFloatArray[i * m_Channel.dimension + j];
+                                            MSkin[i].Weight[j] = componentsFloatArray[i * mChannel.Dimension + j];
                                         }
                                     }
                                     break;
                                 case 13: //kShaderChannelBlendIndices
-                                    if (m_Skin == null)
+                                    if (MSkin == null)
                                     {
                                         InitMSkin();
                                     }
-                                    for (int i = 0; i < m_VertexCount; i++)
+                                    for (int i = 0; i < MVertexCount; i++)
                                     {
-                                        for (int j = 0; j < m_Channel.dimension; j++)
+                                        for (int j = 0; j < mChannel.Dimension; j++)
                                         {
-                                            m_Skin[i].boneIndex[j] = componentsIntArray[i * m_Channel.dimension + j];
+                                            MSkin[i].BoneIndex[j] = componentsIntArray[i * mChannel.Dimension + j];
                                         }
                                     }
                                     break;
@@ -826,35 +826,35 @@ namespace AssetStudio
                             switch (chn)
                             {
                                 case 0: //kShaderChannelVertex
-                                    m_Vertices = componentsFloatArray;
+                                    MVertices = componentsFloatArray;
                                     break;
                                 case 1: //kShaderChannelNormal
-                                    m_Normals = componentsFloatArray;
+                                    MNormals = componentsFloatArray;
                                     break;
                                 case 2: //kShaderChannelColor
-                                    m_Colors = componentsFloatArray;
+                                    MColors = componentsFloatArray;
                                     break;
                                 case 3: //kShaderChannelTexCoord0
-                                    m_UV0 = componentsFloatArray;
+                                    MUV0 = componentsFloatArray;
                                     break;
                                 case 4: //kShaderChannelTexCoord1
-                                    m_UV1 = componentsFloatArray;
+                                    MUV1 = componentsFloatArray;
                                     break;
                                 case 5:
-                                    if (version[0] >= 5) //kShaderChannelTexCoord2
+                                    if (Version[0] >= 5) //kShaderChannelTexCoord2
                                     {
-                                        m_UV2 = componentsFloatArray;
+                                        MUV2 = componentsFloatArray;
                                     }
                                     else //kShaderChannelTangent
                                     {
-                                        m_Tangents = componentsFloatArray;
+                                        MTangents = componentsFloatArray;
                                     }
                                     break;
                                 case 6: //kShaderChannelTexCoord3
-                                    m_UV3 = componentsFloatArray;
+                                    MUV3 = componentsFloatArray;
                                     break;
                                 case 7: //kShaderChannelTangent
-                                    m_Tangents = componentsFloatArray;
+                                    MTangents = componentsFloatArray;
                                     break;
                             }
                         }
@@ -866,16 +866,16 @@ namespace AssetStudio
         private void DecompressCompressedMesh()
         {
             //Vertex
-            if (m_CompressedMesh.m_Vertices.m_NumItems > 0)
+            if (_mCompressedMesh.MVertices.MNumItems > 0)
             {
-                m_VertexCount = (int)m_CompressedMesh.m_Vertices.m_NumItems / 3;
-                m_Vertices = m_CompressedMesh.m_Vertices.UnpackFloats(3, 3 * 4);
+                MVertexCount = (int)_mCompressedMesh.MVertices.MNumItems / 3;
+                MVertices = _mCompressedMesh.MVertices.UnpackFloats(3, 3 * 4);
             }
             //UV
-            if (m_CompressedMesh.m_UV.m_NumItems > 0)
+            if (_mCompressedMesh.MUV.MNumItems > 0)
             {
-                var m_UVInfo = m_CompressedMesh.m_UVInfo;
-                if (m_UVInfo != 0)
+                var mUVInfo = _mCompressedMesh.MUVInfo;
+                if (mUVInfo != 0)
                 {
                     const int kInfoBitsPerUV = 4;
                     const int kUVDimensionMask = 3;
@@ -885,48 +885,48 @@ namespace AssetStudio
                     int uvSrcOffset = 0;
                     for (int uv = 0; uv < kMaxTexCoordShaderChannels; uv++)
                     {
-                        var texCoordBits = m_UVInfo >> (uv * kInfoBitsPerUV);
+                        var texCoordBits = mUVInfo >> (uv * kInfoBitsPerUV);
                         texCoordBits &= (1u << kInfoBitsPerUV) - 1u;
                         if ((texCoordBits & kUVChannelExists) != 0)
                         {
                             var uvDim = 1 + (int)(texCoordBits & kUVDimensionMask);
-                            var m_UV = m_CompressedMesh.m_UV.UnpackFloats(uvDim, uvDim * 4, uvSrcOffset, m_VertexCount);
-                            SetUV(uv, m_UV);
-                            uvSrcOffset += uvDim * m_VertexCount;
+                            var mUV = _mCompressedMesh.MUV.UnpackFloats(uvDim, uvDim * 4, uvSrcOffset, MVertexCount);
+                            SetUV(uv, mUV);
+                            uvSrcOffset += uvDim * MVertexCount;
                         }
                     }
                 }
                 else
                 {
-                    m_UV0 = m_CompressedMesh.m_UV.UnpackFloats(2, 2 * 4, 0, m_VertexCount);
-                    if (m_CompressedMesh.m_UV.m_NumItems >= m_VertexCount * 4)
+                    MUV0 = _mCompressedMesh.MUV.UnpackFloats(2, 2 * 4, 0, MVertexCount);
+                    if (_mCompressedMesh.MUV.MNumItems >= MVertexCount * 4)
                     {
-                        m_UV1 = m_CompressedMesh.m_UV.UnpackFloats(2, 2 * 4, m_VertexCount * 2, m_VertexCount);
+                        MUV1 = _mCompressedMesh.MUV.UnpackFloats(2, 2 * 4, MVertexCount * 2, MVertexCount);
                     }
                 }
             }
             //BindPose
-            if (version[0] < 5)
+            if (Version[0] < 5)
             {
-                if (m_CompressedMesh.m_BindPoses.m_NumItems > 0)
+                if (_mCompressedMesh.MBindPoses.MNumItems > 0)
                 {
-                    m_BindPose = new Matrix4x4[m_CompressedMesh.m_BindPoses.m_NumItems / 16];
-                    var m_BindPoses_Unpacked = m_CompressedMesh.m_BindPoses.UnpackFloats(16, 4 * 16);
+                    MBindPose = new Matrix4X4[_mCompressedMesh.MBindPoses.MNumItems / 16];
+                    var mBindPosesUnpacked = _mCompressedMesh.MBindPoses.UnpackFloats(16, 4 * 16);
                     var buffer = new float[16];
-                    for (int i = 0; i < m_BindPose.Length; i++)
+                    for (int i = 0; i < MBindPose.Length; i++)
                     {
-                        Array.Copy(m_BindPoses_Unpacked, i * 16, buffer, 0, 16);
-                        m_BindPose[i] = new Matrix4x4(buffer);
+                        Array.Copy(mBindPosesUnpacked, i * 16, buffer, 0, 16);
+                        MBindPose[i] = new Matrix4X4(buffer);
                     }
                 }
             }
             //Normal
-            if (m_CompressedMesh.m_Normals.m_NumItems > 0)
+            if (_mCompressedMesh.MNormals.MNumItems > 0)
             {
-                var normalData = m_CompressedMesh.m_Normals.UnpackFloats(2, 4 * 2);
-                var signs = m_CompressedMesh.m_NormalSigns.UnpackInts();
-                m_Normals = new float[m_CompressedMesh.m_Normals.m_NumItems / 2 * 3];
-                for (int i = 0; i < m_CompressedMesh.m_Normals.m_NumItems / 2; ++i)
+                var normalData = _mCompressedMesh.MNormals.UnpackFloats(2, 4 * 2);
+                var signs = _mCompressedMesh.MNormalSigns.UnpackInts();
+                MNormals = new float[_mCompressedMesh.MNormals.MNumItems / 2 * 3];
+                for (int i = 0; i < _mCompressedMesh.MNormals.MNumItems / 2; ++i)
                 {
                     var x = normalData[i * 2 + 0];
                     var y = normalData[i * 2 + 1];
@@ -945,18 +945,18 @@ namespace AssetStudio
                     }
                     if (signs[i] == 0)
                         z = -z;
-                    m_Normals[i * 3] = x;
-                    m_Normals[i * 3 + 1] = y;
-                    m_Normals[i * 3 + 2] = z;
+                    MNormals[i * 3] = x;
+                    MNormals[i * 3 + 1] = y;
+                    MNormals[i * 3 + 2] = z;
                 }
             }
             //Tangent
-            if (m_CompressedMesh.m_Tangents.m_NumItems > 0)
+            if (_mCompressedMesh.MTangents.MNumItems > 0)
             {
-                var tangentData = m_CompressedMesh.m_Tangents.UnpackFloats(2, 4 * 2);
-                var signs = m_CompressedMesh.m_TangentSigns.UnpackInts();
-                m_Tangents = new float[m_CompressedMesh.m_Tangents.m_NumItems / 2 * 4];
-                for (int i = 0; i < m_CompressedMesh.m_Tangents.m_NumItems / 2; ++i)
+                var tangentData = _mCompressedMesh.MTangents.UnpackFloats(2, 4 * 2);
+                var signs = _mCompressedMesh.MTangentSigns.UnpackInts();
+                MTangents = new float[_mCompressedMesh.MTangents.MNumItems / 2 * 4];
+                for (int i = 0; i < _mCompressedMesh.MTangents.MNumItems / 2; ++i)
                 {
                     var x = tangentData[i * 2 + 0];
                     var y = tangentData[i * 2 + 1];
@@ -967,34 +967,34 @@ namespace AssetStudio
                     else
                     {
                         z = 0;
-                        var vector3f = new Vector3(x, y, z);
-                        vector3f.Normalize();
-                        x = vector3f.X;
-                        y = vector3f.Y;
-                        z = vector3f.Z;
+                        var vector3F = new Vector3(x, y, z);
+                        vector3F.Normalize();
+                        x = vector3F.X;
+                        y = vector3F.Y;
+                        z = vector3F.Z;
                     }
                     if (signs[i * 2 + 0] == 0)
                         z = -z;
                     var w = signs[i * 2 + 1] > 0 ? 1.0f : -1.0f;
-                    m_Tangents[i * 4] = x;
-                    m_Tangents[i * 4 + 1] = y;
-                    m_Tangents[i * 4 + 2] = z;
-                    m_Tangents[i * 4 + 3] = w;
+                    MTangents[i * 4] = x;
+                    MTangents[i * 4 + 1] = y;
+                    MTangents[i * 4 + 2] = z;
+                    MTangents[i * 4 + 3] = w;
                 }
             }
             //FloatColor
-            if (version[0] >= 5)
+            if (Version[0] >= 5)
             {
-                if (m_CompressedMesh.m_FloatColors.m_NumItems > 0)
+                if (_mCompressedMesh.MFloatColors.MNumItems > 0)
                 {
-                    m_Colors = m_CompressedMesh.m_FloatColors.UnpackFloats(1, 4);
+                    MColors = _mCompressedMesh.MFloatColors.UnpackFloats(1, 4);
                 }
             }
             //Skin
-            if (m_CompressedMesh.m_Weights.m_NumItems > 0)
+            if (_mCompressedMesh.MWeights.MNumItems > 0)
             {
-                var weights = m_CompressedMesh.m_Weights.UnpackInts();
-                var boneIndices = m_CompressedMesh.m_BoneIndices.UnpackInts();
+                var weights = _mCompressedMesh.MWeights.UnpackInts();
+                var boneIndices = _mCompressedMesh.MBoneIndices.UnpackInts();
 
                 InitMSkin();
 
@@ -1003,11 +1003,11 @@ namespace AssetStudio
                 int j = 0;
                 int sum = 0;
 
-                for (int i = 0; i < m_CompressedMesh.m_Weights.m_NumItems; i++)
+                for (int i = 0; i < _mCompressedMesh.MWeights.MNumItems; i++)
                 {
                     //read bone index and weight.
-                    m_Skin[bonePos].weight[j] = weights[i] / 31.0f;
-                    m_Skin[bonePos].boneIndex[j] = boneIndices[boneIndexPos++];
+                    MSkin[bonePos].Weight[j] = weights[i] / 31.0f;
+                    MSkin[bonePos].BoneIndex[j] = boneIndices[boneIndexPos++];
                     j++;
                     sum += weights[i];
 
@@ -1016,8 +1016,8 @@ namespace AssetStudio
                     {
                         for (; j < 4; j++)
                         {
-                            m_Skin[bonePos].weight[j] = 0;
-                            m_Skin[bonePos].boneIndex[j] = 0;
+                            MSkin[bonePos].Weight[j] = 0;
+                            MSkin[bonePos].BoneIndex[j] = 0;
                         }
                         bonePos++;
                         j = 0;
@@ -1027,8 +1027,8 @@ namespace AssetStudio
                     //missing bone index. continue with next vertex.
                     else if (j == 3)
                     {
-                        m_Skin[bonePos].weight[j] = (31 - sum) / 31.0f;
-                        m_Skin[bonePos].boneIndex[j] = boneIndices[boneIndexPos++];
+                        MSkin[bonePos].Weight[j] = (31 - sum) / 31.0f;
+                        MSkin[bonePos].BoneIndex[j] = boneIndices[boneIndexPos++];
                         bonePos++;
                         j = 0;
                         sum = 0;
@@ -1036,53 +1036,53 @@ namespace AssetStudio
                 }
             }
             //IndexBuffer
-            if (m_CompressedMesh.m_Triangles.m_NumItems > 0)
+            if (_mCompressedMesh.MTriangles.MNumItems > 0)
             {
-                m_IndexBuffer = Array.ConvertAll(m_CompressedMesh.m_Triangles.UnpackInts(), x => (uint)x);
+                _mIndexBuffer = Array.ConvertAll(_mCompressedMesh.MTriangles.UnpackInts(), x => (uint)x);
             }
             //Color
-            if (m_CompressedMesh.m_Colors?.m_NumItems > 0)
+            if (_mCompressedMesh.MColors?.MNumItems > 0)
             {
-                m_CompressedMesh.m_Colors.m_NumItems *= 4;
-                m_CompressedMesh.m_Colors.m_BitSize /= 4;
-                var tempColors = m_CompressedMesh.m_Colors.UnpackInts();
-                m_Colors = new float[m_CompressedMesh.m_Colors.m_NumItems];
-                for (int v = 0; v < m_CompressedMesh.m_Colors.m_NumItems; v++)
+                _mCompressedMesh.MColors.MNumItems *= 4;
+                _mCompressedMesh.MColors.MBitSize /= 4;
+                var tempColors = _mCompressedMesh.MColors.UnpackInts();
+                MColors = new float[_mCompressedMesh.MColors.MNumItems];
+                for (int v = 0; v < _mCompressedMesh.MColors.MNumItems; v++)
                 {
-                    m_Colors[v] = tempColors[v] / 255f;
+                    MColors[v] = tempColors[v] / 255f;
                 }
             }
         }
 
         private void GetTriangles()
         {
-            foreach (var m_SubMesh in m_SubMeshes)
+            foreach (var mSubMesh in MSubMeshes)
             {
-                var firstIndex = m_SubMesh.firstByte / 2;
-                if (!m_Use16BitIndices)
+                var firstIndex = mSubMesh.FirstByte / 2;
+                if (!_mUse16BitIndices)
                 {
                     firstIndex /= 2;
                 }
-                var indexCount = m_SubMesh.indexCount;
-                var topology = m_SubMesh.topology;
+                var indexCount = mSubMesh.IndexCount;
+                var topology = mSubMesh.Topology;
                 if (topology == GfxPrimitiveType.Triangles)
                 {
                     for (int i = 0; i < indexCount; i += 3)
                     {
-                        m_Indices.Add(m_IndexBuffer[firstIndex + i]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + i + 1]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + i + 2]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + i]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + i + 1]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + i + 2]);
                     }
                 }
-                else if (version[0] < 4 || topology == GfxPrimitiveType.TriangleStrip)
+                else if (Version[0] < 4 || topology == GfxPrimitiveType.TriangleStrip)
                 {
                     // de-stripify :
                     uint triIndex = 0;
                     for (int i = 0; i < indexCount - 2; i++)
                     {
-                        var a = m_IndexBuffer[firstIndex + i];
-                        var b = m_IndexBuffer[firstIndex + i + 1];
-                        var c = m_IndexBuffer[firstIndex + i + 2];
+                        var a = _mIndexBuffer[firstIndex + i];
+                        var b = _mIndexBuffer[firstIndex + i + 1];
+                        var c = _mIndexBuffer[firstIndex + i + 2];
 
                         // skip degenerates
                         if (a == b || a == c || b == c)
@@ -1091,33 +1091,33 @@ namespace AssetStudio
                         // do the winding flip-flop of strips :
                         if ((i & 1) == 1)
                         {
-                            m_Indices.Add(b);
-                            m_Indices.Add(a);
+                            MIndices.Add(b);
+                            MIndices.Add(a);
                         }
                         else
                         {
-                            m_Indices.Add(a);
-                            m_Indices.Add(b);
+                            MIndices.Add(a);
+                            MIndices.Add(b);
                         }
-                        m_Indices.Add(c);
+                        MIndices.Add(c);
                         triIndex += 3;
                     }
                     //fix indexCount
-                    m_SubMesh.indexCount = triIndex;
+                    mSubMesh.IndexCount = triIndex;
                 }
                 else if (topology == GfxPrimitiveType.Quads)
                 {
                     for (int q = 0; q < indexCount; q += 4)
                     {
-                        m_Indices.Add(m_IndexBuffer[firstIndex + q]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + q + 1]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + q + 2]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + q]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + q + 2]);
-                        m_Indices.Add(m_IndexBuffer[firstIndex + q + 3]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + q]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + q + 1]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + q + 2]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + q]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + q + 2]);
+                        MIndices.Add(_mIndexBuffer[firstIndex + q + 3]);
                     }
                     //fix indexCount
-                    m_SubMesh.indexCount = indexCount / 2 * 3;
+                    mSubMesh.IndexCount = indexCount / 2 * 3;
                 }
                 else
                 {
@@ -1128,40 +1128,40 @@ namespace AssetStudio
 
         private void InitMSkin()
         {
-            m_Skin = new BoneWeights4[m_VertexCount];
-            for (int i = 0; i < m_VertexCount; i++)
+            MSkin = new BoneWeights4[MVertexCount];
+            for (int i = 0; i < MVertexCount; i++)
             {
-                m_Skin[i] = new BoneWeights4();
+                MSkin[i] = new BoneWeights4();
             }
         }
 
-        private void SetUV(int uv, float[] m_UV)
+        private void SetUV(int uv, float[] mUV)
         {
             switch (uv)
             {
                 case 0:
-                    m_UV0 = m_UV;
+                    MUV0 = mUV;
                     break;
                 case 1:
-                    m_UV1 = m_UV;
+                    MUV1 = mUV;
                     break;
                 case 2:
-                    m_UV2 = m_UV;
+                    MUV2 = mUV;
                     break;
                 case 3:
-                    m_UV3 = m_UV;
+                    MUV3 = mUV;
                     break;
                 case 4:
-                    m_UV4 = m_UV;
+                    MUV4 = mUV;
                     break;
                 case 5:
-                    m_UV5 = m_UV;
+                    MUV5 = mUV;
                     break;
                 case 6:
-                    m_UV6 = m_UV;
+                    MUV6 = mUV;
                     break;
                 case 7:
-                    m_UV7 = m_UV;
+                    MUV7 = mUV;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -1173,21 +1173,21 @@ namespace AssetStudio
             switch (uv)
             {
                 case 0:
-                    return m_UV0;
+                    return MUV0;
                 case 1:
-                    return m_UV1;
+                    return MUV1;
                 case 2:
-                    return m_UV2;
+                    return MUV2;
                 case 3:
-                    return m_UV3;
+                    return MUV3;
                 case 4:
-                    return m_UV4;
+                    return MUV4;
                 case 5:
-                    return m_UV5;
+                    return MUV5;
                 case 6:
-                    return m_UV6;
+                    return MUV6;
                 case 7:
-                    return m_UV7;
+                    return MUV7;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

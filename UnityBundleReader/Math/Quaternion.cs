@@ -70,7 +70,7 @@ namespace AssetStudio
 
         private static bool IsEqualUsingDot(float dot)
         {
-            return dot > 1.0f - kEpsilon;
+            return dot > 1.0f - KEpsilon;
         }
 
         public static bool operator ==(Quaternion lhs, Quaternion rhs)
@@ -83,6 +83,6 @@ namespace AssetStudio
             return !(lhs == rhs);
         }
 
-        private const float kEpsilon = 0.000001F;
+        private const float KEpsilon = 0.000001F;
     }
 }

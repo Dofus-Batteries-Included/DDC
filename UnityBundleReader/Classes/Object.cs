@@ -4,75 +4,75 @@ namespace AssetStudio
 {
     public class Object
     {
-        public SerializedFile assetsFile;
-        public ObjectReader reader;
-        public long m_PathID;
-        public int[] version;
-        protected BuildType buildType;
-        public BuildTarget platform;
-        public ClassIDType type;
-        public SerializedType serializedType;
-        public uint byteSize;
+        public SerializedFile AssetsFile;
+        public ObjectReader Reader;
+        public long MPathID;
+        public int[] Version;
+        protected BuildType BuildType;
+        public BuildTarget Platform;
+        public ClassIDType Type;
+        public SerializedType SerializedType;
+        public uint ByteSize;
 
         public Object(ObjectReader reader)
         {
-            this.reader = reader;
+            Reader = reader;
             reader.Reset();
-            assetsFile = reader.assetsFile;
-            type = reader.type;
-            m_PathID = reader.m_PathID;
-            version = reader.version;
-            buildType = reader.buildType;
-            platform = reader.platform;
-            serializedType = reader.serializedType;
-            byteSize = reader.byteSize;
+            AssetsFile = reader.AssetsFile;
+            Type = reader.Type;
+            MPathID = reader.MPathID;
+            Version = reader.Version;
+            BuildType = reader.BuildType;
+            Platform = reader.Platform;
+            SerializedType = reader.SerializedType;
+            ByteSize = reader.ByteSize;
 
-            if (platform == BuildTarget.NoTarget)
+            if (Platform == BuildTarget.NoTarget)
             {
-                var m_ObjectHideFlags = reader.ReadUInt32();
+                var mObjectHideFlags = reader.ReadUInt32();
             }
         }
 
         public string Dump()
         {
-            if (serializedType?.m_Type != null)
+            if (SerializedType?.MType != null)
             {
-                return TypeTreeHelper.ReadTypeString(serializedType.m_Type, reader);
+                return TypeTreeHelper.ReadTypeString(SerializedType.MType, Reader);
             }
             return null;
         }
 
-        public string Dump(TypeTree m_Type)
+        public string Dump(TypeTree mType)
         {
-            if (m_Type != null)
+            if (mType != null)
             {
-                return TypeTreeHelper.ReadTypeString(m_Type, reader);
+                return TypeTreeHelper.ReadTypeString(mType, Reader);
             }
             return null;
         }
 
         public OrderedDictionary ToType()
         {
-            if (serializedType?.m_Type != null)
+            if (SerializedType?.MType != null)
             {
-                return TypeTreeHelper.ReadType(serializedType.m_Type, reader);
+                return TypeTreeHelper.ReadType(SerializedType.MType, Reader);
             }
             return null;
         }
 
-        public OrderedDictionary ToType(TypeTree m_Type)
+        public OrderedDictionary ToType(TypeTree mType)
         {
-            if (m_Type != null)
+            if (mType != null)
             {
-                return TypeTreeHelper.ReadType(m_Type, reader);
+                return TypeTreeHelper.ReadType(mType, Reader);
             }
             return null;
         }
 
         public byte[] GetRawData()
         {
-            reader.Reset();
-            return reader.ReadBytes((int)byteSize);
+            Reader.Reset();
+            return Reader.ReadBytes((int)ByteSize);
         }
     }
 }

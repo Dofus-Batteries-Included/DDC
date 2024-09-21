@@ -14,11 +14,11 @@ namespace AssetStudio
     [ComVisible(false)]
     internal static class HalfHelper
     {
-        private static uint[] mantissaTable = GenerateMantissaTable();
-        private static uint[] exponentTable = GenerateExponentTable();
-        private static ushort[] offsetTable = GenerateOffsetTable();
-        private static ushort[] baseTable = GenerateBaseTable();
-        private static sbyte[] shiftTable = GenerateShiftTable();
+        private static uint[] _mantissaTable = GenerateMantissaTable();
+        private static uint[] _exponentTable = GenerateExponentTable();
+        private static ushort[] _offsetTable = GenerateOffsetTable();
+        private static ushort[] _baseTable = GenerateBaseTable();
+        private static sbyte[] _shiftTable = GenerateShiftTable();
 
         // Transforms the subnormal representation to a normalized one. 
         private static uint ConvertMantissa(int i)
@@ -171,7 +171,7 @@ namespace AssetStudio
         }*/
         public static float HalfToSingle(Half half)
         {
-            uint result = mantissaTable[offsetTable[half.value >> 10] + (half.value & 0x3ff)] + exponentTable[half.value >> 10];
+            uint result = _mantissaTable[_offsetTable[half.Value >> 10] + (half.Value & 0x3ff)] + _exponentTable[half.Value >> 10];
             byte[] uintBytes = BitConverter.GetBytes(result);
             return BitConverter.ToSingle(uintBytes, 0);
         }
@@ -179,34 +179,34 @@ namespace AssetStudio
         {
             byte[] singleBytes = BitConverter.GetBytes(single);
             uint value = BitConverter.ToUInt32(singleBytes, 0);
-            ushort result = (ushort)(baseTable[(value >> 23) & 0x1ff] + ((value & 0x007fffff) >> shiftTable[value >> 23]));
+            ushort result = (ushort)(_baseTable[(value >> 23) & 0x1ff] + ((value & 0x007fffff) >> _shiftTable[value >> 23]));
             return Half.ToHalf(result);
         }
 
         public static Half Negate(Half half)
         {
-            return Half.ToHalf((ushort)(half.value ^ 0x8000));
+            return Half.ToHalf((ushort)(half.Value ^ 0x8000));
         }
         public static Half Abs(Half half)
         {
-            return Half.ToHalf((ushort)(half.value & 0x7fff));
+            return Half.ToHalf((ushort)(half.Value & 0x7fff));
         }
 
         public static bool IsNaN(Half half)
         {
-            return ((half.value & 0x7fff) > 0x7c00);
+            return ((half.Value & 0x7fff) > 0x7c00);
         }
         public static bool IsInfinity(Half half)
         {
-            return ((half.value & 0x7fff) == 0x7c00);
+            return ((half.Value & 0x7fff) == 0x7c00);
         }
         public static bool IsPositiveInfinity(Half half)
         {
-            return (half.value == 0x7c00);
+            return (half.Value == 0x7c00);
         }
         public static bool IsNegativeInfinity(Half half)
         {
-            return (half.value == 0xfc00);
+            return (half.Value == 0xfc00);
         }
     }
 }

@@ -7,51 +7,51 @@ namespace AssetStudio
 {
     public class Hash128
     {
-        public byte[] bytes;
+        public byte[] Bytes;
 
         public Hash128(BinaryReader reader)
         {
-            bytes = reader.ReadBytes(16);
+            Bytes = reader.ReadBytes(16);
         }
     }
 
     public class StructParameter
     {
-        public MatrixParameter[] m_MatrixParams;
-        public VectorParameter[] m_VectorParams;
+        public MatrixParameter[] MMatrixParams;
+        public VectorParameter[] MVectorParams;
 
         public StructParameter(BinaryReader reader)
         {
-            var m_NameIndex = reader.ReadInt32();
-            var m_Index = reader.ReadInt32();
-            var m_ArraySize = reader.ReadInt32();
-            var m_StructSize = reader.ReadInt32();
+            var mNameIndex = reader.ReadInt32();
+            var mIndex = reader.ReadInt32();
+            var mArraySize = reader.ReadInt32();
+            var mStructSize = reader.ReadInt32();
 
             int numVectorParams = reader.ReadInt32();
-            m_VectorParams = new VectorParameter[numVectorParams];
+            MVectorParams = new VectorParameter[numVectorParams];
             for (int i = 0; i < numVectorParams; i++)
             {
-                m_VectorParams[i] = new VectorParameter(reader);
+                MVectorParams[i] = new VectorParameter(reader);
             }
 
             int numMatrixParams = reader.ReadInt32();
-            m_MatrixParams = new MatrixParameter[numMatrixParams];
+            MMatrixParams = new MatrixParameter[numMatrixParams];
             for (int i = 0; i < numMatrixParams; i++)
             {
-                m_MatrixParams[i] = new MatrixParameter(reader);
+                MMatrixParams[i] = new MatrixParameter(reader);
             }
         }
     }
 
     public class SamplerParameter
     {
-        public uint sampler;
-        public int bindPoint;
+        public uint Sampler;
+        public int BindPoint;
 
         public SamplerParameter(BinaryReader reader)
         {
-            sampler = reader.ReadUInt32();
-            bindPoint = reader.ReadInt32();
+            Sampler = reader.ReadUInt32();
+            BindPoint = reader.ReadInt32();
         }
     }
     public enum TextureDimension
@@ -68,13 +68,13 @@ namespace AssetStudio
 
     public class SerializedTextureProperty
     {
-        public string m_DefaultName;
-        public TextureDimension m_TexDim;
+        public string MDefaultName;
+        public TextureDimension MTexDim;
 
         public SerializedTextureProperty(BinaryReader reader)
         {
-            m_DefaultName = reader.ReadAlignedString();
-            m_TexDim = (TextureDimension)reader.ReadInt32();
+            MDefaultName = reader.ReadAlignedString();
+            MTexDim = (TextureDimension)reader.ReadInt32();
         }
     }
 
@@ -90,106 +90,106 @@ namespace AssetStudio
 
     public class SerializedProperty
     {
-        public string m_Name;
-        public string m_Description;
-        public string[] m_Attributes;
-        public SerializedPropertyType m_Type;
-        public uint m_Flags;
-        public float[] m_DefValue;
-        public SerializedTextureProperty m_DefTexture;
+        public string MName;
+        public string MDescription;
+        public string[] MAttributes;
+        public SerializedPropertyType MType;
+        public uint MFlags;
+        public float[] MDefValue;
+        public SerializedTextureProperty MDefTexture;
 
         public SerializedProperty(BinaryReader reader)
         {
-            m_Name = reader.ReadAlignedString();
-            m_Description = reader.ReadAlignedString();
-            m_Attributes = reader.ReadStringArray();
-            m_Type = (SerializedPropertyType)reader.ReadInt32();
-            m_Flags = reader.ReadUInt32();
-            m_DefValue = reader.ReadSingleArray(4);
-            m_DefTexture = new SerializedTextureProperty(reader);
+            MName = reader.ReadAlignedString();
+            MDescription = reader.ReadAlignedString();
+            MAttributes = reader.ReadStringArray();
+            MType = (SerializedPropertyType)reader.ReadInt32();
+            MFlags = reader.ReadUInt32();
+            MDefValue = reader.ReadSingleArray(4);
+            MDefTexture = new SerializedTextureProperty(reader);
         }
     }
 
     public class SerializedProperties
     {
-        public SerializedProperty[] m_Props;
+        public SerializedProperty[] MProps;
 
         public SerializedProperties(BinaryReader reader)
         {
             int numProps = reader.ReadInt32();
-            m_Props = new SerializedProperty[numProps];
+            MProps = new SerializedProperty[numProps];
             for (int i = 0; i < numProps; i++)
             {
-                m_Props[i] = new SerializedProperty(reader);
+                MProps[i] = new SerializedProperty(reader);
             }
         }
     }
 
     public class SerializedShaderFloatValue
     {
-        public float val;
-        public string name;
+        public float Val;
+        public string Name;
 
         public SerializedShaderFloatValue(BinaryReader reader)
         {
-            val = reader.ReadSingle();
-            name = reader.ReadAlignedString();
+            Val = reader.ReadSingle();
+            Name = reader.ReadAlignedString();
         }
     }
 
     public class SerializedShaderRTBlendState
     {
-        public SerializedShaderFloatValue srcBlend;
-        public SerializedShaderFloatValue destBlend;
-        public SerializedShaderFloatValue srcBlendAlpha;
-        public SerializedShaderFloatValue destBlendAlpha;
-        public SerializedShaderFloatValue blendOp;
-        public SerializedShaderFloatValue blendOpAlpha;
-        public SerializedShaderFloatValue colMask;
+        public SerializedShaderFloatValue SrcBlend;
+        public SerializedShaderFloatValue DestBlend;
+        public SerializedShaderFloatValue SrcBlendAlpha;
+        public SerializedShaderFloatValue DestBlendAlpha;
+        public SerializedShaderFloatValue BlendOp;
+        public SerializedShaderFloatValue BlendOpAlpha;
+        public SerializedShaderFloatValue ColMask;
 
         public SerializedShaderRTBlendState(BinaryReader reader)
         {
-            srcBlend = new SerializedShaderFloatValue(reader);
-            destBlend = new SerializedShaderFloatValue(reader);
-            srcBlendAlpha = new SerializedShaderFloatValue(reader);
-            destBlendAlpha = new SerializedShaderFloatValue(reader);
-            blendOp = new SerializedShaderFloatValue(reader);
-            blendOpAlpha = new SerializedShaderFloatValue(reader);
-            colMask = new SerializedShaderFloatValue(reader);
+            SrcBlend = new SerializedShaderFloatValue(reader);
+            DestBlend = new SerializedShaderFloatValue(reader);
+            SrcBlendAlpha = new SerializedShaderFloatValue(reader);
+            DestBlendAlpha = new SerializedShaderFloatValue(reader);
+            BlendOp = new SerializedShaderFloatValue(reader);
+            BlendOpAlpha = new SerializedShaderFloatValue(reader);
+            ColMask = new SerializedShaderFloatValue(reader);
         }
     }
 
     public class SerializedStencilOp
     {
-        public SerializedShaderFloatValue pass;
-        public SerializedShaderFloatValue fail;
-        public SerializedShaderFloatValue zFail;
-        public SerializedShaderFloatValue comp;
+        public SerializedShaderFloatValue Pass;
+        public SerializedShaderFloatValue Fail;
+        public SerializedShaderFloatValue ZFail;
+        public SerializedShaderFloatValue Comp;
 
         public SerializedStencilOp(BinaryReader reader)
         {
-            pass = new SerializedShaderFloatValue(reader);
-            fail = new SerializedShaderFloatValue(reader);
-            zFail = new SerializedShaderFloatValue(reader);
-            comp = new SerializedShaderFloatValue(reader);
+            Pass = new SerializedShaderFloatValue(reader);
+            Fail = new SerializedShaderFloatValue(reader);
+            ZFail = new SerializedShaderFloatValue(reader);
+            Comp = new SerializedShaderFloatValue(reader);
         }
     }
 
     public class SerializedShaderVectorValue
     {
-        public SerializedShaderFloatValue x;
-        public SerializedShaderFloatValue y;
-        public SerializedShaderFloatValue z;
-        public SerializedShaderFloatValue w;
-        public string name;
+        public SerializedShaderFloatValue X;
+        public SerializedShaderFloatValue Y;
+        public SerializedShaderFloatValue Z;
+        public SerializedShaderFloatValue W;
+        public string Name;
 
         public SerializedShaderVectorValue(BinaryReader reader)
         {
-            x = new SerializedShaderFloatValue(reader);
-            y = new SerializedShaderFloatValue(reader);
-            z = new SerializedShaderFloatValue(reader);
-            w = new SerializedShaderFloatValue(reader);
-            name = reader.ReadAlignedString();
+            X = new SerializedShaderFloatValue(reader);
+            Y = new SerializedShaderFloatValue(reader);
+            Z = new SerializedShaderFloatValue(reader);
+            W = new SerializedShaderFloatValue(reader);
+            Name = reader.ReadAlignedString();
         }
     }
 
@@ -204,227 +204,227 @@ namespace AssetStudio
 
     public class SerializedShaderState
     {
-        public string m_Name;
-        public SerializedShaderRTBlendState[] rtBlend;
-        public bool rtSeparateBlend;
-        public SerializedShaderFloatValue zClip;
-        public SerializedShaderFloatValue zTest;
-        public SerializedShaderFloatValue zWrite;
-        public SerializedShaderFloatValue culling;
-        public SerializedShaderFloatValue conservative;
-        public SerializedShaderFloatValue offsetFactor;
-        public SerializedShaderFloatValue offsetUnits;
-        public SerializedShaderFloatValue alphaToMask;
-        public SerializedStencilOp stencilOp;
-        public SerializedStencilOp stencilOpFront;
-        public SerializedStencilOp stencilOpBack;
-        public SerializedShaderFloatValue stencilReadMask;
-        public SerializedShaderFloatValue stencilWriteMask;
-        public SerializedShaderFloatValue stencilRef;
-        public SerializedShaderFloatValue fogStart;
-        public SerializedShaderFloatValue fogEnd;
-        public SerializedShaderFloatValue fogDensity;
-        public SerializedShaderVectorValue fogColor;
-        public FogMode fogMode;
-        public int gpuProgramID;
-        public SerializedTagMap m_Tags;
-        public int m_LOD;
-        public bool lighting;
+        public string MName;
+        public SerializedShaderRTBlendState[] RTBlend;
+        public bool RTSeparateBlend;
+        public SerializedShaderFloatValue ZClip;
+        public SerializedShaderFloatValue ZTest;
+        public SerializedShaderFloatValue ZWrite;
+        public SerializedShaderFloatValue Culling;
+        public SerializedShaderFloatValue Conservative;
+        public SerializedShaderFloatValue OffsetFactor;
+        public SerializedShaderFloatValue OffsetUnits;
+        public SerializedShaderFloatValue AlphaToMask;
+        public SerializedStencilOp StencilOp;
+        public SerializedStencilOp StencilOpFront;
+        public SerializedStencilOp StencilOpBack;
+        public SerializedShaderFloatValue StencilReadMask;
+        public SerializedShaderFloatValue StencilWriteMask;
+        public SerializedShaderFloatValue StencilRef;
+        public SerializedShaderFloatValue FogStart;
+        public SerializedShaderFloatValue FogEnd;
+        public SerializedShaderFloatValue FogDensity;
+        public SerializedShaderVectorValue FogColor;
+        public FogMode FogMode;
+        public int GPUProgramID;
+        public SerializedTagMap MTags;
+        public int MLOD;
+        public bool Lighting;
 
         public SerializedShaderState(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_Name = reader.ReadAlignedString();
-            rtBlend = new SerializedShaderRTBlendState[8];
+            MName = reader.ReadAlignedString();
+            RTBlend = new SerializedShaderRTBlendState[8];
             for (int i = 0; i < 8; i++)
             {
-                rtBlend[i] = new SerializedShaderRTBlendState(reader);
+                RTBlend[i] = new SerializedShaderRTBlendState(reader);
             }
-            rtSeparateBlend = reader.ReadBoolean();
+            RTSeparateBlend = reader.ReadBoolean();
             reader.AlignStream();
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 2)) //2017.2 and up
             {
-                zClip = new SerializedShaderFloatValue(reader);
+                ZClip = new SerializedShaderFloatValue(reader);
             }
-            zTest = new SerializedShaderFloatValue(reader);
-            zWrite = new SerializedShaderFloatValue(reader);
-            culling = new SerializedShaderFloatValue(reader);
+            ZTest = new SerializedShaderFloatValue(reader);
+            ZWrite = new SerializedShaderFloatValue(reader);
+            Culling = new SerializedShaderFloatValue(reader);
             if (version[0] >= 2020) //2020.1 and up
             {
-                conservative = new SerializedShaderFloatValue(reader);
+                Conservative = new SerializedShaderFloatValue(reader);
             }
-            offsetFactor = new SerializedShaderFloatValue(reader);
-            offsetUnits = new SerializedShaderFloatValue(reader);
-            alphaToMask = new SerializedShaderFloatValue(reader);
-            stencilOp = new SerializedStencilOp(reader);
-            stencilOpFront = new SerializedStencilOp(reader);
-            stencilOpBack = new SerializedStencilOp(reader);
-            stencilReadMask = new SerializedShaderFloatValue(reader);
-            stencilWriteMask = new SerializedShaderFloatValue(reader);
-            stencilRef = new SerializedShaderFloatValue(reader);
-            fogStart = new SerializedShaderFloatValue(reader);
-            fogEnd = new SerializedShaderFloatValue(reader);
-            fogDensity = new SerializedShaderFloatValue(reader);
-            fogColor = new SerializedShaderVectorValue(reader);
-            fogMode = (FogMode)reader.ReadInt32();
-            gpuProgramID = reader.ReadInt32();
-            m_Tags = new SerializedTagMap(reader);
-            m_LOD = reader.ReadInt32();
-            lighting = reader.ReadBoolean();
+            OffsetFactor = new SerializedShaderFloatValue(reader);
+            OffsetUnits = new SerializedShaderFloatValue(reader);
+            AlphaToMask = new SerializedShaderFloatValue(reader);
+            StencilOp = new SerializedStencilOp(reader);
+            StencilOpFront = new SerializedStencilOp(reader);
+            StencilOpBack = new SerializedStencilOp(reader);
+            StencilReadMask = new SerializedShaderFloatValue(reader);
+            StencilWriteMask = new SerializedShaderFloatValue(reader);
+            StencilRef = new SerializedShaderFloatValue(reader);
+            FogStart = new SerializedShaderFloatValue(reader);
+            FogEnd = new SerializedShaderFloatValue(reader);
+            FogDensity = new SerializedShaderFloatValue(reader);
+            FogColor = new SerializedShaderVectorValue(reader);
+            FogMode = (FogMode)reader.ReadInt32();
+            GPUProgramID = reader.ReadInt32();
+            MTags = new SerializedTagMap(reader);
+            MLOD = reader.ReadInt32();
+            Lighting = reader.ReadBoolean();
             reader.AlignStream();
         }
     }
 
     public class ShaderBindChannel
     {
-        public sbyte source;
-        public sbyte target;
+        public sbyte Source;
+        public sbyte Target;
 
         public ShaderBindChannel(BinaryReader reader)
         {
-            source = reader.ReadSByte();
-            target = reader.ReadSByte();
+            Source = reader.ReadSByte();
+            Target = reader.ReadSByte();
         }
     }
 
     public class ParserBindChannels
     {
-        public ShaderBindChannel[] m_Channels;
-        public uint m_SourceMap;
+        public ShaderBindChannel[] MChannels;
+        public uint MSourceMap;
 
         public ParserBindChannels(BinaryReader reader)
         {
             int numChannels = reader.ReadInt32();
-            m_Channels = new ShaderBindChannel[numChannels];
+            MChannels = new ShaderBindChannel[numChannels];
             for (int i = 0; i < numChannels; i++)
             {
-                m_Channels[i] = new ShaderBindChannel(reader);
+                MChannels[i] = new ShaderBindChannel(reader);
             }
             reader.AlignStream();
 
-            m_SourceMap = reader.ReadUInt32();
+            MSourceMap = reader.ReadUInt32();
         }
     }
 
     public class VectorParameter
     {
-        public int m_NameIndex;
-        public int m_Index;
-        public int m_ArraySize;
-        public sbyte m_Type;
-        public sbyte m_Dim;
+        public int MNameIndex;
+        public int MIndex;
+        public int MArraySize;
+        public sbyte MType;
+        public sbyte MDim;
 
         public VectorParameter(BinaryReader reader)
         {
-            m_NameIndex = reader.ReadInt32();
-            m_Index = reader.ReadInt32();
-            m_ArraySize = reader.ReadInt32();
-            m_Type = reader.ReadSByte();
-            m_Dim = reader.ReadSByte();
+            MNameIndex = reader.ReadInt32();
+            MIndex = reader.ReadInt32();
+            MArraySize = reader.ReadInt32();
+            MType = reader.ReadSByte();
+            MDim = reader.ReadSByte();
             reader.AlignStream();
         }
     }
 
     public class MatrixParameter
     {
-        public int m_NameIndex;
-        public int m_Index;
-        public int m_ArraySize;
-        public sbyte m_Type;
-        public sbyte m_RowCount;
+        public int MNameIndex;
+        public int MIndex;
+        public int MArraySize;
+        public sbyte MType;
+        public sbyte MRowCount;
 
         public MatrixParameter(BinaryReader reader)
         {
-            m_NameIndex = reader.ReadInt32();
-            m_Index = reader.ReadInt32();
-            m_ArraySize = reader.ReadInt32();
-            m_Type = reader.ReadSByte();
-            m_RowCount = reader.ReadSByte();
+            MNameIndex = reader.ReadInt32();
+            MIndex = reader.ReadInt32();
+            MArraySize = reader.ReadInt32();
+            MType = reader.ReadSByte();
+            MRowCount = reader.ReadSByte();
             reader.AlignStream();
         }
     }
 
     public class TextureParameter
     {
-        public int m_NameIndex;
-        public int m_Index;
-        public int m_SamplerIndex;
-        public sbyte m_Dim;
+        public int MNameIndex;
+        public int MIndex;
+        public int MSamplerIndex;
+        public sbyte MDim;
 
         public TextureParameter(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_NameIndex = reader.ReadInt32();
-            m_Index = reader.ReadInt32();
-            m_SamplerIndex = reader.ReadInt32();
+            MNameIndex = reader.ReadInt32();
+            MIndex = reader.ReadInt32();
+            MSamplerIndex = reader.ReadInt32();
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 3)) //2017.3 and up
             {
-                var m_MultiSampled = reader.ReadBoolean();
+                var mMultiSampled = reader.ReadBoolean();
             }
-            m_Dim = reader.ReadSByte();
+            MDim = reader.ReadSByte();
             reader.AlignStream();
         }
     }
 
     public class BufferBinding
     {
-        public int m_NameIndex;
-        public int m_Index;
-        public int m_ArraySize;
+        public int MNameIndex;
+        public int MIndex;
+        public int MArraySize;
 
         public BufferBinding(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_NameIndex = reader.ReadInt32();
-            m_Index = reader.ReadInt32();
+            MNameIndex = reader.ReadInt32();
+            MIndex = reader.ReadInt32();
             if (version[0] >= 2020) //2020.1 and up
             {
-                m_ArraySize = reader.ReadInt32();
+                MArraySize = reader.ReadInt32();
             }
         }
     }
 
     public class ConstantBuffer
     {
-        public int m_NameIndex;
-        public MatrixParameter[] m_MatrixParams;
-        public VectorParameter[] m_VectorParams;
-        public StructParameter[] m_StructParams;
-        public int m_Size;
-        public bool m_IsPartialCB;
+        public int MNameIndex;
+        public MatrixParameter[] MMatrixParams;
+        public VectorParameter[] MVectorParams;
+        public StructParameter[] MStructParams;
+        public int MSize;
+        public bool MIsPartialCb;
 
         public ConstantBuffer(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_NameIndex = reader.ReadInt32();
+            MNameIndex = reader.ReadInt32();
 
             int numMatrixParams = reader.ReadInt32();
-            m_MatrixParams = new MatrixParameter[numMatrixParams];
+            MMatrixParams = new MatrixParameter[numMatrixParams];
             for (int i = 0; i < numMatrixParams; i++)
             {
-                m_MatrixParams[i] = new MatrixParameter(reader);
+                MMatrixParams[i] = new MatrixParameter(reader);
             }
 
             int numVectorParams = reader.ReadInt32();
-            m_VectorParams = new VectorParameter[numVectorParams];
+            MVectorParams = new VectorParameter[numVectorParams];
             for (int i = 0; i < numVectorParams; i++)
             {
-                m_VectorParams[i] = new VectorParameter(reader);
+                MVectorParams[i] = new VectorParameter(reader);
             }
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 3)) //2017.3 and up
             {
                 int numStructParams = reader.ReadInt32();
-                m_StructParams = new StructParameter[numStructParams];
+                MStructParams = new StructParameter[numStructParams];
                 for (int i = 0; i < numStructParams; i++)
                 {
-                    m_StructParams[i] = new StructParameter(reader);
+                    MStructParams[i] = new StructParameter(reader);
                 }
             }
-            m_Size = reader.ReadInt32();
+            MSize = reader.ReadInt32();
 
             if ((version[0] == 2020 && version[1] > 3) ||
                (version[0] == 2020 && version[1] == 3 && version[2] >= 2) || //2020.3.2f1 and up
@@ -432,23 +432,23 @@ namespace AssetStudio
                (version[0] == 2021 && version[1] > 1) ||
                (version[0] == 2021 && version[1] == 1 && version[2] >= 4)) //2021.1.4f1 and up
             {
-                m_IsPartialCB = reader.ReadBoolean();
+                MIsPartialCb = reader.ReadBoolean();
                 reader.AlignStream();
             }
         }
     }
 
-    public class UAVParameter
+    public class UavParameter
     {
-        public int m_NameIndex;
-        public int m_Index;
-        public int m_OriginalIndex;
+        public int MNameIndex;
+        public int MIndex;
+        public int MOriginalIndex;
 
-        public UAVParameter(BinaryReader reader)
+        public UavParameter(BinaryReader reader)
         {
-            m_NameIndex = reader.ReadInt32();
-            m_Index = reader.ReadInt32();
-            m_OriginalIndex = reader.ReadInt32();
+            MNameIndex = reader.ReadInt32();
+            MIndex = reader.ReadInt32();
+            MOriginalIndex = reader.ReadInt32();
         }
     }
 
@@ -456,152 +456,152 @@ namespace AssetStudio
     {
         Unknown = 0,
         GLLegacy = 1,
-        GLES31AEP = 2,
-        GLES31 = 3,
-        GLES3 = 4,
-        GLES = 5,
+        Gles31AEP = 2,
+        Gles31 = 3,
+        Gles3 = 4,
+        Gles = 5,
         GLCore32 = 6,
         GLCore41 = 7,
         GLCore43 = 8,
-        DX9VertexSM20 = 9,
-        DX9VertexSM30 = 10,
-        DX9PixelSM20 = 11,
-        DX9PixelSM30 = 12,
-        DX10Level9Vertex = 13,
-        DX10Level9Pixel = 14,
-        DX11VertexSM40 = 15,
-        DX11VertexSM50 = 16,
-        DX11PixelSM40 = 17,
-        DX11PixelSM50 = 18,
-        DX11GeometrySM40 = 19,
-        DX11GeometrySM50 = 20,
-        DX11HullSM50 = 21,
-        DX11DomainSM50 = 22,
+        Dx9VertexSm20 = 9,
+        Dx9VertexSm30 = 10,
+        Dx9PixelSm20 = 11,
+        Dx9PixelSm30 = 12,
+        Dx10Level9Vertex = 13,
+        Dx10Level9Pixel = 14,
+        Dx11VertexSm40 = 15,
+        Dx11VertexSm50 = 16,
+        Dx11PixelSm40 = 17,
+        Dx11PixelSm50 = 18,
+        Dx11GeometrySm40 = 19,
+        Dx11GeometrySm50 = 20,
+        Dx11HullSm50 = 21,
+        Dx11DomainSm50 = 22,
         MetalVS = 23,
-        MetalFS = 24,
-        SPIRV = 25,
+        MetalFs = 24,
+        Spirv = 25,
         ConsoleVS = 26,
-        ConsoleFS = 27,
-        ConsoleHS = 28,
+        ConsoleFs = 27,
+        ConsoleHs = 28,
         ConsoleDS = 29,
-        ConsoleGS = 30,
+        ConsoleGs = 30,
         RayTracing = 31,
-        PS5NGGC = 32
+        PS5Nggc = 32
     };
 
     public class SerializedProgramParameters
     {
-        public VectorParameter[] m_VectorParams;
-        public MatrixParameter[] m_MatrixParams;
-        public TextureParameter[] m_TextureParams;
-        public BufferBinding[] m_BufferParams;
-        public ConstantBuffer[] m_ConstantBuffers;
-        public BufferBinding[] m_ConstantBufferBindings;
-        public UAVParameter[] m_UAVParams;
-        public SamplerParameter[] m_Samplers;
+        public VectorParameter[] MVectorParams;
+        public MatrixParameter[] MMatrixParams;
+        public TextureParameter[] MTextureParams;
+        public BufferBinding[] MBufferParams;
+        public ConstantBuffer[] MConstantBuffers;
+        public BufferBinding[] MConstantBufferBindings;
+        public UavParameter[] MUavParams;
+        public SamplerParameter[] MSamplers;
 
         public SerializedProgramParameters(ObjectReader reader)
         {
             int numVectorParams = reader.ReadInt32();
-            m_VectorParams = new VectorParameter[numVectorParams];
+            MVectorParams = new VectorParameter[numVectorParams];
             for (int i = 0; i < numVectorParams; i++)
             {
-                m_VectorParams[i] = new VectorParameter(reader);
+                MVectorParams[i] = new VectorParameter(reader);
             }
 
             int numMatrixParams = reader.ReadInt32();
-            m_MatrixParams = new MatrixParameter[numMatrixParams];
+            MMatrixParams = new MatrixParameter[numMatrixParams];
             for (int i = 0; i < numMatrixParams; i++)
             {
-                m_MatrixParams[i] = new MatrixParameter(reader);
+                MMatrixParams[i] = new MatrixParameter(reader);
             }
 
             int numTextureParams = reader.ReadInt32();
-            m_TextureParams = new TextureParameter[numTextureParams];
+            MTextureParams = new TextureParameter[numTextureParams];
             for (int i = 0; i < numTextureParams; i++)
             {
-                m_TextureParams[i] = new TextureParameter(reader);
+                MTextureParams[i] = new TextureParameter(reader);
             }
 
             int numBufferParams = reader.ReadInt32();
-            m_BufferParams = new BufferBinding[numBufferParams];
+            MBufferParams = new BufferBinding[numBufferParams];
             for (int i = 0; i < numBufferParams; i++)
             {
-                m_BufferParams[i] = new BufferBinding(reader);
+                MBufferParams[i] = new BufferBinding(reader);
             }
 
             int numConstantBuffers = reader.ReadInt32();
-            m_ConstantBuffers = new ConstantBuffer[numConstantBuffers];
+            MConstantBuffers = new ConstantBuffer[numConstantBuffers];
             for (int i = 0; i < numConstantBuffers; i++)
             {
-                m_ConstantBuffers[i] = new ConstantBuffer(reader);
+                MConstantBuffers[i] = new ConstantBuffer(reader);
             }
 
             int numConstantBufferBindings = reader.ReadInt32();
-            m_ConstantBufferBindings = new BufferBinding[numConstantBufferBindings];
+            MConstantBufferBindings = new BufferBinding[numConstantBufferBindings];
             for (int i = 0; i < numConstantBufferBindings; i++)
             {
-                m_ConstantBufferBindings[i] = new BufferBinding(reader);
+                MConstantBufferBindings[i] = new BufferBinding(reader);
             }
 
-            int numUAVParams = reader.ReadInt32();
-            m_UAVParams = new UAVParameter[numUAVParams];
-            for (int i = 0; i < numUAVParams; i++)
+            int numUavParams = reader.ReadInt32();
+            MUavParams = new UavParameter[numUavParams];
+            for (int i = 0; i < numUavParams; i++)
             {
-                m_UAVParams[i] = new UAVParameter(reader);
+                MUavParams[i] = new UavParameter(reader);
             }
 
             int numSamplers = reader.ReadInt32();
-            m_Samplers = new SamplerParameter[numSamplers];
+            MSamplers = new SamplerParameter[numSamplers];
             for (int i = 0; i < numSamplers; i++)
             {
-                m_Samplers[i] = new SamplerParameter(reader);
+                MSamplers[i] = new SamplerParameter(reader);
             }
         }
     }
 
     public class SerializedSubProgram
     {
-        public uint m_BlobIndex;
-        public ParserBindChannels m_Channels;
-        public ushort[] m_KeywordIndices;
-        public sbyte m_ShaderHardwareTier;
-        public ShaderGpuProgramType m_GpuProgramType;
-        public SerializedProgramParameters m_Parameters;
-        public VectorParameter[] m_VectorParams;
-        public MatrixParameter[] m_MatrixParams;
-        public TextureParameter[] m_TextureParams;
-        public BufferBinding[] m_BufferParams;
-        public ConstantBuffer[] m_ConstantBuffers;
-        public BufferBinding[] m_ConstantBufferBindings;
-        public UAVParameter[] m_UAVParams;
-        public SamplerParameter[] m_Samplers;
+        public uint MBlobIndex;
+        public ParserBindChannels MChannels;
+        public ushort[] MKeywordIndices;
+        public sbyte MShaderHardwareTier;
+        public ShaderGpuProgramType MGpuProgramType;
+        public SerializedProgramParameters MParameters;
+        public VectorParameter[] MVectorParams;
+        public MatrixParameter[] MMatrixParams;
+        public TextureParameter[] MTextureParams;
+        public BufferBinding[] MBufferParams;
+        public ConstantBuffer[] MConstantBuffers;
+        public BufferBinding[] MConstantBufferBindings;
+        public UavParameter[] MUavParams;
+        public SamplerParameter[] MSamplers;
 
         public SerializedSubProgram(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_BlobIndex = reader.ReadUInt32();
-            m_Channels = new ParserBindChannels(reader);
+            MBlobIndex = reader.ReadUInt32();
+            MChannels = new ParserBindChannels(reader);
 
             if ((version[0] >= 2019 && version[0] < 2021) || (version[0] == 2021 && version[1] < 2)) //2019 ~2021.1
             {
-                var m_GlobalKeywordIndices = reader.ReadUInt16Array();
+                var mGlobalKeywordIndices = reader.ReadUInt16Array();
                 reader.AlignStream();
-                var m_LocalKeywordIndices = reader.ReadUInt16Array();
+                var mLocalKeywordIndices = reader.ReadUInt16Array();
                 reader.AlignStream();
             }
             else
             {
-                m_KeywordIndices = reader.ReadUInt16Array();
+                MKeywordIndices = reader.ReadUInt16Array();
                 if (version[0] >= 2017) //2017 and up
                 {
                     reader.AlignStream();
                 }
             }
 
-            m_ShaderHardwareTier = reader.ReadSByte();
-            m_GpuProgramType = (ShaderGpuProgramType)reader.ReadSByte();
+            MShaderHardwareTier = reader.ReadSByte();
+            MGpuProgramType = (ShaderGpuProgramType)reader.ReadSByte();
             reader.AlignStream();
 
             if ((version[0] == 2020 && version[1] > 3) ||
@@ -610,66 +610,66 @@ namespace AssetStudio
                (version[0] == 2021 && version[1] > 1) ||
                (version[0] == 2021 && version[1] == 1 && version[2] >= 1)) //2021.1.1f1 and up
             {
-                m_Parameters = new SerializedProgramParameters(reader);
+                MParameters = new SerializedProgramParameters(reader);
             }
             else
             {
                 int numVectorParams = reader.ReadInt32();
-                m_VectorParams = new VectorParameter[numVectorParams];
+                MVectorParams = new VectorParameter[numVectorParams];
                 for (int i = 0; i < numVectorParams; i++)
                 {
-                    m_VectorParams[i] = new VectorParameter(reader);
+                    MVectorParams[i] = new VectorParameter(reader);
                 }
 
                 int numMatrixParams = reader.ReadInt32();
-                m_MatrixParams = new MatrixParameter[numMatrixParams];
+                MMatrixParams = new MatrixParameter[numMatrixParams];
                 for (int i = 0; i < numMatrixParams; i++)
                 {
-                    m_MatrixParams[i] = new MatrixParameter(reader);
+                    MMatrixParams[i] = new MatrixParameter(reader);
                 }
 
                 int numTextureParams = reader.ReadInt32();
-                m_TextureParams = new TextureParameter[numTextureParams];
+                MTextureParams = new TextureParameter[numTextureParams];
                 for (int i = 0; i < numTextureParams; i++)
                 {
-                    m_TextureParams[i] = new TextureParameter(reader);
+                    MTextureParams[i] = new TextureParameter(reader);
                 }
 
                 int numBufferParams = reader.ReadInt32();
-                m_BufferParams = new BufferBinding[numBufferParams];
+                MBufferParams = new BufferBinding[numBufferParams];
                 for (int i = 0; i < numBufferParams; i++)
                 {
-                    m_BufferParams[i] = new BufferBinding(reader);
+                    MBufferParams[i] = new BufferBinding(reader);
                 }
 
                 int numConstantBuffers = reader.ReadInt32();
-                m_ConstantBuffers = new ConstantBuffer[numConstantBuffers];
+                MConstantBuffers = new ConstantBuffer[numConstantBuffers];
                 for (int i = 0; i < numConstantBuffers; i++)
                 {
-                    m_ConstantBuffers[i] = new ConstantBuffer(reader);
+                    MConstantBuffers[i] = new ConstantBuffer(reader);
                 }
 
                 int numConstantBufferBindings = reader.ReadInt32();
-                m_ConstantBufferBindings = new BufferBinding[numConstantBufferBindings];
+                MConstantBufferBindings = new BufferBinding[numConstantBufferBindings];
                 for (int i = 0; i < numConstantBufferBindings; i++)
                 {
-                    m_ConstantBufferBindings[i] = new BufferBinding(reader);
+                    MConstantBufferBindings[i] = new BufferBinding(reader);
                 }
 
-                int numUAVParams = reader.ReadInt32();
-                m_UAVParams = new UAVParameter[numUAVParams];
-                for (int i = 0; i < numUAVParams; i++)
+                int numUavParams = reader.ReadInt32();
+                MUavParams = new UavParameter[numUavParams];
+                for (int i = 0; i < numUavParams; i++)
                 {
-                    m_UAVParams[i] = new UAVParameter(reader);
+                    MUavParams[i] = new UavParameter(reader);
                 }
 
                 if (version[0] >= 2017) //2017 and up
                 {
                     int numSamplers = reader.ReadInt32();
-                    m_Samplers = new SamplerParameter[numSamplers];
+                    MSamplers = new SamplerParameter[numSamplers];
                     for (int i = 0; i < numSamplers; i++)
                     {
-                        m_Samplers[i] = new SamplerParameter(reader);
+                        MSamplers[i] = new SamplerParameter(reader);
                     }
                 }
             }
@@ -678,11 +678,11 @@ namespace AssetStudio
             {
                 if (version[0] >= 2021) //2021.1 and up
                 {
-                    var m_ShaderRequirements = reader.ReadInt64();
+                    var mShaderRequirements = reader.ReadInt64();
                 }
                 else
                 {
-                    var m_ShaderRequirements = reader.ReadInt32();
+                    var mShaderRequirements = reader.ReadInt32();
                 }
             }
         }
@@ -690,19 +690,19 @@ namespace AssetStudio
 
     public class SerializedProgram
     {
-        public SerializedSubProgram[] m_SubPrograms;
-        public SerializedProgramParameters m_CommonParameters;
-        public ushort[] m_SerializedKeywordStateMask;
+        public SerializedSubProgram[] MSubPrograms;
+        public SerializedProgramParameters MCommonParameters;
+        public ushort[] MSerializedKeywordStateMask;
 
         public SerializedProgram(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
             int numSubPrograms = reader.ReadInt32();
-            m_SubPrograms = new SerializedSubProgram[numSubPrograms];
+            MSubPrograms = new SerializedSubProgram[numSubPrograms];
             for (int i = 0; i < numSubPrograms; i++)
             {
-                m_SubPrograms[i] = new SerializedSubProgram(reader);
+                MSubPrograms[i] = new SerializedSubProgram(reader);
             }
 
             if ((version[0] == 2020 && version[1] > 3) ||
@@ -711,12 +711,12 @@ namespace AssetStudio
                (version[0] == 2021 && version[1] > 1) ||
                (version[0] == 2021 && version[1] == 1 && version[2] >= 1)) //2021.1.1f1 and up
             {
-                m_CommonParameters = new SerializedProgramParameters(reader);
+                MCommonParameters = new SerializedProgramParameters(reader);
             }
 
             if (version[0] > 2022 || (version[0] == 2022 && version[1] >= 1)) //2022.1 and up
             {
-                m_SerializedKeywordStateMask = reader.ReadUInt16Array();
+                MSerializedKeywordStateMask = reader.ReadUInt16Array();
                 reader.AlignStream();
             }
         }
@@ -731,83 +731,83 @@ namespace AssetStudio
 
     public class SerializedPass
     {
-        public Hash128[] m_EditorDataHash;
-        public byte[] m_Platforms;
-        public ushort[] m_LocalKeywordMask;
-        public ushort[] m_GlobalKeywordMask;
-        public KeyValuePair<string, int>[] m_NameIndices;
-        public PassType m_Type;
-        public SerializedShaderState m_State;
-        public uint m_ProgramMask;
-        public SerializedProgram progVertex;
-        public SerializedProgram progFragment;
-        public SerializedProgram progGeometry;
-        public SerializedProgram progHull;
-        public SerializedProgram progDomain;
-        public SerializedProgram progRayTracing;
-        public bool m_HasInstancingVariant;
-        public string m_UseName;
-        public string m_Name;
-        public string m_TextureName;
-        public SerializedTagMap m_Tags;
-        public ushort[] m_SerializedKeywordStateMask;
+        public Hash128[] MEditorDataHash;
+        public byte[] MPlatforms;
+        public ushort[] MLocalKeywordMask;
+        public ushort[] MGlobalKeywordMask;
+        public KeyValuePair<string, int>[] MNameIndices;
+        public PassType MType;
+        public SerializedShaderState MState;
+        public uint MProgramMask;
+        public SerializedProgram ProgVertex;
+        public SerializedProgram ProgFragment;
+        public SerializedProgram ProgGeometry;
+        public SerializedProgram ProgHull;
+        public SerializedProgram ProgDomain;
+        public SerializedProgram ProgRayTracing;
+        public bool MHasInstancingVariant;
+        public string MUseName;
+        public string MName;
+        public string MTextureName;
+        public SerializedTagMap MTags;
+        public ushort[] MSerializedKeywordStateMask;
 
         public SerializedPass(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
             if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
             {
                 int numEditorDataHash = reader.ReadInt32();
-                m_EditorDataHash = new Hash128[numEditorDataHash];
+                MEditorDataHash = new Hash128[numEditorDataHash];
                 for (int i = 0; i < numEditorDataHash; i++)
                 {
-                    m_EditorDataHash[i] = new Hash128(reader);
+                    MEditorDataHash[i] = new Hash128(reader);
                 }
                 reader.AlignStream();
-                m_Platforms = reader.ReadUInt8Array();
+                MPlatforms = reader.ReadUInt8Array();
                 reader.AlignStream();
                 if (version[0] < 2021 || (version[0] == 2021 && version[1] < 2)) //2021.1 and down
                 {
-                    m_LocalKeywordMask = reader.ReadUInt16Array();
+                    MLocalKeywordMask = reader.ReadUInt16Array();
                     reader.AlignStream();
-                    m_GlobalKeywordMask = reader.ReadUInt16Array();
+                    MGlobalKeywordMask = reader.ReadUInt16Array();
                     reader.AlignStream();
                 }
             }
 
             int numIndices = reader.ReadInt32();
-            m_NameIndices = new KeyValuePair<string, int>[numIndices];
+            MNameIndices = new KeyValuePair<string, int>[numIndices];
             for (int i = 0; i < numIndices; i++)
             {
-                m_NameIndices[i] = new KeyValuePair<string, int>(reader.ReadAlignedString(), reader.ReadInt32());
+                MNameIndices[i] = new KeyValuePair<string, int>(reader.ReadAlignedString(), reader.ReadInt32());
             }
 
-            m_Type = (PassType)reader.ReadInt32();
-            m_State = new SerializedShaderState(reader);
-            m_ProgramMask = reader.ReadUInt32();
-            progVertex = new SerializedProgram(reader);
-            progFragment = new SerializedProgram(reader);
-            progGeometry = new SerializedProgram(reader);
-            progHull = new SerializedProgram(reader);
-            progDomain = new SerializedProgram(reader);
+            MType = (PassType)reader.ReadInt32();
+            MState = new SerializedShaderState(reader);
+            MProgramMask = reader.ReadUInt32();
+            ProgVertex = new SerializedProgram(reader);
+            ProgFragment = new SerializedProgram(reader);
+            ProgGeometry = new SerializedProgram(reader);
+            ProgHull = new SerializedProgram(reader);
+            ProgDomain = new SerializedProgram(reader);
             if (version[0] > 2019 || (version[0] == 2019 && version[1] >= 3)) //2019.3 and up
             {
-                progRayTracing = new SerializedProgram(reader);
+                ProgRayTracing = new SerializedProgram(reader);
             }
-            m_HasInstancingVariant = reader.ReadBoolean();
+            MHasInstancingVariant = reader.ReadBoolean();
             if (version[0] >= 2018) //2018 and up
             {
-                var m_HasProceduralInstancingVariant = reader.ReadBoolean();
+                var mHasProceduralInstancingVariant = reader.ReadBoolean();
             }
             reader.AlignStream();
-            m_UseName = reader.ReadAlignedString();
-            m_Name = reader.ReadAlignedString();
-            m_TextureName = reader.ReadAlignedString();
-            m_Tags = new SerializedTagMap(reader);
+            MUseName = reader.ReadAlignedString();
+            MName = reader.ReadAlignedString();
+            MTextureName = reader.ReadAlignedString();
+            MTags = new SerializedTagMap(reader);
             if (version[0] == 2021 && version[1] >= 2) //2021.2 ~2021.x
             {
-                m_SerializedKeywordStateMask = reader.ReadUInt16Array();
+                MSerializedKeywordStateMask = reader.ReadUInt16Array();
                 reader.AlignStream();
             }
         }
@@ -815,118 +815,118 @@ namespace AssetStudio
 
     public class SerializedTagMap
     {
-        public KeyValuePair<string, string>[] tags;
+        public KeyValuePair<string, string>[] Tags;
 
         public SerializedTagMap(BinaryReader reader)
         {
             int numTags = reader.ReadInt32();
-            tags = new KeyValuePair<string, string>[numTags];
+            Tags = new KeyValuePair<string, string>[numTags];
             for (int i = 0; i < numTags; i++)
             {
-                tags[i] = new KeyValuePair<string, string>(reader.ReadAlignedString(), reader.ReadAlignedString());
+                Tags[i] = new KeyValuePair<string, string>(reader.ReadAlignedString(), reader.ReadAlignedString());
             }
         }
     }
 
     public class SerializedSubShader
     {
-        public SerializedPass[] m_Passes;
-        public SerializedTagMap m_Tags;
-        public int m_LOD;
+        public SerializedPass[] MPasses;
+        public SerializedTagMap MTags;
+        public int MLOD;
 
         public SerializedSubShader(ObjectReader reader)
         {
             int numPasses = reader.ReadInt32();
-            m_Passes = new SerializedPass[numPasses];
+            MPasses = new SerializedPass[numPasses];
             for (int i = 0; i < numPasses; i++)
             {
-                m_Passes[i] = new SerializedPass(reader);
+                MPasses[i] = new SerializedPass(reader);
             }
 
-            m_Tags = new SerializedTagMap(reader);
-            m_LOD = reader.ReadInt32();
+            MTags = new SerializedTagMap(reader);
+            MLOD = reader.ReadInt32();
         }
     }
 
     public class SerializedShaderDependency
     {
-        public string from;
-        public string to;
+        public string From;
+        public string To;
 
         public SerializedShaderDependency(BinaryReader reader)
         {
-            from = reader.ReadAlignedString();
-            to = reader.ReadAlignedString();
+            From = reader.ReadAlignedString();
+            To = reader.ReadAlignedString();
         }
     }
 
     public class SerializedCustomEditorForRenderPipeline
     {
-        public string customEditorName;
-        public string renderPipelineType;
+        public string CustomEditorName;
+        public string RenderPipelineType;
 
         public SerializedCustomEditorForRenderPipeline(BinaryReader reader)
         {
-            customEditorName = reader.ReadAlignedString();
-            renderPipelineType = reader.ReadAlignedString();
+            CustomEditorName = reader.ReadAlignedString();
+            RenderPipelineType = reader.ReadAlignedString();
         }
     }
 
     public class SerializedShader
     {
-        public SerializedProperties m_PropInfo;
-        public SerializedSubShader[] m_SubShaders;
-        public string[] m_KeywordNames;
-        public byte[] m_KeywordFlags;
-        public string m_Name;
-        public string m_CustomEditorName;
-        public string m_FallbackName;
-        public SerializedShaderDependency[] m_Dependencies;
-        public SerializedCustomEditorForRenderPipeline[] m_CustomEditorForRenderPipelines;
-        public bool m_DisableNoSubshadersMessage;
+        public SerializedProperties MPropInfo;
+        public SerializedSubShader[] MSubShaders;
+        public string[] MKeywordNames;
+        public byte[] MKeywordFlags;
+        public string MName;
+        public string MCustomEditorName;
+        public string MFallbackName;
+        public SerializedShaderDependency[] MDependencies;
+        public SerializedCustomEditorForRenderPipeline[] MCustomEditorForRenderPipelines;
+        public bool MDisableNoSubshadersMessage;
 
         public SerializedShader(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_PropInfo = new SerializedProperties(reader);
+            MPropInfo = new SerializedProperties(reader);
 
             int numSubShaders = reader.ReadInt32();
-            m_SubShaders = new SerializedSubShader[numSubShaders];
+            MSubShaders = new SerializedSubShader[numSubShaders];
             for (int i = 0; i < numSubShaders; i++)
             {
-                m_SubShaders[i] = new SerializedSubShader(reader);
+                MSubShaders[i] = new SerializedSubShader(reader);
             }
 
             if (version[0] > 2021 || (version[0] == 2021 && version[1] >= 2)) //2021.2 and up
             {
-                m_KeywordNames = reader.ReadStringArray();
-                m_KeywordFlags = reader.ReadUInt8Array();
+                MKeywordNames = reader.ReadStringArray();
+                MKeywordFlags = reader.ReadUInt8Array();
                 reader.AlignStream();
             }
 
-            m_Name = reader.ReadAlignedString();
-            m_CustomEditorName = reader.ReadAlignedString();
-            m_FallbackName = reader.ReadAlignedString();
+            MName = reader.ReadAlignedString();
+            MCustomEditorName = reader.ReadAlignedString();
+            MFallbackName = reader.ReadAlignedString();
 
             int numDependencies = reader.ReadInt32();
-            m_Dependencies = new SerializedShaderDependency[numDependencies];
+            MDependencies = new SerializedShaderDependency[numDependencies];
             for (int i = 0; i < numDependencies; i++)
             {
-                m_Dependencies[i] = new SerializedShaderDependency(reader);
+                MDependencies[i] = new SerializedShaderDependency(reader);
             }
 
             if (version[0] >= 2021) //2021.1 and up
             {
-                int m_CustomEditorForRenderPipelinesSize = reader.ReadInt32();
-                m_CustomEditorForRenderPipelines = new SerializedCustomEditorForRenderPipeline[m_CustomEditorForRenderPipelinesSize];
-                for (int i = 0; i < m_CustomEditorForRenderPipelinesSize; i++)
+                int mCustomEditorForRenderPipelinesSize = reader.ReadInt32();
+                MCustomEditorForRenderPipelines = new SerializedCustomEditorForRenderPipeline[mCustomEditorForRenderPipelinesSize];
+                for (int i = 0; i < mCustomEditorForRenderPipelinesSize; i++)
                 {
-                    m_CustomEditorForRenderPipelines[i] = new SerializedCustomEditorForRenderPipeline(reader);
+                    MCustomEditorForRenderPipelines[i] = new SerializedCustomEditorForRenderPipeline(reader);
                 }
             }
 
-            m_DisableNoSubshadersMessage = reader.ReadBoolean();
+            MDisableNoSubshadersMessage = reader.ReadBoolean();
             reader.AlignStream();
         }
     }
@@ -939,18 +939,18 @@ namespace AssetStudio
         Xbox360 = 2,
         PS3 = 3,
         D3D11 = 4,
-        GLES20 = 5,
+        Gles20 = 5,
         NaCl = 6,
         Flash = 7,
-        D3D11_9x = 8,
-        GLES3Plus = 9,
-        PSP2 = 10,
+        D3D119X = 8,
+        Gles3Plus = 9,
+        Psp2 = 10,
         PS4 = 11,
         XboxOne = 12,
-        PSM = 13,
+        Psm = 13,
         Metal = 14,
         OpenGLCore = 15,
-        N3DS = 16,
+        N3Ds = 16,
         WiiU = 17,
         Vulkan = 18,
         Switch = 19,
@@ -958,72 +958,72 @@ namespace AssetStudio
         GameCoreXboxOne = 21,
         GameCoreScarlett = 22,
         PS5 = 23,
-        PS5NGGC = 24
+        PS5Nggc = 24
     };
 
     public class Shader : NamedObject
     {
-        public byte[] m_Script;
+        public byte[] MScript;
         //5.3 - 5.4
-        public uint decompressedSize;
-        public byte[] m_SubProgramBlob;
+        public uint DecompressedSize;
+        public byte[] MSubProgramBlob;
         //5.5 and up
-        public SerializedShader m_ParsedForm;
-        public ShaderCompilerPlatform[] platforms;
-        public uint[][] offsets;
-        public uint[][] compressedLengths;
-        public uint[][] decompressedLengths;
-        public byte[] compressedBlob;
+        public SerializedShader MParsedForm;
+        public ShaderCompilerPlatform[] Platforms;
+        public uint[][] Offsets;
+        public uint[][] CompressedLengths;
+        public uint[][] DecompressedLengths;
+        public byte[] CompressedBlob;
 
         public Shader(ObjectReader reader) : base(reader)
         {
-            if (version[0] == 5 && version[1] >= 5 || version[0] > 5) //5.5 and up
+            if (Version[0] == 5 && Version[1] >= 5 || Version[0] > 5) //5.5 and up
             {
-                m_ParsedForm = new SerializedShader(reader);
-                platforms = reader.ReadUInt32Array().Select(x => (ShaderCompilerPlatform)x).ToArray();
-                if (version[0] > 2019 || (version[0] == 2019 && version[1] >= 3)) //2019.3 and up
+                MParsedForm = new SerializedShader(reader);
+                Platforms = reader.ReadUInt32Array().Select(x => (ShaderCompilerPlatform)x).ToArray();
+                if (Version[0] > 2019 || (Version[0] == 2019 && Version[1] >= 3)) //2019.3 and up
                 {
-                    offsets = reader.ReadUInt32ArrayArray();
-                    compressedLengths = reader.ReadUInt32ArrayArray();
-                    decompressedLengths = reader.ReadUInt32ArrayArray();
+                    Offsets = reader.ReadUInt32ArrayArray();
+                    CompressedLengths = reader.ReadUInt32ArrayArray();
+                    DecompressedLengths = reader.ReadUInt32ArrayArray();
                 }
                 else
                 {
-                    offsets = reader.ReadUInt32Array().Select(x => new[] { x }).ToArray();
-                    compressedLengths = reader.ReadUInt32Array().Select(x => new[] { x }).ToArray();
-                    decompressedLengths = reader.ReadUInt32Array().Select(x => new[] { x }).ToArray();
+                    Offsets = reader.ReadUInt32Array().Select(x => new[] { x }).ToArray();
+                    CompressedLengths = reader.ReadUInt32Array().Select(x => new[] { x }).ToArray();
+                    DecompressedLengths = reader.ReadUInt32Array().Select(x => new[] { x }).ToArray();
                 }
-                compressedBlob = reader.ReadUInt8Array();
+                CompressedBlob = reader.ReadUInt8Array();
                 reader.AlignStream();
 
-                var m_DependenciesCount = reader.ReadInt32();
-                for (int i = 0; i < m_DependenciesCount; i++)
+                var mDependenciesCount = reader.ReadInt32();
+                for (int i = 0; i < mDependenciesCount; i++)
                 {
                     new PPtr<Shader>(reader);
                 }
 
-                if (version[0] >= 2018)
+                if (Version[0] >= 2018)
                 {
-                    var m_NonModifiableTexturesCount = reader.ReadInt32();
-                    for (int i = 0; i < m_NonModifiableTexturesCount; i++)
+                    var mNonModifiableTexturesCount = reader.ReadInt32();
+                    for (int i = 0; i < mNonModifiableTexturesCount; i++)
                     {
                         var first = reader.ReadAlignedString();
                         new PPtr<Texture>(reader);
                     }
                 }
 
-                var m_ShaderIsBaked = reader.ReadBoolean();
+                var mShaderIsBaked = reader.ReadBoolean();
                 reader.AlignStream();
             }
             else
             {
-                m_Script = reader.ReadUInt8Array();
+                MScript = reader.ReadUInt8Array();
                 reader.AlignStream();
-                var m_PathName = reader.ReadAlignedString();
-                if (version[0] == 5 && version[1] >= 3) //5.3 - 5.4
+                var mPathName = reader.ReadAlignedString();
+                if (Version[0] == 5 && Version[1] >= 3) //5.3 - 5.4
                 {
-                    decompressedSize = reader.ReadUInt32();
-                    m_SubProgramBlob = reader.ReadUInt8Array();
+                    DecompressedSize = reader.ReadUInt32();
+                    MSubProgramBlob = reader.ReadUInt8Array();
                 }
             }
         }

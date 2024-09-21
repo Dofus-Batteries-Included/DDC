@@ -9,10 +9,10 @@ namespace AssetStudio
         public string FileName;
         public FileType FileType;
 
-        private static readonly byte[] gzipMagic = { 0x1f, 0x8b };
-        private static readonly byte[] brotliMagic = { 0x62, 0x72, 0x6F, 0x74, 0x6C, 0x69 };
-        private static readonly byte[] zipMagic = { 0x50, 0x4B, 0x03, 0x04 };
-        private static readonly byte[] zipSpannedMagic = { 0x50, 0x4B, 0x07, 0x08 };
+        private static readonly byte[] GzipMagic = { 0x1f, 0x8b };
+        private static readonly byte[] BrotliMagic = { 0x62, 0x72, 0x6F, 0x74, 0x6C, 0x69 };
+        private static readonly byte[] ZipMagic = { 0x50, 0x4B, 0x03, 0x04 };
+        private static readonly byte[] ZipSpannedMagic = { 0x50, 0x4B, 0x07, 0x08 };
 
         public FileReader(string path) : this(path, File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) { }
 
@@ -40,14 +40,14 @@ namespace AssetStudio
                     {
                         byte[] magic = ReadBytes(2);
                         Position = 0;
-                        if (gzipMagic.SequenceEqual(magic))
+                        if (GzipMagic.SequenceEqual(magic))
                         {
                             return FileType.GZipFile;
                         }
                         Position = 0x20;
                         magic = ReadBytes(6);
                         Position = 0;
-                        if (brotliMagic.SequenceEqual(magic))
+                        if (BrotliMagic.SequenceEqual(magic))
                         {
                             return FileType.BrotliFile;
                         }
@@ -57,7 +57,7 @@ namespace AssetStudio
                         }
                         magic = ReadBytes(4);
                         Position = 0;
-                        if (zipMagic.SequenceEqual(magic) || zipSpannedMagic.SequenceEqual(magic))
+                        if (ZipMagic.SequenceEqual(magic) || ZipSpannedMagic.SequenceEqual(magic))
                             return FileType.ZipFile;
                         return FileType.ResourceFile;
                     }
@@ -71,29 +71,29 @@ namespace AssetStudio
             {
                 return false;
             }
-            var m_MetadataSize = ReadUInt32();
-            long m_FileSize = ReadUInt32();
-            var m_Version = ReadUInt32();
-            long m_DataOffset = ReadUInt32();
-            var m_Endianess = ReadByte();
-            var m_Reserved = ReadBytes(3);
-            if (m_Version >= 22)
+            var mMetadataSize = ReadUInt32();
+            long mFileSize = ReadUInt32();
+            var mVersion = ReadUInt32();
+            long mDataOffset = ReadUInt32();
+            var mEndianess = ReadByte();
+            var mReserved = ReadBytes(3);
+            if (mVersion >= 22)
             {
                 if (fileSize < 48)
                 {
                     Position = 0;
                     return false;
                 }
-                m_MetadataSize = ReadUInt32();
-                m_FileSize = ReadInt64();
-                m_DataOffset = ReadInt64();
+                mMetadataSize = ReadUInt32();
+                mFileSize = ReadInt64();
+                mDataOffset = ReadInt64();
             }
             Position = 0;
-            if (m_FileSize != fileSize)
+            if (mFileSize != fileSize)
             {
                 return false;
             }
-            if (m_DataOffset > fileSize)
+            if (mDataOffset > fileSize)
             {
                 return false;
             }

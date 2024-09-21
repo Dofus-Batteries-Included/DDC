@@ -4,217 +4,217 @@ namespace AssetStudio
 {
     public class StreamingInfo
     {
-        public long offset; //ulong
-        public uint size;
-        public string path;
+        public long Offset; //ulong
+        public uint Size;
+        public string Path;
 
         public StreamingInfo(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
             if (version[0] >= 2020) //2020.1 and up
             {
-                offset = reader.ReadInt64();
+                Offset = reader.ReadInt64();
             }
             else
             {
-                offset = reader.ReadUInt32();
+                Offset = reader.ReadUInt32();
             }
-            size = reader.ReadUInt32();
-            path = reader.ReadAlignedString();
+            Size = reader.ReadUInt32();
+            Path = reader.ReadAlignedString();
         }
     }
 
     public class GLTextureSettings
     {
-        public int m_FilterMode;
-        public int m_Aniso;
-        public float m_MipBias;
-        public int m_WrapMode;
+        public int MFilterMode;
+        public int MAniso;
+        public float MMipBias;
+        public int MWrapMode;
 
         public GLTextureSettings(ObjectReader reader)
         {
-            var version = reader.version;
+            var version = reader.Version;
 
-            m_FilterMode = reader.ReadInt32();
-            m_Aniso = reader.ReadInt32();
-            m_MipBias = reader.ReadSingle();
+            MFilterMode = reader.ReadInt32();
+            MAniso = reader.ReadInt32();
+            MMipBias = reader.ReadSingle();
             if (version[0] >= 2017)//2017.x and up
             {
-                m_WrapMode = reader.ReadInt32(); //m_WrapU
-                int m_WrapV = reader.ReadInt32();
-                int m_WrapW = reader.ReadInt32();
+                MWrapMode = reader.ReadInt32(); //m_WrapU
+                int mWrapV = reader.ReadInt32();
+                int mWrapW = reader.ReadInt32();
             }
             else
             {
-                m_WrapMode = reader.ReadInt32();
+                MWrapMode = reader.ReadInt32();
             }
         }
     }
 
     public sealed class Texture2D : Texture
     {
-        public int m_Width;
-        public int m_Height;
-        public TextureFormat m_TextureFormat;
-        public bool m_MipMap;
-        public int m_MipCount;
-        public GLTextureSettings m_TextureSettings;
-        public ResourceReader image_data;
-        public StreamingInfo m_StreamData;
+        public int MWidth;
+        public int MHeight;
+        public TextureFormat MTextureFormat;
+        public bool MMipMap;
+        public int MMipCount;
+        public GLTextureSettings MTextureSettings;
+        public ResourceReader ImageData;
+        public StreamingInfo MStreamData;
 
         public Texture2D(ObjectReader reader) : base(reader)
         {
-            m_Width = reader.ReadInt32();
-            m_Height = reader.ReadInt32();
-            var m_CompleteImageSize = reader.ReadInt32();
-            if (version[0] >= 2020) //2020.1 and up
+            MWidth = reader.ReadInt32();
+            MHeight = reader.ReadInt32();
+            var mCompleteImageSize = reader.ReadInt32();
+            if (Version[0] >= 2020) //2020.1 and up
             {
-                var m_MipsStripped = reader.ReadInt32();
+                var mMipsStripped = reader.ReadInt32();
             }
-            m_TextureFormat = (TextureFormat)reader.ReadInt32();
-            if (version[0] < 5 || (version[0] == 5 && version[1] < 2)) //5.2 down
+            MTextureFormat = (TextureFormat)reader.ReadInt32();
+            if (Version[0] < 5 || (Version[0] == 5 && Version[1] < 2)) //5.2 down
             {
-                m_MipMap = reader.ReadBoolean();
+                MMipMap = reader.ReadBoolean();
             }
             else
             {
-                m_MipCount = reader.ReadInt32();
+                MMipCount = reader.ReadInt32();
             }
-            if (version[0] > 2 || (version[0] == 2 && version[1] >= 6)) //2.6.0 and up
+            if (Version[0] > 2 || (Version[0] == 2 && Version[1] >= 6)) //2.6.0 and up
             {
-                var m_IsReadable = reader.ReadBoolean();
+                var mIsReadable = reader.ReadBoolean();
             }
-            if (version[0] >= 2020) //2020.1 and up
+            if (Version[0] >= 2020) //2020.1 and up
             {
-                var m_IsPreProcessed = reader.ReadBoolean();
+                var mIsPreProcessed = reader.ReadBoolean();
             }
-            if (version[0] > 2019 || (version[0] == 2019 && version[1] >= 3)) //2019.3 and up
+            if (Version[0] > 2019 || (Version[0] == 2019 && Version[1] >= 3)) //2019.3 and up
             {
-                var m_IgnoreMasterTextureLimit = reader.ReadBoolean();
+                var mIgnoreMasterTextureLimit = reader.ReadBoolean();
             }
-            if (version[0] >= 3) //3.0.0 - 5.4
+            if (Version[0] >= 3) //3.0.0 - 5.4
             {
-                if (version[0] < 5 || (version[0] == 5 && version[1] <= 4))
+                if (Version[0] < 5 || (Version[0] == 5 && Version[1] <= 4))
                 {
-                    var m_ReadAllowed = reader.ReadBoolean();
+                    var mReadAllowed = reader.ReadBoolean();
                 }
             }
-            if (version[0] > 2018 || (version[0] == 2018 && version[1] >= 2)) //2018.2 and up
+            if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 2)) //2018.2 and up
             {
-                var m_StreamingMipmaps = reader.ReadBoolean();
+                var mStreamingMipmaps = reader.ReadBoolean();
             }
             reader.AlignStream();
-            if (version[0] > 2018 || (version[0] == 2018 && version[1] >= 2)) //2018.2 and up
+            if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 2)) //2018.2 and up
             {
-                var m_StreamingMipmapsPriority = reader.ReadInt32();
+                var mStreamingMipmapsPriority = reader.ReadInt32();
             }
-            var m_ImageCount = reader.ReadInt32();
-            var m_TextureDimension = reader.ReadInt32();
-            m_TextureSettings = new GLTextureSettings(reader);
-            if (version[0] >= 3) //3.0 and up
+            var mImageCount = reader.ReadInt32();
+            var mTextureDimension = reader.ReadInt32();
+            MTextureSettings = new GLTextureSettings(reader);
+            if (Version[0] >= 3) //3.0 and up
             {
-                var m_LightmapFormat = reader.ReadInt32();
+                var mLightmapFormat = reader.ReadInt32();
             }
-            if (version[0] > 3 || (version[0] == 3 && version[1] >= 5)) //3.5.0 and up
+            if (Version[0] > 3 || (Version[0] == 3 && Version[1] >= 5)) //3.5.0 and up
             {
-                var m_ColorSpace = reader.ReadInt32();
+                var mColorSpace = reader.ReadInt32();
             }
-            if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
+            if (Version[0] > 2020 || (Version[0] == 2020 && Version[1] >= 2)) //2020.2 and up
             {
-                var m_PlatformBlob = reader.ReadUInt8Array();
+                var mPlatformBlob = reader.ReadUInt8Array();
                 reader.AlignStream();
             }
-            var image_data_size = reader.ReadInt32();
-            if (image_data_size == 0 && ((version[0] == 5 && version[1] >= 3) || version[0] > 5))//5.3.0 and up
+            var imageDataSize = reader.ReadInt32();
+            if (imageDataSize == 0 && ((Version[0] == 5 && Version[1] >= 3) || Version[0] > 5))//5.3.0 and up
             {
-                m_StreamData = new StreamingInfo(reader);
+                MStreamData = new StreamingInfo(reader);
             }
 
             ResourceReader resourceReader;
-            if (!string.IsNullOrEmpty(m_StreamData?.path))
+            if (!string.IsNullOrEmpty(MStreamData?.Path))
             {
-                resourceReader = new ResourceReader(m_StreamData.path, assetsFile, m_StreamData.offset, m_StreamData.size);
+                resourceReader = new ResourceReader(MStreamData.Path, AssetsFile, MStreamData.Offset, MStreamData.Size);
             }
             else
             {
-                resourceReader = new ResourceReader(reader, reader.BaseStream.Position, image_data_size);
+                resourceReader = new ResourceReader(reader, reader.BaseStream.Position, imageDataSize);
             }
-            image_data = resourceReader;
+            ImageData = resourceReader;
         }
     }
 
     public enum TextureFormat
     {
         Alpha8 = 1,
-        ARGB4444,
+        Argb4444,
         RGB24,
-        RGBA32,
-        ARGB32,
-        ARGBFloat,
+        Rgba32,
+        Argb32,
+        ArgbFloat,
         RGB565,
-        BGR24,
+        Bgr24,
         R16,
-        DXT1,
-        DXT3,
-        DXT5,
-        RGBA4444,
-        BGRA32,
+        Dxt1,
+        Dxt3,
+        Dxt5,
+        Rgba4444,
+        Bgra32,
         RHalf,
-        RGHalf,
-        RGBAHalf,
+        RgHalf,
+        RgbaHalf,
         RFloat,
-        RGFloat,
-        RGBAFloat,
-        YUY2,
-        RGB9e5Float,
+        RgFloat,
+        RgbaFloat,
+        Yuy2,
+        RGB9E5Float,
         RGBFloat,
         BC6H,
         BC7,
         BC4,
         BC5,
-        DXT1Crunched,
-        DXT5Crunched,
-        PVRTC_RGB2,
-        PVRTC_RGBA2,
-        PVRTC_RGB4,
-        PVRTC_RGBA4,
-        ETC_RGB4,
-        ATC_RGB4,
-        ATC_RGBA8,
-        EAC_R = 41,
-        EAC_R_SIGNED,
-        EAC_RG,
-        EAC_RG_SIGNED,
-        ETC2_RGB,
-        ETC2_RGBA1,
-        ETC2_RGBA8,
-        ASTC_RGB_4x4,
-        ASTC_RGB_5x5,
-        ASTC_RGB_6x6,
-        ASTC_RGB_8x8,
-        ASTC_RGB_10x10,
-        ASTC_RGB_12x12,
-        ASTC_RGBA_4x4,
-        ASTC_RGBA_5x5,
-        ASTC_RGBA_6x6,
-        ASTC_RGBA_8x8,
-        ASTC_RGBA_10x10,
-        ASTC_RGBA_12x12,
-        ETC_RGB4_3DS,
-        ETC_RGBA8_3DS,
-        RG16,
+        Dxt1Crunched,
+        Dxt5Crunched,
+        PVRTCRGB2,
+        PVRTCRgba2,
+        PVRTCRGB4,
+        PVRTCRgba4,
+        ETCRGB4,
+        AtcRGB4,
+        AtcRgba8,
+        EACR = 41,
+        EACRSigned,
+        EACRg,
+        EACRgSigned,
+        ETC2RGB,
+        ETC2Rgba1,
+        ETC2Rgba8,
+        AstcRGB4X4,
+        AstcRGB5X5,
+        AstcRGB6X6,
+        AstcRGB8X8,
+        AstcRGB10X10,
+        AstcRGB12X12,
+        AstcRgba4X4,
+        AstcRgba5X5,
+        AstcRgba6X6,
+        AstcRgba8X8,
+        AstcRgba10X10,
+        AstcRgba12X12,
+        ETCRGB43Ds,
+        ETCRgba83Ds,
+        Rg16,
         R8,
-        ETC_RGB4Crunched,
-        ETC2_RGBA8Crunched,
-        ASTC_HDR_4x4,
-        ASTC_HDR_5x5,
-        ASTC_HDR_6x6,
-        ASTC_HDR_8x8,
-        ASTC_HDR_10x10,
-        ASTC_HDR_12x12,
-        RG32,
+        ETCRGB4Crunched,
+        ETC2Rgba8Crunched,
+        AstcHDR4X4,
+        AstcHDR5X5,
+        AstcHDR6X6,
+        AstcHDR8X8,
+        AstcHDR10X10,
+        AstcHDR12X12,
+        Rg32,
         RGB48,
-        RGBA64
+        Rgba64
     }
 }

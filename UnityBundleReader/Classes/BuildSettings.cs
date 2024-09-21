@@ -7,18 +7,18 @@ namespace AssetStudio
 {
     public sealed class BuildSettings : Object
     {
-        public string m_Version;
+        public string MVersion;
 
         public BuildSettings(ObjectReader reader) : base(reader)
         {
             var levels = reader.ReadStringArray();
 
             var hasRenderTexture = reader.ReadBoolean();
-            var hasPROVersion = reader.ReadBoolean();
+            var hasProVersion = reader.ReadBoolean();
             var hasPublishingRights = reader.ReadBoolean();
             var hasShadows = reader.ReadBoolean();
 
-            m_Version = reader.ReadAlignedString();
+            MVersion = reader.ReadAlignedString();
         }
     }
 }
