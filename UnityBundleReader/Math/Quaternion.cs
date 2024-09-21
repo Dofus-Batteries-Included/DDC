@@ -52,13 +52,13 @@ public struct Quaternion : IEquatable<Quaternion>
 
     public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode()<<2 ^ Z.GetHashCode()>> 2 ^ W.GetHashCode()>> 1;
 
-    public override bool Equals(object other)
+    public override bool Equals(object? other)
     {
-        if (!(other is Quaternion))
+        if (other is not Quaternion quaternion)
         {
             return false;
         }
-        return Equals((Quaternion)other);
+        return Equals(quaternion);
     }
 
     public bool Equals(Quaternion other) => X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W);

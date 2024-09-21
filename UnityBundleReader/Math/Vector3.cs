@@ -46,13 +46,13 @@ public struct Vector3 : IEquatable<Vector3>
 
     public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode()<<2 ^ Z.GetHashCode()>> 2;
 
-    public override bool Equals(object other)
+    public override bool Equals(object? other)
     {
-        if (!(other is Vector3))
+        if (other is not Vector3 vector3)
         {
             return false;
         }
-        return Equals((Vector3)other);
+        return Equals(vector3);
     }
 
     public bool Equals(Vector3 other) => X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);

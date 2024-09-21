@@ -40,13 +40,13 @@ public struct Vector2 : IEquatable<Vector2>
 
     public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode()<<2;
 
-    public override bool Equals(object other)
+    public override bool Equals(object? other)
     {
-        if (!(other is Vector2))
+        if (other is not Vector2 vector2)
         {
             return false;
         }
-        return Equals((Vector2)other);
+        return Equals(vector2);
     }
 
     public bool Equals(Vector2 other) => X.Equals(other.X) && Y.Equals(other.Y);
