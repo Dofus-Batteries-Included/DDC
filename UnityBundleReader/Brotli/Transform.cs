@@ -33,7 +33,7 @@ sealed class Transform
     }
 
     internal static readonly Transform[] Transforms =
-    {
+    [
         new(string.Empty, WordTransformType.Identity, string.Empty), new(string.Empty, WordTransformType.Identity, " "), new(" ", WordTransformType.Identity, " "),
         new(string.Empty, WordTransformType.OmitFirst1, string.Empty), new(string.Empty, WordTransformType.UppercaseFirst, " "),
         new(string.Empty, WordTransformType.Identity, " the "), new(" ", WordTransformType.Identity, string.Empty), new("s ", WordTransformType.Identity, " "),
@@ -78,7 +78,7 @@ sealed class Transform
         new(string.Empty, WordTransformType.UppercaseAll, ". "), new(" ", WordTransformType.UppercaseAll, "."), new(string.Empty, WordTransformType.UppercaseAll, "='"),
         new(" ", WordTransformType.UppercaseAll, ". "), new(" ", WordTransformType.UppercaseFirst, "=\""), new(" ", WordTransformType.UppercaseAll, "='"),
         new(" ", WordTransformType.UppercaseFirst, "='")
-    };
+    ];
 
     internal static int TransformDictionaryWord(byte[] dst, int dstOffset, byte[] word, int wordOffset, int len, Transform transform)
     {

@@ -56,7 +56,7 @@ sealed class Dictionary
         static DataHolder()
         {
             Data = new byte[122784];
-            string[] chunks = { DataHolder0.GetData(), DataHolder1.GetData(), DataHolder2.GetData() };
+            string[] chunks = [DataHolder0.GetData(), DataHolder1.GetData(), DataHolder2.GetData()];
             int sum = 0;
             foreach (string chunk in chunks)
             {
@@ -79,10 +79,10 @@ sealed class Dictionary
 
     internal static byte[] GetData() => DataHolder.Data;
 
-    internal static readonly int[] OffsetsByLength =
-        { 0, 0, 0, 0, 0, 4096, 9216, 21504, 35840, 44032, 53248, 63488, 74752, 87040, 93696, 100864, 104704, 106752, 108928, 113536, 115968, 118528, 119872, 121280, 122016 };
+    internal static readonly int[] OffsetsByLength = [0, 0, 0, 0, 0, 4096, 9216, 21504, 35840, 44032, 53248, 63488, 74752, 87040, 93696, 100864, 104704, 106752, 108928, 113536, 115968, 118528, 119872, 121280, 122016
+    ];
 
-    internal static readonly int[] SizeBitsByLength = { 0, 0, 0, 0, 10, 10, 11, 11, 10, 10, 10, 10, 10, 9, 9, 8, 7, 7, 8, 7, 7, 6, 6, 5, 5 };
+    internal static readonly int[] SizeBitsByLength = [0, 0, 0, 0, 10, 10, 11, 11, 10, 10, 10, 10, 10, 9, 9, 8, 7, 7, 8, 7, 7, 6, 6, 5, 5];
 
     internal const int MinWordLength = 4;
 

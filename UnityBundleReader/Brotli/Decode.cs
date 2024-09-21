@@ -29,17 +29,17 @@ sealed class Decode
 
     const int CodeLengthCodes = 18;
 
-    static readonly int[] CodeLengthCodeOrder = { 1, 2, 3, 4, 0, 5, 17, 6, 16, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    static readonly int[] CodeLengthCodeOrder = [1, 2, 3, 4, 0, 5, 17, 6, 16, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
     const int NumDistanceShortCodes = 16;
 
-    static readonly int[] DistanceShortCodeIndexOffset = { 3, 2, 1, 0, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2 };
+    static readonly int[] DistanceShortCodeIndexOffset = [3, 2, 1, 0, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2];
 
-    static readonly int[] DistanceShortCodeValueOffset = { 0, 0, 0, 0, -1, 1, -2, 2, -3, 3, -1, 1, -2, 2, -3, 3 };
+    static readonly int[] DistanceShortCodeValueOffset = [0, 0, 0, 0, -1, 1, -2, 2, -3, 3, -1, 1, -2, 2, -3, 3];
 
     /// <summary>Static Huffman code for the code length code lengths.</summary>
-    static readonly int[] FixedTable =
-        { 0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040001, 0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040005 };
+    static readonly int[] FixedTable = [0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040001, 0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040005
+    ];
 
     /// <summary>Decodes a number in the range [0..255], by reading 1 - 11 bits.</summary>
     static int DecodeVarLenUnsignedByte(BitReader br)
@@ -654,7 +654,7 @@ sealed class Decode
         return state.OutputUsed < state.OutputLength;
     }
 
-    internal static void SetCustomDictionary(State state, byte[] data) => state.CustomDictionary = data == null ? new byte[0] : data;
+    internal static void SetCustomDictionary(State state, byte[] data) => state.CustomDictionary = data == null ? [] : data;
 
     /// <summary>Actual decompress implementation.</summary>
     internal static void Decompress(State state)

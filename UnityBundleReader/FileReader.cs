@@ -8,10 +8,10 @@ public class FileReader : EndianBinaryReader
     public readonly string FileName;
     public readonly FileType FileType;
 
-    static readonly byte[] GzipMagic = { 0x1f, 0x8b };
-    static readonly byte[] BrotliMagic = { 0x62, 0x72, 0x6F, 0x74, 0x6C, 0x69 };
-    static readonly byte[] ZipMagic = { 0x50, 0x4B, 0x03, 0x04 };
-    static readonly byte[] ZipSpannedMagic = { 0x50, 0x4B, 0x07, 0x08 };
+    static readonly byte[] GzipMagic = [0x1f, 0x8b];
+    static readonly byte[] BrotliMagic = [0x62, 0x72, 0x6F, 0x74, 0x6C, 0x69];
+    static readonly byte[] ZipMagic = [0x50, 0x4B, 0x03, 0x04];
+    static readonly byte[] ZipSpannedMagic = [0x50, 0x4B, 0x07, 0x08];
 
     public FileReader(string path) : this(path, File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) { }
 

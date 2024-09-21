@@ -14,9 +14,9 @@ public class AssetsManager
     internal readonly Dictionary<string, int> AssetsFileIndexCache = new(StringComparer.OrdinalIgnoreCase);
     internal readonly Dictionary<string, BinaryReader> ResourceFileReaders = new(StringComparer.OrdinalIgnoreCase);
 
-    readonly List<string> _importFiles = new();
+    readonly List<string> _importFiles = [];
     readonly HashSet<string> _importFilesHash = new(StringComparer.OrdinalIgnoreCase);
-    readonly HashSet<string> _noexistFiles = new(StringComparer.OrdinalIgnoreCase);
+    readonly HashSet<string> _noExistFiles = new(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> _assetsFileListHash = new(StringComparer.OrdinalIgnoreCase);
 
     public void LoadFiles(params string[] files)
@@ -53,7 +53,7 @@ public class AssetsManager
 
         _importFiles.Clear();
         _importFilesHash.Clear();
-        _noexistFiles.Clear();
+        _noExistFiles.Clear();
         _assetsFileListHash.Clear();
 
         ReadAssets();
@@ -110,7 +110,7 @@ public class AssetsManager
                     if (!_importFilesHash.Contains(sharedFileName))
                     {
                         string sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", sharedFileName);
-                        if (!_noexistFiles.Contains(sharedFilePath))
+                        if (!_noExistFiles.Contains(sharedFilePath))
                         {
                             if (!File.Exists(sharedFilePath))
                             {
@@ -127,7 +127,7 @@ public class AssetsManager
                             }
                             else
                             {
-                                _noexistFiles.Add(sharedFilePath);
+                                _noExistFiles.Add(sharedFilePath);
                             }
                         }
                     }
@@ -217,7 +217,7 @@ public class AssetsManager
             WebFile webFile = new(reader);
             foreach (StreamFile? file in webFile.FileList)
             {
-                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", file.fileName);
                 FileReader subReader = new(dummyPath, file.stream);
                 switch (subReader.FileType)
                 {
@@ -261,7 +261,7 @@ public class AssetsManager
                     if (entry.Name.Contains(".split"))
                     {
                         string baseName = Path.GetFileNameWithoutExtension(entry.Name);
-                        string basePath = Path.Combine(Path.GetDirectoryName(entry.FullName), baseName);
+                        string basePath = Path.Combine(Path.GetDirectoryName(entry.FullName) ?? ".", baseName);
                         if (!splitFiles.Contains(basePath))
                         {
                             splitFiles.Add(basePath);
@@ -284,7 +284,7 @@ public class AssetsManager
                         while (true)
                         {
                             string path = $"{basePath}.split{i++}";
-                            ZipArchiveEntry entry = archive.GetEntry(path);
+                            ZipArchiveEntry? entry = archive.GetEntry(path);
                             if (entry == null)
                             {
                                 break;
@@ -309,7 +309,7 @@ public class AssetsManager
                 {
                     try
                     {
-                        string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), reader.FileName, entry.FullName);
+                        string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", reader.FileName, entry.FullName);
                         // create a new stream
                         // - to store the deflated stream in
                         // - to keep the data for later extraction
@@ -325,10 +325,7 @@ public class AssetsManager
                         if (entryReader.FileType == FileType.ResourceFile)
                         {
                             entryReader.Position = 0;
-                            if (!ResourceFileReaders.ContainsKey(entry.Name))
-                            {
-                                ResourceFileReaders.Add(entry.Name, entryReader);
-                            }
+                            ResourceFileReaders.TryAdd(entry.Name, entryReader);
                         }
                     }
                     catch (Exception e)
@@ -385,105 +382,26 @@ public class AssetsManager
         int progressCount = AssetsFileList.Sum(x => x.MObjects.Count);
         int i = 0;
         Progress.Reset();
-        foreach (SerializedFile? assetsFile in AssetsFileList)
+        foreach (SerializedFile assetsFile in AssetsFileList)
         {
+            Logger.Info($"Reading assets from {assetsFile.FileName}...");
+
             foreach (ObjectInfo? objectInfo in assetsFile.MObjects)
             {
                 ObjectReader objectReader = new(assetsFile.Reader, assetsFile, objectInfo);
+                Logger.Info($"Reading object of type {objectReader.Type}...");
                 try
                 {
-                    Object obj;
                     switch (objectReader.Type)
                     {
-                        case ClassIDType.Animation:
-                            obj = new Animation(objectReader);
-                            break;
-                        case ClassIDType.AnimationClip:
-                            obj = new AnimationClip(objectReader);
-                            break;
-                        case ClassIDType.Animator:
-                            obj = new Animator(objectReader);
-                            break;
-                        case ClassIDType.AnimatorController:
-                            obj = new AnimatorController(objectReader);
-                            break;
-                        case ClassIDType.AnimatorOverrideController:
-                            obj = new AnimatorOverrideController(objectReader);
-                            break;
-                        case ClassIDType.AssetBundle:
-                            obj = new AssetBundle(objectReader);
-                            break;
-                        case ClassIDType.AudioClip:
-                            obj = new AudioClip(objectReader);
-                            break;
-                        case ClassIDType.Avatar:
-                            obj = new Avatar(objectReader);
-                            break;
-                        case ClassIDType.Font:
-                            obj = new Font(objectReader);
-                            break;
-                        case ClassIDType.GameObject:
-                            obj = new GameObject(objectReader);
-                            break;
-                        case ClassIDType.Material:
-                            obj = new Material(objectReader);
-                            break;
-                        case ClassIDType.Mesh:
-                            obj = new Mesh(objectReader);
-                            break;
-                        case ClassIDType.MeshFilter:
-                            obj = new MeshFilter(objectReader);
-                            break;
-                        case ClassIDType.MeshRenderer:
-                            obj = new MeshRenderer(objectReader);
-                            break;
                         case ClassIDType.MonoBehaviour:
-                            obj = new MonoBehaviour(objectReader);
-                            break;
-                        case ClassIDType.MonoScript:
-                            obj = new MonoScript(objectReader);
-                            break;
-                        case ClassIDType.MovieTexture:
-                            obj = new MovieTexture(objectReader);
-                            break;
-                        case ClassIDType.PlayerSettings:
-                            obj = new PlayerSettings(objectReader);
-                            break;
-                        case ClassIDType.RectTransform:
-                            obj = new RectTransform(objectReader);
-                            break;
-                        case ClassIDType.Shader:
-                            obj = new Shader(objectReader);
-                            break;
-                        case ClassIDType.SkinnedMeshRenderer:
-                            obj = new SkinnedMeshRenderer(objectReader);
-                            break;
-                        case ClassIDType.Sprite:
-                            obj = new Sprite(objectReader);
-                            break;
-                        case ClassIDType.SpriteAtlas:
-                            obj = new SpriteAtlas(objectReader);
-                            break;
-                        case ClassIDType.TextAsset:
-                            obj = new TextAsset(objectReader);
-                            break;
-                        case ClassIDType.Texture2D:
-                            obj = new Texture2D(objectReader);
-                            break;
-                        case ClassIDType.Transform:
-                            obj = new Transform(objectReader);
-                            break;
-                        case ClassIDType.VideoClip:
-                            obj = new VideoClip(objectReader);
-                            break;
-                        case ClassIDType.ResourceManager:
-                            obj = new ResourceManager(objectReader);
+                            Object obj = new MonoBehaviour(objectReader);
+                            assetsFile.AddObject(obj);
                             break;
                         default:
-                            obj = new Object(objectReader);
+                            Logger.Debug("Object skipped because it is not a MonoBehaviour.");
                             break;
                     }
-                    assetsFile.AddObject(obj);
                 }
                 catch (Exception e)
                 {
@@ -510,55 +428,60 @@ public class AssetsManager
         {
             foreach (Object? obj in assetsFile.Objects)
             {
-                if (obj is GameObject mGameObject)
+                switch (obj)
                 {
-                    foreach (PPtr<Component>? pptr in mGameObject.MComponents)
+                    case GameObject mGameObject:
                     {
-                        if (pptr.TryGet(out Component? mComponent))
+                        foreach (PPtr<Component>? pptr in mGameObject.MComponents)
                         {
-                            switch (mComponent)
+                            if (pptr.TryGet(out Component? mComponent))
                             {
-                                case Transform mTransform:
-                                    mGameObject.MTransform = mTransform;
-                                    break;
-                                case MeshRenderer mMeshRenderer:
-                                    mGameObject.MMeshRenderer = mMeshRenderer;
-                                    break;
-                                case MeshFilter mMeshFilter:
-                                    mGameObject.MMeshFilter = mMeshFilter;
-                                    break;
-                                case SkinnedMeshRenderer mSkinnedMeshRenderer:
-                                    mGameObject.MSkinnedMeshRenderer = mSkinnedMeshRenderer;
-                                    break;
-                                case Animator mAnimator:
-                                    mGameObject.MAnimator = mAnimator;
-                                    break;
-                                case Animation mAnimation:
-                                    mGameObject.MAnimation = mAnimation;
-                                    break;
-                            }
-                        }
-                    }
-                }
-                else if (obj is SpriteAtlas mSpriteAtlas)
-                {
-                    foreach (PPtr<Sprite>? mPackedSprite in mSpriteAtlas.MPackedSprites)
-                    {
-                        if (mPackedSprite.TryGet(out Sprite? mSprite))
-                        {
-                            if (mSprite.MSpriteAtlas.IsNull)
-                            {
-                                mSprite.MSpriteAtlas.Set(mSpriteAtlas);
-                            }
-                            else
-                            {
-                                mSprite.MSpriteAtlas.TryGet(out SpriteAtlas? mSpriteAtlaOld);
-                                if (mSpriteAtlaOld.MIsVariant)
+                                switch (mComponent)
                                 {
-                                    mSprite.MSpriteAtlas.Set(mSpriteAtlas);
+                                    case Transform mTransform:
+                                        mGameObject.MTransform = mTransform;
+                                        break;
+                                    case MeshRenderer mMeshRenderer:
+                                        mGameObject.MMeshRenderer = mMeshRenderer;
+                                        break;
+                                    case MeshFilter mMeshFilter:
+                                        mGameObject.MMeshFilter = mMeshFilter;
+                                        break;
+                                    case SkinnedMeshRenderer mSkinnedMeshRenderer:
+                                        mGameObject.MSkinnedMeshRenderer = mSkinnedMeshRenderer;
+                                        break;
+                                    case Animator mAnimator:
+                                        mGameObject.MAnimator = mAnimator;
+                                        break;
+                                    case Animation mAnimation:
+                                        mGameObject.MAnimation = mAnimation;
+                                        break;
                                 }
                             }
                         }
+                        break;
+                    }
+                    case SpriteAtlas mSpriteAtlas:
+                    {
+                        foreach (PPtr<Sprite>? mPackedSprite in mSpriteAtlas.MPackedSprites)
+                        {
+                            if (mPackedSprite.TryGet(out Sprite? mSprite))
+                            {
+                                if (mSprite.MSpriteAtlas.IsNull)
+                                {
+                                    mSprite.MSpriteAtlas.Set(mSpriteAtlas);
+                                }
+                                else
+                                {
+                                    mSprite.MSpriteAtlas.TryGet(out SpriteAtlas? mSpriteAtlaOld);
+                                    if (mSpriteAtlaOld.MIsVariant)
+                                    {
+                                        mSprite.MSpriteAtlas.Set(mSpriteAtlas);
+                                    }
+                                }
+                            }
+                        }
+                        break;
                     }
                 }
             }

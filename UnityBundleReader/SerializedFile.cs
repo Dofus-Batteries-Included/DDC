@@ -11,7 +11,7 @@ public class SerializedFile
     public readonly string FullName;
     public string OriginalPath;
     public readonly string FileName;
-    public int[] Version = { 0, 0, 0, 0 };
+    public int[] Version = [0, 0, 0, 0];
     public BuildType BuildType;
     public readonly List<Object> Objects;
     public readonly Dictionary<long, Object> ObjectsDic;
@@ -226,9 +226,9 @@ public class SerializedFile
         if (stringVersion != StrippedVersion)
         {
             UnityVersion = stringVersion;
-            string[] buildSplit = Regex.Replace(stringVersion, @"\d", "").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+            string[] buildSplit = Regex.Replace(stringVersion, @"\d", "").Split(["."], StringSplitOptions.RemoveEmptyEntries);
             BuildType = new BuildType(buildSplit[0]);
-            string[] versionSplit = Regex.Replace(stringVersion, @"\D", ".").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+            string[] versionSplit = Regex.Replace(stringVersion, @"\D", ".").Split(["."], StringSplitOptions.RemoveEmptyEntries);
             Version = versionSplit.Select(int.Parse).ToArray();
         }
     }
@@ -266,7 +266,7 @@ public class SerializedFile
         if (_mEnableTypeTree)
         {
             type.MType = new TypeTree();
-            type.MType.Nodes = new List<TypeTreeNode>();
+            type.MType.Nodes = [];
             if (Header.MVersion >= SerializedFileFormatVersion.Unknown12 || Header.MVersion == SerializedFileFormatVersion.Unknown10)
             {
                 TypeTreeBlobRead(type.MType);

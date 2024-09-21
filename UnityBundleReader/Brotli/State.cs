@@ -40,7 +40,7 @@ sealed class State
 
     internal readonly int[] BlockTypeRb = new int[6];
 
-    internal readonly int[] DistRb = { 16, 15, 11, 4 };
+    internal readonly int[] DistRb = [16, 15, 11, 4];
 
     internal int Pos = 0;
 
@@ -96,7 +96,7 @@ sealed class State
 
     internal long ExpectedTotalSize = 0;
 
-    internal byte[] CustomDictionary = new byte[0];
+    internal byte[] CustomDictionary = [];
 
     internal int BytesToIgnore = 0;
 

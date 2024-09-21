@@ -1490,10 +1490,10 @@ public class Encoder : ICoder, ISetCoderProperties, IWriteCoderProperties
 
 
     static readonly string[] _kMatchFinderIDs =
-    {
+    [
         "BT2",
         "BT4"
-    };
+    ];
 
     static int FindMatchFinder(string s)
     {

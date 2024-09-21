@@ -68,7 +68,7 @@ public class ImportedFrame
 
     public ImportedFrame FindRelativeFrameWithPath(string path)
     {
-        string[] subs = path.Split(new[] { '/' }, 2);
+        string[] subs = path.Split(['/'], 2);
         foreach (ImportedFrame? child in _children)
         {
             if (child.Name == subs[0])
@@ -239,9 +239,9 @@ public class ImportedKeyframedAnimation
 public class ImportedAnimationKeyframedTrack
 {
     public string Path { get; set; }
-    public List<ImportedKeyframe<Vector3>> Scalings = new();
-    public List<ImportedKeyframe<Vector3>> Rotations = new();
-    public List<ImportedKeyframe<Vector3>> Translations = new();
+    public List<ImportedKeyframe<Vector3>> Scalings = [];
+    public List<ImportedKeyframe<Vector3>> Rotations = [];
+    public List<ImportedKeyframe<Vector3>> Translations = [];
     public ImportedBlendShape BlendShape;
 }
 
@@ -260,7 +260,7 @@ public class ImportedKeyframe<T>
 public class ImportedBlendShape
 {
     public string ChannelName;
-    public List<ImportedKeyframe<float>> Keyframes = new();
+    public List<ImportedKeyframe<float>> Keyframes = [];
 }
 
 public class ImportedMorph

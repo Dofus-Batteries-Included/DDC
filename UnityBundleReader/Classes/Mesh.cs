@@ -222,7 +222,7 @@ public class VertexData
         for (int s = 0; s < Streams.Length; s++)
         {
             StreamInfo mStream = Streams[s];
-            BitArray channelMask = new(new[] { (int)mStream.ChannelMask });
+            BitArray channelMask = new([(int)mStream.ChannelMask]);
             byte offset = 0;
             for (int i = 0; i < 6; i++)
             {
@@ -469,7 +469,7 @@ public sealed class Mesh : NamedObject
     readonly CompressedMesh _mCompressedMesh;
     readonly StreamingInfo _mStreamData;
 
-    public readonly List<uint> MIndices = new();
+    public readonly List<uint> MIndices = [];
 
     public Mesh(ObjectReader reader) : base(reader)
     {
@@ -715,7 +715,7 @@ public sealed class Mesh : NamedObject
             if (mChannel.Dimension > 0)
             {
                 StreamInfo mStream = _mVertexData.Streams[mChannel.Stream];
-                BitArray channelMask = new(new[] { (int)mStream.ChannelMask });
+                BitArray channelMask = new([(int)mStream.ChannelMask]);
                 if (channelMask.Get(chn))
                 {
                     if (Version[0] < 2018 && chn == 2 && mChannel.Format == 2) //kShaderChannelColor && kChannelFormatColor

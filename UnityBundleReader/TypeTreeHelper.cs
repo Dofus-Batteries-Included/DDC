@@ -315,8 +315,10 @@ public static class TypeTreeHelper
 
     static List<TypeTreeNode> GetNodes(List<TypeTreeNode> mNodes, int index)
     {
-        List<TypeTreeNode> nodes = new();
-        nodes.Add(mNodes[index]);
+        List<TypeTreeNode> nodes =
+        [
+            mNodes[index]
+        ];
         int level = mNodes[index].MLevel;
         for (int i = index + 1; i < mNodes.Count; i++)
         {
