@@ -9,9 +9,9 @@ public class WebFile
 
     class WebData
     {
-        public int DataOffset;
-        public int DataLength;
-        public string Path;
+        public required int DataOffset;
+        public required int DataLength;
+        public required string Path;
     }
 
     public WebFile(EndianBinaryReader reader)
@@ -22,12 +22,11 @@ public class WebFile
         List<WebData> dataList = new();
         while (reader.BaseStream.Position < headLength)
         {
-            WebData data = new();
-            data.DataOffset = reader.ReadInt32();
-            data.DataLength = reader.ReadInt32();
+            int dataOffset = reader.ReadInt32();
+            int dataLength = reader.ReadInt32();
             int pathLength = reader.ReadInt32();
-            data.Path = Encoding.UTF8.GetString(reader.ReadBytes(pathLength));
-            dataList.Add(data);
+            string path = Encoding.UTF8.GetString(reader.ReadBytes(pathLength));
+            dataList.Add(new WebData { DataOffset = dataOffset, DataLength = dataLength, Path = path });
         }
         FileList = new StreamFile[dataList.Count];
         for (int i = 0; i < dataList.Count; i++)
