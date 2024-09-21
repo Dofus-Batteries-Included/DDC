@@ -366,14 +366,14 @@ public class AssetsManager
     {
         _logger.LogInformation("Reading assets...");
 
-        int progressCount = AssetsFileList.Sum(x => x.MObjects.Count);
+        int progressCount = AssetsFileList.Sum(x => x.ObjectInfos.Count);
         int i = 0;
         Progress.Reset();
         foreach (SerializedFile assetsFile in AssetsFileList)
         {
             _logger.LogInformation("Reading assets from {Name}...", assetsFile.FileName);
 
-            foreach (ObjectInfo? objectInfo in assetsFile.MObjects)
+            foreach (ObjectInfo? objectInfo in assetsFile.ObjectInfos)
             {
                 ObjectReader objectReader = new(assetsFile.Reader, assetsFile, objectInfo);
                 try

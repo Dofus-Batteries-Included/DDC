@@ -9,10 +9,10 @@ public class SerializedFile
     public readonly AssetsManager AssetsManager;
     public readonly FileReader Reader;
     public readonly string FullName;
-    public string OriginalPath;
+    public string? OriginalPath;
     public readonly string FileName;
     public int[] Version = [0, 0, 0, 0];
-    public BuildType BuildType;
+    public BuildType? BuildType;
     public readonly List<Object> Objects;
     public readonly Dictionary<long, Object> ObjectsDic;
 
@@ -22,10 +22,10 @@ public class SerializedFile
     readonly bool _mEnableTypeTree = true;
     public readonly List<SerializedType> MTypes;
     public readonly int BigIDEnabled;
-    public readonly List<ObjectInfo> MObjects;
+    public readonly List<ObjectInfo> ObjectInfos;
     public readonly List<FileIdentifier> Externals;
     public readonly List<SerializedType> RefTypes = [];
-    public string UserInformation;
+    public string? UserInformation;
 
     public SerializedFile(FileReader reader, AssetsManager assetsManager)
     {
@@ -100,7 +100,7 @@ public class SerializedFile
 
         // Read Objects
         int objectCount = reader.ReadInt32();
-        MObjects = new List<ObjectInfo>(objectCount);
+        ObjectInfos = new List<ObjectInfo>(objectCount);
         Objects = new List<Object>(objectCount);
         ObjectsDic = new Dictionary<long, Object>(objectCount);
         for (int i = 0; i < objectCount; i++)
@@ -159,7 +159,7 @@ public class SerializedFile
             {
                 objectInfo.Stripped = reader.ReadByte();
             }
-            MObjects.Add(objectInfo);
+            ObjectInfos.Add(objectInfo);
         }
 
         if (Header.MVersion >= SerializedFileFormatVersion.HasScriptTypeIndex)

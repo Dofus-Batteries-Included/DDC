@@ -8,7 +8,7 @@ public class Object
     public readonly ObjectReader Reader;
     public readonly long PathId;
     public readonly int[] Versions;
-    protected readonly BuildType BuildType;
+    protected readonly BuildType? BuildType;
     public readonly BuildTarget Platform;
     public ClassIDType Type;
     public readonly SerializedType? SerializedType;

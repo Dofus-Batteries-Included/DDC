@@ -12,7 +12,7 @@ public class ObjectReader : EndianBinaryReader
     public readonly SerializedFileFormatVersion MVersion;
 
     public int[] Version => AssetsFile.Version;
-    public BuildType BuildType => AssetsFile.BuildType;
+    public BuildType? BuildType => AssetsFile.BuildType;
 
     public ObjectReader(EndianBinaryReader reader, SerializedFile assetsFile, ObjectInfo objectInfo) : base(reader.BaseStream, reader.Endian)
     {
