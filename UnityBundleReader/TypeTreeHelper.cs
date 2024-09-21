@@ -26,12 +26,12 @@ public static class TypeTreeHelper
     static void ReadStringValue(StringBuilder sb, List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
     {
         TypeTreeNode mNode = mNodes[i];
-        int level = mNode.MLevel;
-        string varTypeStr = mNode.MType;
-        string varNameStr = mNode.MName;
+        int level = mNode.Level;
+        string varTypeStr = mNode.Type;
+        string varNameStr = mNode.Name;
         object value = null;
         bool append = true;
-        bool align = (mNode.MMetaFlag & 0x4000) != 0;
+        bool align = (mNode.MetaFlag & 0x4000) != 0;
         switch (varTypeStr)
         {
             case "SInt8":
@@ -87,7 +87,7 @@ public static class TypeTreeHelper
                 break;
             case "map":
             {
-                if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
+                if ((mNodes[i + 1].MetaFlag & 0x4000) != 0)
                 {
                     align = true;
                 }
@@ -124,9 +124,9 @@ public static class TypeTreeHelper
             }
             default:
             {
-                if (i < mNodes.Count - 1 && mNodes[i + 1].MType == "Array") //Array
+                if (i < mNodes.Count - 1 && mNodes[i + 1].Type == "Array") //Array
                 {
-                    if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
+                    if ((mNodes[i + 1].MetaFlag & 0x4000) != 0)
                     {
                         align = true;
                     }
@@ -175,7 +175,7 @@ public static class TypeTreeHelper
         for (int i = 1; i < mNodes.Count; i++)
         {
             TypeTreeNode mNode = mNodes[i];
-            string varNameStr = mNode.MName;
+            string varNameStr = mNode.Name;
             obj[varNameStr] = ReadValue(mNodes, reader, ref i);
         }
         long readed = reader.Position - reader.ByteStart;
@@ -189,9 +189,9 @@ public static class TypeTreeHelper
     static object ReadValue(List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
     {
         TypeTreeNode mNode = mNodes[i];
-        string varTypeStr = mNode.MType;
+        string varTypeStr = mNode.Type;
         object value;
-        bool align = (mNode.MMetaFlag & 0x4000) != 0;
+        bool align = (mNode.MetaFlag & 0x4000) != 0;
         switch (varTypeStr)
         {
             case "SInt8":
@@ -245,7 +245,7 @@ public static class TypeTreeHelper
                 break;
             case "map":
             {
-                if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
+                if ((mNodes[i + 1].MetaFlag & 0x4000) != 0)
                 {
                     align = true;
                 }
@@ -274,9 +274,9 @@ public static class TypeTreeHelper
             }
             default:
             {
-                if (i < mNodes.Count - 1 && mNodes[i + 1].MType == "Array") //Array
+                if (i < mNodes.Count - 1 && mNodes[i + 1].Type == "Array") //Array
                 {
-                    if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
+                    if ((mNodes[i + 1].MetaFlag & 0x4000) != 0)
                     {
                         align = true;
                     }
@@ -299,7 +299,7 @@ public static class TypeTreeHelper
                 for (int j = 1; j < @class.Count; j++)
                 {
                     TypeTreeNode classmember = @class[j];
-                    string name = classmember.MName;
+                    string name = classmember.Name;
                     obj[name] = ReadValue(@class, reader, ref j);
                 }
                 value = obj;
@@ -319,11 +319,11 @@ public static class TypeTreeHelper
         [
             mNodes[index]
         ];
-        int level = mNodes[index].MLevel;
+        int level = mNodes[index].Level;
         for (int i = index + 1; i < mNodes.Count; i++)
         {
             TypeTreeNode member = mNodes[i];
-            int level2 = member.MLevel;
+            int level2 = member.Level;
             if (level2 <= level)
             {
                 return nodes;

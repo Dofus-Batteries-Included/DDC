@@ -4,11 +4,11 @@ namespace UnityBundleReader._7zip.Compress.LZ;
 
 public class OutWindow
 {
-    byte[] _buffer;
+    byte[] _buffer = [];
     uint _pos;
     uint _windowSize;
     uint _streamPos;
-    Stream _stream;
+    Stream? _stream;
 
     public uint TrainSize;
 
@@ -79,7 +79,7 @@ public class OutWindow
         {
             return;
         }
-        _stream.Write(_buffer, (int)_streamPos, (int)size);
+        _stream?.Write(_buffer, (int)_streamPos, (int)size);
         if (_pos >= _windowSize)
         {
             _pos = 0;

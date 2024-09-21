@@ -2,25 +2,25 @@
 
 public class TypeTreeNode
 {
-    public string MType;
-    public string MName;
-    public int MByteSize;
-    public int MIndex;
-    public int MTypeFlags; //m_IsArray
-    public int MVersion;
-    public int MMetaFlag;
-    public int MLevel;
-    public uint MTypeStrOffset;
-    public uint MNameStrOffset;
-    public ulong MRefTypeHash;
+    public string? Type;
+    public string? Name;
+    public int ByteSize;
+    public int Index;
+    public int TypeFlags; //m_IsArray
+    public int Version;
+    public int MetaFlag;
+    public int Level;
+    public uint TypeStrOffset;
+    public uint NameStrOffset;
+    public ulong RefTypeHash;
 
     public TypeTreeNode() { }
 
     public TypeTreeNode(string type, string name, int level, bool align)
     {
-        MType = type;
-        MName = name;
-        MLevel = level;
-        MMetaFlag = align ? 0x4000 : 0;
+        Type = type;
+        Name = name;
+        Level = level;
+        MetaFlag = align ? 0x4000 : 0;
     }
 }

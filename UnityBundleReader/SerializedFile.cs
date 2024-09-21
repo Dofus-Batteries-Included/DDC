@@ -302,23 +302,23 @@ public class SerializedFile
     {
         TypeTreeNode typeTreeNode = new();
         mType.Nodes.Add(typeTreeNode);
-        typeTreeNode.MLevel = level;
-        typeTreeNode.MType = Reader.ReadStringToNull();
-        typeTreeNode.MName = Reader.ReadStringToNull();
-        typeTreeNode.MByteSize = Reader.ReadInt32();
+        typeTreeNode.Level = level;
+        typeTreeNode.Type = Reader.ReadStringToNull();
+        typeTreeNode.Name = Reader.ReadStringToNull();
+        typeTreeNode.ByteSize = Reader.ReadInt32();
         if (Header.MVersion == SerializedFileFormatVersion.Unknown2)
         {
             int variableCount = Reader.ReadInt32();
         }
         if (Header.MVersion != SerializedFileFormatVersion.Unknown3)
         {
-            typeTreeNode.MIndex = Reader.ReadInt32();
+            typeTreeNode.Index = Reader.ReadInt32();
         }
-        typeTreeNode.MTypeFlags = Reader.ReadInt32();
-        typeTreeNode.MVersion = Reader.ReadInt32();
+        typeTreeNode.TypeFlags = Reader.ReadInt32();
+        typeTreeNode.Version = Reader.ReadInt32();
         if (Header.MVersion != SerializedFileFormatVersion.Unknown3)
         {
-            typeTreeNode.MMetaFlag = Reader.ReadInt32();
+            typeTreeNode.MetaFlag = Reader.ReadInt32();
         }
 
         int childrenCount = Reader.ReadInt32();
@@ -336,17 +336,17 @@ public class SerializedFile
         {
             TypeTreeNode typeTreeNode = new();
             mType.Nodes.Add(typeTreeNode);
-            typeTreeNode.MVersion = Reader.ReadUInt16();
-            typeTreeNode.MLevel = Reader.ReadByte();
-            typeTreeNode.MTypeFlags = Reader.ReadByte();
-            typeTreeNode.MTypeStrOffset = Reader.ReadUInt32();
-            typeTreeNode.MNameStrOffset = Reader.ReadUInt32();
-            typeTreeNode.MByteSize = Reader.ReadInt32();
-            typeTreeNode.MIndex = Reader.ReadInt32();
-            typeTreeNode.MMetaFlag = Reader.ReadInt32();
+            typeTreeNode.Version = Reader.ReadUInt16();
+            typeTreeNode.Level = Reader.ReadByte();
+            typeTreeNode.TypeFlags = Reader.ReadByte();
+            typeTreeNode.TypeStrOffset = Reader.ReadUInt32();
+            typeTreeNode.NameStrOffset = Reader.ReadUInt32();
+            typeTreeNode.ByteSize = Reader.ReadInt32();
+            typeTreeNode.Index = Reader.ReadInt32();
+            typeTreeNode.MetaFlag = Reader.ReadInt32();
             if (Header.MVersion >= SerializedFileFormatVersion.TypeTreeNodeWithTypeFlags)
             {
-                typeTreeNode.MRefTypeHash = Reader.ReadUInt64();
+                typeTreeNode.RefTypeHash = Reader.ReadUInt64();
             }
         }
         mType.StringBuffer = Reader.ReadBytes(stringBufferSize);
@@ -356,8 +356,8 @@ public class SerializedFile
             for (int i = 0; i < numberOfNodes; i++)
             {
                 TypeTreeNode mNode = mType.Nodes[i];
-                mNode.MType = ReadString(stringBufferReader, mNode.MTypeStrOffset);
-                mNode.MName = ReadString(stringBufferReader, mNode.MNameStrOffset);
+                mNode.Type = ReadString(stringBufferReader, mNode.TypeStrOffset);
+                mNode.Name = ReadString(stringBufferReader, mNode.NameStrOffset);
             }
         }
 
