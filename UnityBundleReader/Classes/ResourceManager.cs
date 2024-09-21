@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class ResourceManager : Object
     {

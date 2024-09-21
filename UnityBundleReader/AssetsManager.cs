@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
-using static AssetStudio.ImportHelper;
+using UnityBundleReader.Classes;
+using static UnityBundleReader.ImportHelper;
+using Object = UnityBundleReader.Classes.Object;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public class AssetsManager
     {

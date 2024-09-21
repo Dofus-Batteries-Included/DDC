@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 
-namespace AssetStudio
+namespace UnityBundleReader.Math
 {
     /// <summary>
     /// Represents a half-precision floating point number. 

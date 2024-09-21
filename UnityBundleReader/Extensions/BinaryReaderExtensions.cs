@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Text;
+using UnityBundleReader.Math;
 
-namespace AssetStudio
+namespace UnityBundleReader.Extensions
 {
     public static class BinaryReaderExtensions
     {

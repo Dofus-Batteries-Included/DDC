@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace AssetStudio
+﻿namespace UnityBundleReader.Extensions
 {
     public static class StreamExtensions
     {

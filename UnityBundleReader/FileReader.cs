@@ -1,7 +1,6 @@
-﻿using System.IO;
-using System.Linq;
+﻿using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public class FileReader : EndianBinaryReader
     {

@@ -1,8 +1,8 @@
 // LzBinTree.cs
 
-using System;
+using UnityBundleReader._7zip.Common;
 
-namespace SevenZip.Compression.LZ
+namespace UnityBundleReader._7zip.Compress.LZ
 {
 	public class BinTree : InWindow, IMatchFinder
 	{
@@ -212,7 +212,7 @@ namespace SevenZip.Compression.LZ
 							(_cyclicBufferPos - delta + _cyclicBufferSize)) << 1;
 
 				UInt32 pby1 = BufferOffset + curMatch;
-				UInt32 len = Math.Min(len0, len1);
+				UInt32 len = System.Math.Min(len0, len1);
 				if (BufferBase[pby1 + len] == BufferBase[cur + len])
 				{
 					while(++len != lenLimit)
@@ -308,7 +308,7 @@ namespace SevenZip.Compression.LZ
 								(_cyclicBufferPos - delta + _cyclicBufferSize)) << 1;
 
 					UInt32 pby1 = BufferOffset + curMatch;
-					UInt32 len = Math.Min(len0, len1);
+					UInt32 len = System.Math.Min(len0, len1);
 					if (BufferBase[pby1 + len] == BufferBase[cur + len])
 					{
 						while (++len != lenLimit)

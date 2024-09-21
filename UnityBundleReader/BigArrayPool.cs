@@ -1,6 +1,6 @@
 ﻿using System.Buffers;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public static class BigArrayPool<T>
     {

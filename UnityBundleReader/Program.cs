@@ -2,16 +2,17 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using AssetStudio;
 using CommandLine;
 using CommandLine.Text;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
+using UnityBundleReader;
+using UnityBundleReader.Classes;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Logger = Serilog.Core.Logger;
-using Object = AssetStudio.Object;
+using Object = UnityBundleReader.Classes.Object;
 
 #if DEBUG
 const LogEventLevel defaultLoggingLevel = LogEventLevel.Debug;
@@ -202,30 +203,32 @@ bool Like(string str, string pattern)
     return new Regex("^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".") + "$", RegexOptions.IgnoreCase | RegexOptions.Singleline).IsMatch(str);
 }
 
-
-[Verb("list", HelpText = "List all the assets in the bundles.")]
-class LineArgs
+namespace UnityBundleReader
 {
-    [Value(0, Min = 1, MetaName = "bundles", HelpText = "Bundle files.")]
-    public IEnumerable<string> BundlePaths { get; set; } = [];
+    [Verb("list", HelpText = "List all the assets in the bundles.")]
+    class LineArgs
+    {
+        [Value(0, Min = 1, MetaName = "bundles", HelpText = "Bundle files.")]
+        public IEnumerable<string> BundlePaths { get; set; } = [];
 
-    [Option('v', "verbose", Default = false, HelpText = "Print more stuff.")]
-    public bool Verbose { get; set; }
-}
+        [Option('v', "verbose", Default = false, HelpText = "Print more stuff.")]
+        public bool Verbose { get; set; }
+    }
 
 
-[Verb("extract", HelpText = "Extract all the assets in the bundles.")]
-class ExtractArgs
-{
-    [Value(0, Min = 1, MetaName = "bundles", HelpText = "Bundle files.")]
-    public IEnumerable<string> BundlePaths { get; set; } = [];
+    [Verb("extract", HelpText = "Extract all the assets in the bundles.")]
+    class ExtractArgs
+    {
+        [Value(0, Min = 1, MetaName = "bundles", HelpText = "Bundle files.")]
+        public IEnumerable<string> BundlePaths { get; set; } = [];
 
-    [Option('f', "field", HelpText = "If set, fields to extract. Glob patterns are accepted.")]
-    public IEnumerable<string> Fields { get; set; } = [];
+        [Option('f', "field", HelpText = "If set, fields to extract. Glob patterns are accepted.")]
+        public IEnumerable<string> Fields { get; set; } = [];
 
-    [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
-    public string OutputPath { get; set; } = "";
+        [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
+        public string OutputPath { get; set; } = "";
 
-    [Option('v', "verbose", Default = false, HelpText = "Print more stuff.")]
-    public bool Verbose { get; set; }
+        [Option('v', "verbose", Default = false, HelpText = "Print more stuff.")]
+        public bool Verbose { get; set; }
+    }
 }

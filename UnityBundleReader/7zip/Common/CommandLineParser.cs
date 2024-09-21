@@ -1,9 +1,8 @@
 // CommandLineParser.cs
 
-using System;
 using System.Collections;
 
-namespace SevenZip.CommandLineParser
+namespace UnityBundleReader._7zip.Common
 {
 	public enum SwitchType
 	{

@@ -3,11 +3,11 @@
 Distributed under MIT license.
 See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
-namespace Org.Brotli.Dec
+namespace UnityBundleReader.Brotli
 {
 	internal sealed class State
 	{
-		internal int RunningState = Org.Brotli.Dec.RunningState.Uninitialized;
+		internal int RunningState = Brotli.RunningState.Uninitialized;
 
 		internal int NextRunningState;
 
@@ -137,7 +137,7 @@ namespace Org.Brotli.Dec
 		/// <param name="input">compressed data source</param>
 		internal static void SetInput(State state, Stream input)
 		{
-			if (state.RunningState != Org.Brotli.Dec.RunningState.Uninitialized)
+			if (state.RunningState != Brotli.RunningState.Uninitialized)
 			{
 				throw new InvalidOperationException("State MUST be uninitialized");
 			}
@@ -150,21 +150,21 @@ namespace Org.Brotli.Dec
 			}
 			state.MaxRingBufferSize = 1 << windowBits;
 			state.MaxBackwardDistance = state.MaxRingBufferSize - 16;
-			state.RunningState = Org.Brotli.Dec.RunningState.BlockStart;
+			state.RunningState = Brotli.RunningState.BlockStart;
 		}
 
 		/// <exception cref="System.IO.IOException"/>
 		internal static void Close(State state)
 		{
-			if (state.RunningState == Org.Brotli.Dec.RunningState.Uninitialized)
+			if (state.RunningState == Brotli.RunningState.Uninitialized)
 			{
 				throw new InvalidOperationException("State MUST be initialized");
 			}
-			if (state.RunningState == Org.Brotli.Dec.RunningState.Closed)
+			if (state.RunningState == Brotli.RunningState.Closed)
 			{
 				return;
 			}
-			state.RunningState = Org.Brotli.Dec.RunningState.Closed;
+			state.RunningState = Brotli.RunningState.Closed;
 			BitReader.Close(state.BR);
 		}
 	}

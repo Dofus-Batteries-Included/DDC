@@ -1,10 +1,7 @@
-﻿using Org.Brotli.Dec;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
+﻿using System.IO.Compression;
+using UnityBundleReader.Brotli;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public static class ImportHelper
     {

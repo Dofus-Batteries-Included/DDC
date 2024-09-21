@@ -1,7 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace AssetStudio
+namespace UnityBundleReader.Math
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct Vector3 : IEquatable<Vector3>
@@ -79,7 +78,7 @@ namespace AssetStudio
 
         public float Length()
         {
-            return (float)Math.Sqrt(LengthSquared());
+            return (float)System.Math.Sqrt(LengthSquared());
         }
 
         public float LengthSquared()

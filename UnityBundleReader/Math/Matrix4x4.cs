@@ -1,7 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace AssetStudio
+namespace UnityBundleReader.Math
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct Matrix4X4 : IEquatable<Matrix4X4>

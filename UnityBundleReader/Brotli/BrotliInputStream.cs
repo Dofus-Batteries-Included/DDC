@@ -3,7 +3,7 @@
 Distributed under MIT license.
 See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
-namespace Org.Brotli.Dec
+namespace UnityBundleReader.Brotli
 {
 	/// <summary>
 	/// <see cref="System.IO.Stream"/>
@@ -156,10 +156,10 @@ namespace Org.Brotli.Dec
 			{
 				return 0;
 			}
-			int copyLen = Math.Max(_remainingBufferBytes - _bufferOffset, 0);
+			int copyLen = System.Math.Max(_remainingBufferBytes - _bufferOffset, 0);
 			if (copyLen != 0)
 			{
-				copyLen = Math.Min(copyLen, destLen);
+				copyLen = System.Math.Min(copyLen, destLen);
 				Array.Copy(_buffer, _bufferOffset, destBuffer, destOffset, copyLen);
 				_bufferOffset += copyLen;
 				destOffset += copyLen;

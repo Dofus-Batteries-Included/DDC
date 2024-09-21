@@ -1,6 +1,6 @@
 ﻿using System.Collections.Specialized;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class Object
     {

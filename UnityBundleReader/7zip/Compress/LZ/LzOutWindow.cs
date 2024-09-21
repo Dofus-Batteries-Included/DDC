@@ -1,6 +1,6 @@
 // LzOutWindow.cs
 
-namespace SevenZip.Compression.LZ
+namespace UnityBundleReader._7zip.Compress.LZ
 {
 	public class OutWindow
 	{

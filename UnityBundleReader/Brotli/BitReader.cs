@@ -3,7 +3,7 @@
 Distributed under MIT license.
 See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
-namespace Org.Brotli.Dec
+namespace UnityBundleReader.Brotli
 {
 	/// <summary>Bit reading helpers.</summary>
 	internal sealed class BitReader
@@ -221,7 +221,7 @@ namespace Org.Brotli.Dec
 				return;
 			}
 			// Get data from shadow buffer with "sizeof(int)" granularity.
-			int copyInts = Math.Min(IntAvailable(br), length >> 2);
+			int copyInts = System.Math.Min(IntAvailable(br), length >> 2);
 			if (copyInts > 0)
 			{
 				int readOffset = br._intOffset << 2;

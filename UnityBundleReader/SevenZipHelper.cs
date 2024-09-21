@@ -1,9 +1,6 @@
-using System;
-using System.IO;
-using SevenZip.Compression.LZMA;
+using UnityBundleReader._7zip.Compress.LZMA;
 
-
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public static class SevenZipHelper
     {

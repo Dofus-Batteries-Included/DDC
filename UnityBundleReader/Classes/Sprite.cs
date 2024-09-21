@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using UnityBundleReader.Extensions;
+using UnityBundleReader.Math;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class SecondarySpriteTexture
     {

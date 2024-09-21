@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using UnityBundleReader.Extensions;
+using Object = UnityBundleReader.Classes.Object;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public class SerializedFile
     {

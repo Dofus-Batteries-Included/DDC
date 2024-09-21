@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public abstract class Texture : NamedObject
     {

@@ -1,6 +1,6 @@
 // Common/CRC.cs
 
-namespace SevenZip
+namespace UnityBundleReader._7zip.Common
 {
 	public class CRC
 	{

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using UnityBundleReader.Extensions;
+using UnityBundleReader.Math;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class Transform : Component
     {

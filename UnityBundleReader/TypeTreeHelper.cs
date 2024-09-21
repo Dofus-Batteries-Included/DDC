@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
+﻿using System.Collections.Specialized;
 using System.Text;
+using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public static class TypeTreeHelper
     {

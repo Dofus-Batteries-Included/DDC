@@ -1,8 +1,6 @@
 // IMatchFinder.cs
 
-using System;
-
-namespace SevenZip.Compression.LZ
+namespace UnityBundleReader._7zip.Compress.LZ
 {
 	interface IInWindowStream
 	{

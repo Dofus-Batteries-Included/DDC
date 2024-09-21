@@ -1,8 +1,6 @@
 // LzInWindow.cs
 
-using System;
-
-namespace SevenZip.Compression.LZ
+namespace UnityBundleReader._7zip.Compress.LZ
 {
 	public class InWindow
 	{

@@ -1,9 +1,7 @@
 ﻿using K4os.Compression.LZ4;
-using System;
-using System.IO;
-using System.Linq;
+using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader
 {
     [Flags]
     public enum ArchiveFlags

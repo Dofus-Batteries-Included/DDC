@@ -3,7 +3,7 @@
 Distributed under MIT license.
 See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
-namespace Org.Brotli.Dec
+namespace UnityBundleReader.Brotli
 {
 	/// <summary>Collection of static dictionary words.</summary>
 	/// <remarks>

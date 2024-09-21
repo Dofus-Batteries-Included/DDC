@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using UnityBundleReader.Extensions;
+using UnityBundleReader.Math;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class UnityTexEnv
     {

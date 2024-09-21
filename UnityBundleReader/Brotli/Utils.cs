@@ -3,7 +3,7 @@
 Distributed under MIT license.
 See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
-namespace Org.Brotli.Dec
+namespace UnityBundleReader.Brotli
 {
 	/// <summary>A set of utility methods.</summary>
 	internal sealed class Utils
@@ -28,7 +28,7 @@ namespace Org.Brotli.Dec
 			int cursor = 0;
 			while (cursor < length)
 			{
-				int step = Math.Min(cursor + 1024, length) - cursor;
+				int step = System.Math.Min(cursor + 1024, length) - cursor;
 				Array.Copy(ByteZeroes, 0, dest, offset + cursor, step);
 				cursor += step;
 			}
@@ -50,7 +50,7 @@ namespace Org.Brotli.Dec
 			int cursor = 0;
 			while (cursor < length)
 			{
-				int step = Math.Min(cursor + 1024, length) - cursor;
+				int step = System.Math.Min(cursor + 1024, length) - cursor;
 				Array.Copy(IntZeroes, 0, dest, offset + cursor, step);
 				cursor += step;
 			}

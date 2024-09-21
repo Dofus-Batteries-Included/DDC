@@ -1,5 +1,5 @@
 // official Class ID Reference: https://docs.unity3d.com/Manual/ClassIDReference.html
-namespace AssetStudio
+namespace UnityBundleReader
 {
     public enum ClassIDType
     {

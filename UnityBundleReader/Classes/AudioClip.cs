@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public sealed class AudioClip : NamedObject
     {

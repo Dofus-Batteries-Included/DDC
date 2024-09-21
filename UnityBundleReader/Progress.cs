@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AssetStudio
+﻿namespace UnityBundleReader
 {
     public static class Progress
     {

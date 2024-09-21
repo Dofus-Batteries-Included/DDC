@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AssetStudio
+﻿namespace UnityBundleReader
 {
     public static class CommonString
     {

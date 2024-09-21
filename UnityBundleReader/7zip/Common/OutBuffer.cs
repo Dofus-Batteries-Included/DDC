@@ -1,6 +1,6 @@
 // OutBuffer.cs
 
-namespace SevenZip.Buffer
+namespace UnityBundleReader._7zip.Common
 {
 	public class OutBuffer
 	{

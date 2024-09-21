@@ -1,11 +1,10 @@
 // LzmaDecoder.cs
 
-using System;
+using UnityBundleReader._7zip.Compress.LZ;
+using UnityBundleReader._7zip.Compress.RangeCoder;
 
-namespace SevenZip.Compression.LZMA
+namespace UnityBundleReader._7zip.Compress.LZMA
 {
-	using RangeCoder;
-
 	public class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
 	{
 		class LenDecoder
@@ -132,7 +131,7 @@ namespace SevenZip.Compression.LZMA
 			{ return _mCoders[GetState(pos, prevByte)].DecodeWithMatchByte(rangeDecoder, matchByte); }
 		};
 
-		LZ.OutWindow _mOutWindow = new LZ.OutWindow();
+		OutWindow _mOutWindow = new OutWindow();
 		RangeCoder.Decoder _mRangeDecoder = new RangeCoder.Decoder();
 
 		BitDecoder[] _mIsMatchDecoders = new BitDecoder[Base.KNumStates << Base.KNumPosStatesBitsMax];
@@ -169,8 +168,8 @@ namespace SevenZip.Compression.LZMA
 			if (_mDictionarySize != dictionarySize)
 			{
 				_mDictionarySize = dictionarySize;
-				_mDictionarySizeCheck = Math.Max(_mDictionarySize, 1);
-				uint blockSize = Math.Max(_mDictionarySizeCheck, (1 << 12));
+				_mDictionarySizeCheck = System.Math.Max(_mDictionarySize, 1);
+				uint blockSize = System.Math.Max(_mDictionarySizeCheck, (1 << 12));
 				_mOutWindow.Create(blockSize);
 			}
 		}

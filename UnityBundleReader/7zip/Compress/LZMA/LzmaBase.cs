@@ -1,6 +1,6 @@
 // LzmaBase.cs
 
-namespace SevenZip.Compression.LZMA
+namespace UnityBundleReader._7zip.Compress.LZMA
 {
 	internal abstract class Base
 	{

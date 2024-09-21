@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using UnityBundleReader.Extensions;
+using UnityBundleReader.Math;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class Keyframe<T>
     {
@@ -112,7 +110,7 @@ namespace AssetStudio
                     while (bits < MBitSize)
                     {
                         x |= (uint)((MData[indexPos] >> bitPos) << bits);
-                        int num = Math.Min(MBitSize - bits, 8 - bitPos);
+                        int num = System.Math.Min(MBitSize - bits, 8 - bitPos);
                         bitPos += num;
                         bits += num;
                         if (bitPos == 8)
@@ -160,7 +158,7 @@ namespace AssetStudio
                 while (bits < MBitSize)
                 {
                     data[i] |= (MData[indexPos] >> bitPos) << bits;
-                    int num = Math.Min(MBitSize - bits, 8 - bitPos);
+                    int num = System.Math.Min(MBitSize - bits, 8 - bitPos);
                     bitPos += num;
                     bits += num;
                     if (bitPos == 8)
@@ -204,7 +202,7 @@ namespace AssetStudio
                 while (bits < 3)
                 {
                     flags |= (uint)((MData[indexPos] >> bitPos) << bits);
-                    int num = Math.Min(3 - bits, 8 - bitPos);
+                    int num = System.Math.Min(3 - bits, 8 - bitPos);
                     bitPos += num;
                     bits += num;
                     if (bitPos == 8)
@@ -229,7 +227,7 @@ namespace AssetStudio
                         while (bits < bitSize)
                         {
                             x |= (uint)((MData[indexPos] >> bitPos) << bits);
-                            int num = Math.Min(bitSize - bits, 8 - bitPos);
+                            int num = System.Math.Min(bitSize - bits, 8 - bitPos);
                             bitPos += num;
                             bits += num;
                             if (bitPos == 8)
@@ -245,7 +243,7 @@ namespace AssetStudio
                 }
 
                 int lastComponent = (int)(flags & 3);
-                q[lastComponent] = (float)Math.Sqrt(1 - sum);
+                q[lastComponent] = (float)System.Math.Sqrt(1 - sum);
                 if ((flags & 4) != 0u)
                     q[lastComponent] = -q[lastComponent];
                 data[i] = q;
@@ -492,7 +490,7 @@ namespace AssetStudio
                     return float.PositiveInfinity;
                 }
 
-                dx = Math.Max(dx, 0.0001f);
+                dx = System.Math.Max(dx, 0.0001f);
                 var dy = rhs.Value - Value;
                 var length = 1.0f / (dx * dx);
                 var d1 = OutSlope * dx;

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections;
+using UnityBundleReader.Extensions;
+using UnityBundleReader.Math;
+using Half = UnityBundleReader.Math.Half;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class MinMaxAABB
     {
@@ -933,7 +932,7 @@ namespace AssetStudio
                     var zsqr = 1 - x * x - y * y;
                     float z;
                     if (zsqr >= 0f)
-                        z = (float)Math.Sqrt(zsqr);
+                        z = (float)System.Math.Sqrt(zsqr);
                     else
                     {
                         z = 0;
@@ -963,7 +962,7 @@ namespace AssetStudio
                     var zsqr = 1 - x * x - y * y;
                     float z;
                     if (zsqr >= 0f)
-                        z = (float)Math.Sqrt(zsqr);
+                        z = (float)System.Math.Sqrt(zsqr);
                     else
                     {
                         z = 0;
@@ -1346,13 +1345,13 @@ namespace AssetStudio
                         result[i] = inputBytes[i] / 255f;
                         break;
                     case VertexFormat.SNorm8:
-                        result[i] = Math.Max((sbyte)inputBytes[i] / 127f, -1f);
+                        result[i] = System.Math.Max((sbyte)inputBytes[i] / 127f, -1f);
                         break;
                     case VertexFormat.UNorm16:
                         result[i] = BitConverter.ToUInt16(inputBytes, i * 2) / 65535f;
                         break;
                     case VertexFormat.SNorm16:
-                        result[i] = Math.Max(BitConverter.ToInt16(inputBytes, i * 2) / 32767f, -1f);
+                        result[i] = System.Math.Max(BitConverter.ToInt16(inputBytes, i * 2) / 32767f, -1f);
                         break;
                 }
             }

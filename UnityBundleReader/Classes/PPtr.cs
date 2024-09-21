@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AssetStudio
+﻿namespace UnityBundleReader.Classes
 {
     public sealed class PPtr<T> where T : Object
     {

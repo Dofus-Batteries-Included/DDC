@@ -1,11 +1,10 @@
 // LzmaEncoder.cs
 
-using System;
+using UnityBundleReader._7zip.Compress.LZ;
+using UnityBundleReader._7zip.Compress.RangeCoder;
 
-namespace SevenZip.Compression.LZMA
+namespace UnityBundleReader._7zip.Compress.LZMA
 {
-	using RangeCoder;
-
 	public class Encoder : ICoder, ISetCoderProperties, IWriteCoderProperties
 	{
 		enum EMatchFinderType
@@ -301,7 +300,7 @@ namespace SevenZip.Compression.LZMA
 			public bool IsShortRep() { return (BackPrev == 0); }
 		};
 		Optimal[] _optimum = new Optimal[KNumOpts];
-		LZ.IMatchFinder _matchFinder = null;
+		IMatchFinder _matchFinder = null;
 		RangeCoder.Encoder _rangeEncoder = new RangeCoder.Encoder();
 
 		BitEncoder[] _isMatch = new BitEncoder[Base.KNumStates << Base.KNumPosStatesBitsMax];
@@ -363,7 +362,7 @@ namespace SevenZip.Compression.LZMA
 		{
 			if (_matchFinder == null)
 			{
-				LZ.BinTree bt = new LZ.BinTree();
+				BinTree bt = new BinTree();
 				int numHashBytes = 4;
 				if (_matchFinderType == EMatchFinderType.Bt2)
 					numHashBytes = 2;
@@ -837,7 +836,7 @@ namespace SevenZip.Compression.LZMA
 				}
 
 				UInt32 numAvailableBytesFull = _matchFinder.GetNumAvailableBytes() + 1;
-				numAvailableBytesFull = Math.Min(KNumOpts - 1 - cur, numAvailableBytesFull);
+				numAvailableBytesFull = System.Math.Min(KNumOpts - 1 - cur, numAvailableBytesFull);
 				numAvailableBytes = numAvailableBytesFull;
 
 				if (numAvailableBytes < 2)
@@ -847,7 +846,7 @@ namespace SevenZip.Compression.LZMA
 				if (!nextIsChar && matchByte != currentByte)
 				{
 					// try Literal + rep0
-					UInt32 t = Math.Min(numAvailableBytesFull - 1, _numFastBytes);
+					UInt32 t = System.Math.Min(numAvailableBytesFull - 1, _numFastBytes);
 					UInt32 lenTest2 = _matchFinder.GetMatchLen(0, _reps[0], t);
 					if (lenTest2 >= 2)
 					{
@@ -907,7 +906,7 @@ namespace SevenZip.Compression.LZMA
 					// if (_maxMode)
 					if (lenTest < numAvailableBytesFull)
 					{
-						UInt32 t = Math.Min(numAvailableBytesFull - 1 - lenTest, _numFastBytes);
+						UInt32 t = System.Math.Min(numAvailableBytesFull - 1 - lenTest, _numFastBytes);
 						UInt32 lenTest2 = _matchFinder.GetMatchLen((Int32)lenTest, _reps[repIndex], t);
 						if (lenTest2 >= 2)
 						{
@@ -982,7 +981,7 @@ namespace SevenZip.Compression.LZMA
 						{
 							if (lenTest < numAvailableBytesFull)
 							{
-								UInt32 t = Math.Min(numAvailableBytesFull - 1 - lenTest, _numFastBytes);
+								UInt32 t = System.Math.Min(numAvailableBytesFull - 1 - lenTest, _numFastBytes);
 								UInt32 lenTest2 = _matchFinder.GetMatchLen((Int32)lenTest, curBack, t);
 								if (lenTest2 >= 2)
 								{

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace AssetStudio
+namespace UnityBundleReader.Math
 {
     /// <summary>
     /// Helper class for Half conversions and some low level operations.

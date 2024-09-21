@@ -1,6 +1,4 @@
-using System;
-
-namespace SevenZip.Compression.RangeCoder
+namespace UnityBundleReader._7zip.Compress.RangeCoder
 {
 	class Encoder
 	{

@@ -3,7 +3,7 @@
 Distributed under MIT license.
 See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
 */
-namespace Org.Brotli.Dec
+namespace UnityBundleReader.Brotli
 {
 	/// <summary>API for Brotli decompression.</summary>
 	internal sealed class Decode
@@ -567,7 +567,7 @@ namespace Org.Brotli.Dec
 			for (int i = 0; i < state.NumBlockTypes[0]; )
 			{
 				/* Ensure that less than 256 bits read between readMoreInput. */
-				int limit = Math.Min(i + 96, state.NumBlockTypes[0]);
+				int limit = System.Math.Min(i + 96, state.NumBlockTypes[0]);
 				for (; i < limit; ++i)
 				{
 					state.ContextModes[i] = unchecked((byte)(BitReader.ReadBits(br, 2) << 1));
@@ -618,7 +618,7 @@ namespace Org.Brotli.Dec
 				state.RunningState = RunningState.BlockStart;
 				return;
 			}
-			int chunkLength = Math.Min(state.RingBufferSize - state.Pos, state.MetaBlockLength);
+			int chunkLength = System.Math.Min(state.RingBufferSize - state.Pos, state.MetaBlockLength);
 			BitReader.CopyBytes(br, ringBuffer, state.Pos, chunkLength);
 			state.MetaBlockLength -= chunkLength;
 			state.Pos += chunkLength;
@@ -642,7 +642,7 @@ namespace Org.Brotli.Dec
 				state.BytesWritten += state.BytesToIgnore;
 				state.BytesToIgnore = 0;
 			}
-			int toWrite = Math.Min(state.OutputLength - state.OutputUsed, state.BytesToWrite - state.BytesWritten);
+			int toWrite = System.Math.Min(state.OutputLength - state.OutputUsed, state.BytesToWrite - state.BytesWritten);
 			if (toWrite != 0)
 			{
 				Array.Copy(state.RingBuffer, state.BytesWritten, state.Output, state.OutputOffset + state.OutputUsed, toWrite);

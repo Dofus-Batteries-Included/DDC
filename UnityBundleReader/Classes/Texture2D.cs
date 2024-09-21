@@ -1,6 +1,6 @@
-﻿using System;
+﻿using UnityBundleReader.Extensions;
 
-namespace AssetStudio
+namespace UnityBundleReader.Classes
 {
     public class StreamingInfo
     {
