@@ -38,7 +38,7 @@ namespace UnityBundleReader.Classes
 
     public class SpriteSettings
     {
-        public uint SettingsRaw;
+        public readonly uint SettingsRaw;
 
         public uint Packed;
         public SpritePackingMode PackingMode;
@@ -78,11 +78,11 @@ namespace UnityBundleReader.Classes
     {
         public PPtr<Texture2D> Texture;
         public PPtr<Texture2D> AlphaTexture;
-        public SecondarySpriteTexture[] SecondaryTextures;
-        public SubMesh[] MSubMeshes;
+        public readonly SecondarySpriteTexture[] SecondaryTextures;
+        public readonly SubMesh[] MSubMeshes;
         public byte[] MIndexBuffer;
         public VertexData MVertexData;
-        public SpriteVertex[] Vertices;
+        public readonly SpriteVertex[] Vertices;
         public ushort[] Indices;
         public Matrix4X4[] MBindpose;
         public BoneWeights4[] MSourceSkin;
@@ -201,9 +201,9 @@ namespace UnityBundleReader.Classes
         public bool MIsPolygon;
         public KeyValuePair<Guid, long> MRenderDataKey;
         public string[] MAtlasTags;
-        public PPtr<SpriteAtlas> MSpriteAtlas;
+        public readonly PPtr<SpriteAtlas> MSpriteAtlas;
         public SpriteRenderData MRd;
-        public Vector2[][] MPhysicsShape;
+        public readonly Vector2[][] MPhysicsShape;
 
         public Sprite(ObjectReader reader) : base(reader)
         {

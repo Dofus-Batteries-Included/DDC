@@ -2,7 +2,7 @@
 {
     public sealed class Animation : Behaviour
     {
-        public PPtr<AnimationClip>[] MAnimations;
+        public readonly PPtr<AnimationClip>[] MAnimations;
 
         public Animation(ObjectReader reader) : base(reader)
         {

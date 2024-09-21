@@ -17,7 +17,7 @@ namespace UnityBundleReader.Classes
 
     public abstract class Renderer : Component
     {
-        public PPtr<Material>[] MMaterials;
+        public readonly PPtr<Material>[] MMaterials;
         public StaticBatchInfo MStaticBatchInfo;
         public uint[] MSubsetIndices;
 

@@ -36,7 +36,7 @@ namespace UnityBundleReader.Classes
 
     public class SkeletonMask
     {
-        public SkeletonMaskElement[] MData;
+        public readonly SkeletonMaskElement[] MData;
 
         public SkeletonMask(ObjectReader reader)
         {
@@ -102,7 +102,7 @@ namespace UnityBundleReader.Classes
 
     public class TransitionConstant
     {
-        public ConditionConstant[] MConditionConstantArray;
+        public readonly ConditionConstant[] MConditionConstantArray;
         public uint MDestinationState;
         public uint MFullPathID;
         public uint MID;
@@ -189,7 +189,7 @@ namespace UnityBundleReader.Classes
         public float[] MChildMagnitudeArray;
         public Vector2[] MChildPairVectorArray;
         public float[] MChildPairAvgMagInvArray;
-        public MotionNeighborList[] MChildNeighborListArray;
+        public readonly MotionNeighborList[] MChildNeighborListArray;
 
         public Blend2dDataConstant(ObjectReader reader)
         {
@@ -297,7 +297,7 @@ namespace UnityBundleReader.Classes
 
     public class BlendTreeConstant
     {
-        public BlendTreeNodeConstant[] MNodeArray;
+        public readonly BlendTreeNodeConstant[] MNodeArray;
         public ValueArrayConstant MBlendEventArrayConstant;
 
         public BlendTreeConstant(ObjectReader reader)
@@ -321,10 +321,10 @@ namespace UnityBundleReader.Classes
 
     public class StateConstant
     {
-        public TransitionConstant[] MTransitionConstantArray;
+        public readonly TransitionConstant[] MTransitionConstantArray;
         public int[] MBlendTreeConstantIndexArray;
-        public LeafInfoConstant[] MLeafInfoArray;
-        public BlendTreeConstant[] MBlendTreeConstantArray;
+        public readonly LeafInfoConstant[] MLeafInfoArray;
+        public readonly BlendTreeConstant[] MBlendTreeConstantArray;
         public uint MNameID;
         public uint MPathID;
         public uint MFullPathID;
@@ -416,7 +416,7 @@ namespace UnityBundleReader.Classes
     public class SelectorTransitionConstant
     {
         public uint MDestination;
-        public ConditionConstant[] MConditionConstantArray;
+        public readonly ConditionConstant[] MConditionConstantArray;
 
         public SelectorTransitionConstant(ObjectReader reader)
         {
@@ -433,7 +433,7 @@ namespace UnityBundleReader.Classes
 
     public class SelectorStateConstant
     {
-        public SelectorTransitionConstant[] MTransitionConstantArray;
+        public readonly SelectorTransitionConstant[] MTransitionConstantArray;
         public uint MFullPathID;
         public bool MIsEntry;
 
@@ -454,9 +454,9 @@ namespace UnityBundleReader.Classes
 
     public class StateMachineConstant
     {
-        public StateConstant[] MStateConstantArray;
-        public TransitionConstant[] MAnyStateTransitionConstantArray;
-        public SelectorStateConstant[] MSelectorStateConstantArray;
+        public readonly StateConstant[] MStateConstantArray;
+        public readonly TransitionConstant[] MAnyStateTransitionConstantArray;
+        public readonly SelectorStateConstant[] MSelectorStateConstantArray;
         public uint MDefaultState;
         public uint MMotionSetCount;
 
@@ -499,9 +499,9 @@ namespace UnityBundleReader.Classes
         public int[] MIntValues;
         public float[] MFloatValues;
         public Vector4[] MVectorValues;
-        public Vector3[] MPositionValues;
+        public readonly Vector3[] MPositionValues;
         public Vector4[] MQuaternionValues;
-        public Vector3[] MScaleValues;
+        public readonly Vector3[] MScaleValues;
 
         public ValueArray(ObjectReader reader)
         {
@@ -550,8 +550,8 @@ namespace UnityBundleReader.Classes
 
     public class ControllerConstant
     {
-        public LayerConstant[] MLayerArray;
-        public StateMachineConstant[] MStateMachineArray;
+        public readonly LayerConstant[] MLayerArray;
+        public readonly StateMachineConstant[] MStateMachineArray;
         public ValueArrayConstant MValues;
         public ValueArray MDefaultValues;
 
@@ -578,7 +578,7 @@ namespace UnityBundleReader.Classes
 
     public sealed class AnimatorController : RuntimeAnimatorController
     {
-        public PPtr<AnimationClip>[] MAnimationClips;
+        public readonly PPtr<AnimationClip>[] MAnimationClips;
 
         public AnimatorController(ObjectReader reader) : base(reader)
         {

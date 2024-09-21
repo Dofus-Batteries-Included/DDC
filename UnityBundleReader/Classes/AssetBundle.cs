@@ -18,8 +18,8 @@ namespace UnityBundleReader.Classes
 
     public sealed class AssetBundle : NamedObject
     {
-        public PPtr<Object>[] MPreloadTable;
-        public KeyValuePair<string, AssetInfo>[] MContainer;
+        public readonly PPtr<Object>[] MPreloadTable;
+        public readonly KeyValuePair<string, AssetInfo>[] MContainer;
 
         public AssetBundle(ObjectReader reader) : base(reader)
         {

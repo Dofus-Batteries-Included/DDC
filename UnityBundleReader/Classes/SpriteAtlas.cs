@@ -13,7 +13,7 @@ namespace UnityBundleReader.Classes
         public Vector4 UVTransform;
         public float DownscaleMultiplier;
         public SpriteSettings SettingsRaw;
-        public SecondarySpriteTexture[] SecondaryTextures;
+        public readonly SecondarySpriteTexture[] SecondaryTextures;
 
         public SpriteAtlasData(ObjectReader reader)
         {
@@ -44,9 +44,9 @@ namespace UnityBundleReader.Classes
 
     public sealed class SpriteAtlas : NamedObject
     {
-        public PPtr<Sprite>[] MPackedSprites;
-        public Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData> MRenderDataMap;
-        public bool MIsVariant;
+        public readonly PPtr<Sprite>[] MPackedSprites;
+        public readonly Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData> MRenderDataMap;
+        public readonly bool MIsVariant;
 
         public SpriteAtlas(ObjectReader reader) : base(reader)
         {

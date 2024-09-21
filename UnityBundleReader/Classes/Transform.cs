@@ -8,7 +8,7 @@ namespace UnityBundleReader.Classes
         public Quaternion MLocalRotation;
         public Vector3 MLocalPosition;
         public Vector3 MLocalScale;
-        public PPtr<Transform>[] MChildren;
+        public readonly PPtr<Transform>[] MChildren;
         public PPtr<Transform> MFather;
 
         public Transform(ObjectReader reader) : base(reader)

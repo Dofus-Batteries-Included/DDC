@@ -4,15 +4,15 @@ namespace UnityBundleReader.Classes
 {
     public class Object
     {
-        public SerializedFile AssetsFile;
-        public ObjectReader Reader;
-        public long MPathID;
-        public int[] Version;
-        protected BuildType BuildType;
-        public BuildTarget Platform;
+        public readonly SerializedFile AssetsFile;
+        public readonly ObjectReader Reader;
+        public readonly long MPathID;
+        public readonly int[] Version;
+        protected readonly BuildType BuildType;
+        public readonly BuildTarget Platform;
         public ClassIDType Type;
-        public SerializedType SerializedType;
-        public uint ByteSize;
+        public readonly SerializedType SerializedType;
+        public readonly uint ByteSize;
 
         public Object(ObjectReader reader)
         {

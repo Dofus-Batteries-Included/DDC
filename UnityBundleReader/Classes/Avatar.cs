@@ -66,9 +66,9 @@ namespace UnityBundleReader.Classes
 
     public class Skeleton
     {
-        public Node[] MNode;
+        public readonly Node[] MNode;
         public uint[] MID;
-        public Axes[] MAxesArray;
+        public readonly Axes[] MAxesArray;
 
 
         public Skeleton(ObjectReader reader)
@@ -93,7 +93,7 @@ namespace UnityBundleReader.Classes
 
     public class SkeletonPose
     {
-        public Xform[] MX;
+        public readonly Xform[] MX;
 
         public SkeletonPose(ObjectReader reader)
         {
@@ -163,8 +163,8 @@ namespace UnityBundleReader.Classes
         public SkeletonPose MSkeletonPose;
         public Hand MLeftHand;
         public Hand MRightHand;
-        public Handle[] MHandles;
-        public Collider[] MColliderArray;
+        public readonly Handle[] MHandles;
+        public readonly Collider[] MColliderArray;
         public int[] MHumanBoneIndex;
         public float[] MHumanBoneMass;
         public int[] MColliderIndex;
@@ -287,7 +287,7 @@ namespace UnityBundleReader.Classes
     {
         public uint MAvatarSize;
         public AvatarConstant MAvatar;
-        public KeyValuePair<uint, string>[] MTos;
+        public readonly KeyValuePair<uint, string>[] MTos;
 
         public Avatar(ObjectReader reader) : base(reader)
         {

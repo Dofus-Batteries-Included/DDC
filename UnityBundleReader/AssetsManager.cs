@@ -9,10 +9,10 @@ namespace UnityBundleReader
     public class AssetsManager
     {
         public string SpecifyUnityVersion;
-        public List<SerializedFile> AssetsFileList = new List<SerializedFile>();
+        public readonly List<SerializedFile> AssetsFileList = new List<SerializedFile>();
 
-        internal Dictionary<string, int> AssetsFileIndexCache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        internal Dictionary<string, BinaryReader> ResourceFileReaders = new Dictionary<string, BinaryReader>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, int> AssetsFileIndexCache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, BinaryReader> ResourceFileReaders = new Dictionary<string, BinaryReader>(StringComparer.OrdinalIgnoreCase);
 
         private List<string> _importFiles = new List<string>();
         private HashSet<string> _importFilesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

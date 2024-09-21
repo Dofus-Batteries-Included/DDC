@@ -58,7 +58,7 @@ namespace UnityBundleReader
             public string Path;
         }
 
-        public Header MHeader;
+        public readonly Header MHeader;
         private StorageBlock[] _mBlocksInfo;
         private Node[] _mDirectoryInfo;
 

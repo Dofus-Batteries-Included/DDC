@@ -4,7 +4,7 @@ namespace UnityBundleReader.Classes
 {
     public class ResourceManager : Object
     {
-        public KeyValuePair<string, PPtr<Object>>[] MContainer;
+        public readonly KeyValuePair<string, PPtr<Object>>[] MContainer;
 
         public ResourceManager(ObjectReader reader) : base(reader)
         {

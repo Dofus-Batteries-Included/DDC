@@ -5,7 +5,7 @@ namespace UnityBundleReader.Classes
     public sealed class SkinnedMeshRenderer : Renderer
     {
         public PPtr<Mesh> MMesh;
-        public PPtr<Transform>[] MBones;
+        public readonly PPtr<Transform>[] MBones;
         public float[] MBlendShapeWeights;
 
         public SkinnedMeshRenderer(ObjectReader reader) : base(reader)

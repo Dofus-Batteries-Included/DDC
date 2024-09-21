@@ -14,8 +14,8 @@ namespace UnityBundleReader.Classes
 
     public class StructParameter
     {
-        public MatrixParameter[] MMatrixParams;
-        public VectorParameter[] MVectorParams;
+        public readonly MatrixParameter[] MMatrixParams;
+        public readonly VectorParameter[] MVectorParams;
 
         public StructParameter(BinaryReader reader)
         {
@@ -109,7 +109,7 @@ namespace UnityBundleReader.Classes
 
     public class SerializedProperties
     {
-        public SerializedProperty[] MProps;
+        public readonly SerializedProperty[] MProps;
 
         public SerializedProperties(BinaryReader reader)
         {
@@ -202,7 +202,7 @@ namespace UnityBundleReader.Classes
     public class SerializedShaderState
     {
         public string MName;
-        public SerializedShaderRTBlendState[] RTBlend;
+        public readonly SerializedShaderRTBlendState[] RTBlend;
         public bool RTSeparateBlend;
         public SerializedShaderFloatValue ZClip;
         public SerializedShaderFloatValue ZTest;
@@ -287,7 +287,7 @@ namespace UnityBundleReader.Classes
 
     public class ParserBindChannels
     {
-        public ShaderBindChannel[] MChannels;
+        public readonly ShaderBindChannel[] MChannels;
         public uint MSourceMap;
 
         public ParserBindChannels(BinaryReader reader)
@@ -387,9 +387,9 @@ namespace UnityBundleReader.Classes
     public class ConstantBuffer
     {
         public int MNameIndex;
-        public MatrixParameter[] MMatrixParams;
-        public VectorParameter[] MVectorParams;
-        public StructParameter[] MStructParams;
+        public readonly MatrixParameter[] MMatrixParams;
+        public readonly VectorParameter[] MVectorParams;
+        public readonly StructParameter[] MStructParams;
         public int MSize;
         public bool MIsPartialCb;
 
@@ -488,14 +488,14 @@ namespace UnityBundleReader.Classes
 
     public class SerializedProgramParameters
     {
-        public VectorParameter[] MVectorParams;
-        public MatrixParameter[] MMatrixParams;
-        public TextureParameter[] MTextureParams;
-        public BufferBinding[] MBufferParams;
-        public ConstantBuffer[] MConstantBuffers;
-        public BufferBinding[] MConstantBufferBindings;
-        public UavParameter[] MUavParams;
-        public SamplerParameter[] MSamplers;
+        public readonly VectorParameter[] MVectorParams;
+        public readonly MatrixParameter[] MMatrixParams;
+        public readonly TextureParameter[] MTextureParams;
+        public readonly BufferBinding[] MBufferParams;
+        public readonly ConstantBuffer[] MConstantBuffers;
+        public readonly BufferBinding[] MConstantBufferBindings;
+        public readonly UavParameter[] MUavParams;
+        public readonly SamplerParameter[] MSamplers;
 
         public SerializedProgramParameters(ObjectReader reader)
         {
@@ -565,14 +565,14 @@ namespace UnityBundleReader.Classes
         public sbyte MShaderHardwareTier;
         public ShaderGpuProgramType MGpuProgramType;
         public SerializedProgramParameters MParameters;
-        public VectorParameter[] MVectorParams;
-        public MatrixParameter[] MMatrixParams;
-        public TextureParameter[] MTextureParams;
-        public BufferBinding[] MBufferParams;
-        public ConstantBuffer[] MConstantBuffers;
-        public BufferBinding[] MConstantBufferBindings;
-        public UavParameter[] MUavParams;
-        public SamplerParameter[] MSamplers;
+        public readonly VectorParameter[] MVectorParams;
+        public readonly MatrixParameter[] MMatrixParams;
+        public readonly TextureParameter[] MTextureParams;
+        public readonly BufferBinding[] MBufferParams;
+        public readonly ConstantBuffer[] MConstantBuffers;
+        public readonly BufferBinding[] MConstantBufferBindings;
+        public readonly UavParameter[] MUavParams;
+        public readonly SamplerParameter[] MSamplers;
 
         public SerializedSubProgram(ObjectReader reader)
         {
@@ -687,7 +687,7 @@ namespace UnityBundleReader.Classes
 
     public class SerializedProgram
     {
-        public SerializedSubProgram[] MSubPrograms;
+        public readonly SerializedSubProgram[] MSubPrograms;
         public SerializedProgramParameters MCommonParameters;
         public ushort[] MSerializedKeywordStateMask;
 
@@ -728,11 +728,11 @@ namespace UnityBundleReader.Classes
 
     public class SerializedPass
     {
-        public Hash128[] MEditorDataHash;
+        public readonly Hash128[] MEditorDataHash;
         public byte[] MPlatforms;
         public ushort[] MLocalKeywordMask;
         public ushort[] MGlobalKeywordMask;
-        public KeyValuePair<string, int>[] MNameIndices;
+        public readonly KeyValuePair<string, int>[] MNameIndices;
         public PassType MType;
         public SerializedShaderState MState;
         public uint MProgramMask;
@@ -812,7 +812,7 @@ namespace UnityBundleReader.Classes
 
     public class SerializedTagMap
     {
-        public KeyValuePair<string, string>[] Tags;
+        public readonly KeyValuePair<string, string>[] Tags;
 
         public SerializedTagMap(BinaryReader reader)
         {
@@ -827,7 +827,7 @@ namespace UnityBundleReader.Classes
 
     public class SerializedSubShader
     {
-        public SerializedPass[] MPasses;
+        public readonly SerializedPass[] MPasses;
         public SerializedTagMap MTags;
         public int MLOD;
 
@@ -872,14 +872,14 @@ namespace UnityBundleReader.Classes
     public class SerializedShader
     {
         public SerializedProperties MPropInfo;
-        public SerializedSubShader[] MSubShaders;
+        public readonly SerializedSubShader[] MSubShaders;
         public string[] MKeywordNames;
         public byte[] MKeywordFlags;
         public string MName;
         public string MCustomEditorName;
         public string MFallbackName;
-        public SerializedShaderDependency[] MDependencies;
-        public SerializedCustomEditorForRenderPipeline[] MCustomEditorForRenderPipelines;
+        public readonly SerializedShaderDependency[] MDependencies;
+        public readonly SerializedCustomEditorForRenderPipeline[] MCustomEditorForRenderPipelines;
         public bool MDisableNoSubshadersMessage;
 
         public SerializedShader(ObjectReader reader)

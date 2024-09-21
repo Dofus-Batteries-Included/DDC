@@ -4,9 +4,9 @@ namespace UnityBundleReader
 {
     public class FileReader : EndianBinaryReader
     {
-        public string FullPath;
-        public string FileName;
-        public FileType FileType;
+        public readonly string FullPath;
+        public readonly string FileName;
+        public readonly FileType FileType;
 
         private static readonly byte[] GzipMagic = { 0x1f, 0x8b };
         private static readonly byte[] BrotliMagic = { 0x62, 0x72, 0x6F, 0x74, 0x6C, 0x69 };

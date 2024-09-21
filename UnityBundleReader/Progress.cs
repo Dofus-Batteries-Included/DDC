@@ -2,7 +2,7 @@
 {
     public static class Progress
     {
-        public static IProgress<int> Default = new Progress<int>();
+        public static readonly IProgress<int> Default = new Progress<int>();
         private static int _preValue;
 
         public static void Reset()

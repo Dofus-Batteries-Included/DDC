@@ -4,9 +4,9 @@ namespace UnityBundleReader.Classes
 {
     public class StreamingInfo
     {
-        public long Offset; //ulong
-        public uint Size;
-        public string Path;
+        public readonly long Offset; //ulong
+        public readonly uint Size;
+        public readonly string Path;
 
         public StreamingInfo(ObjectReader reader)
         {
@@ -61,7 +61,7 @@ namespace UnityBundleReader.Classes
         public int MMipCount;
         public GLTextureSettings MTextureSettings;
         public ResourceReader ImageData;
-        public StreamingInfo MStreamData;
+        public readonly StreamingInfo MStreamData;
 
         public Texture2D(ObjectReader reader) : base(reader)
         {

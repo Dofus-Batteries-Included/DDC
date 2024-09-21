@@ -6,27 +6,27 @@ namespace UnityBundleReader
 {
     public class SerializedFile
     {
-        public AssetsManager AssetsManager;
-        public FileReader Reader;
-        public string FullName;
+        public readonly AssetsManager AssetsManager;
+        public readonly FileReader Reader;
+        public readonly string FullName;
         public string OriginalPath;
-        public string FileName;
+        public readonly string FileName;
         public int[] Version = { 0, 0, 0, 0 };
         public BuildType BuildType;
-        public List<Object> Objects;
-        public Dictionary<long, Object> ObjectsDic;
+        public readonly List<Object> Objects;
+        public readonly Dictionary<long, Object> ObjectsDic;
 
-        public SerializedFileHeader Header;
+        public readonly SerializedFileHeader Header;
         private byte _mFileEndianess;
         public string UnityVersion = "2.5.0f5";
-        public BuildTarget MTargetPlatform = BuildTarget.UnknownPlatform;
+        public readonly BuildTarget MTargetPlatform = BuildTarget.UnknownPlatform;
         private bool _mEnableTypeTree = true;
-        public List<SerializedType> MTypes;
-        public int BigIDEnabled = 0;
-        public List<ObjectInfo> MObjects;
+        public readonly List<SerializedType> MTypes;
+        public readonly int BigIDEnabled = 0;
+        public readonly List<ObjectInfo> MObjects;
         private List<LocalSerializedObjectIdentifier> _mScriptTypes;
-        public List<FileIdentifier> MExternals;
-        public List<SerializedType> MRefTypes;
+        public readonly List<FileIdentifier> MExternals;
+        public readonly List<SerializedType> MRefTypes;
         public string UserInformation;
 
         public SerializedFile(FileReader reader, AssetsManager assetsManager)

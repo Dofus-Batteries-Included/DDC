@@ -22,9 +22,9 @@ namespace UnityBundleReader.Classes
         public bool MLegacy3D;
         public AudioCompressionFormat MCompressionFormat;
 
-        public string MSource;
-        public long MOffset; //ulong
-        public long MSize; //ulong
+        public readonly string MSource;
+        public readonly long MOffset; //ulong
+        public readonly long MSize; //ulong
         public ResourceReader MAudioData;
 
         public AudioClip(ObjectReader reader) : base(reader)

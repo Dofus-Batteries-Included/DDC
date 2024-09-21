@@ -15,12 +15,12 @@ namespace UnityBundleReader._7zip.Common
 
 	public class SwitchForm
 	{
-		public string IDString;
-		public SwitchType Type;
-		public bool Multi;
-		public int MinLen;
-		public int MaxLen;
-		public string PostCharSet;
+		public readonly string IDString;
+		public readonly SwitchType Type;
+		public readonly bool Multi;
+		public readonly int MinLen;
+		public readonly int MaxLen;
+		public readonly string PostCharSet;
 
 		public SwitchForm(string idString, SwitchType type, bool multi,
 			int minLen, int maxLen, string postCharSet)
@@ -46,7 +46,7 @@ namespace UnityBundleReader._7zip.Common
 	{
 		public bool ThereIs;
 		public bool WithMinus;
-		public ArrayList PostStrings = new ArrayList();
+		public readonly ArrayList PostStrings = new ArrayList();
 		public int PostCharIndex;
 		public SwitchResult()
 		{
@@ -56,7 +56,7 @@ namespace UnityBundleReader._7zip.Common
 
 	public class Parser
 	{
-		public ArrayList NonSwitchStrings = new ArrayList();
+		public readonly ArrayList NonSwitchStrings = new ArrayList();
 		SwitchResult[] _switches;
 
 		public Parser(int numSwitches)
@@ -256,8 +256,8 @@ namespace UnityBundleReader._7zip.Common
 
 	public class CommandForm
 	{
-		public string IDString = "";
-		public bool PostStringMode = false;
+		public readonly string IDString = "";
+		public readonly bool PostStringMode = false;
 		public CommandForm(string idString, bool postStringMode)
 		{
 			IDString = idString;
@@ -267,7 +267,7 @@ namespace UnityBundleReader._7zip.Common
 
 	class CommandSubCharsSet
 	{
-		public string Chars = "";
-		public bool EmptyAllowed = false;
+		public readonly string Chars = "";
+		public readonly bool EmptyAllowed = false;
 	}
 }

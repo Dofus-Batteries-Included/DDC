@@ -4,7 +4,7 @@ namespace UnityBundleReader.Classes
 {
     public sealed class GameObject : EditorExtension
     {
-        public PPtr<Component>[] MComponents;
+        public readonly PPtr<Component>[] MComponents;
         public string MName;
 
         public Transform MTransform;

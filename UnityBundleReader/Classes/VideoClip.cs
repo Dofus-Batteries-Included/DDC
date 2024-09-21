@@ -4,9 +4,9 @@ namespace UnityBundleReader.Classes
 {
     public class StreamedResource
     {
-        public string MSource;
-        public long MOffset; //ulong
-        public long MSize; //ulong
+        public readonly string MSource;
+        public readonly long MOffset; //ulong
+        public readonly long MSize; //ulong
 
         public StreamedResource(BinaryReader reader)
         {
@@ -20,7 +20,7 @@ namespace UnityBundleReader.Classes
     {
         public ResourceReader MVideoData;
         public string MOriginalPath;
-        public StreamedResource MExternalResources;
+        public readonly StreamedResource MExternalResources;
 
         public VideoClip(ObjectReader reader) : base(reader)
         {

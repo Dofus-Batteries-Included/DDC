@@ -19,10 +19,10 @@ namespace UnityBundleReader.Classes
 
     public class UnityPropertySheet
     {
-        public KeyValuePair<string, UnityTexEnv>[] MTexEnvs;
-        public KeyValuePair<string, int>[] MInts;
-        public KeyValuePair<string, float>[] MFloats;
-        public KeyValuePair<string, Color>[] MColors;
+        public readonly KeyValuePair<string, UnityTexEnv>[] MTexEnvs;
+        public readonly KeyValuePair<string, int>[] MInts;
+        public readonly KeyValuePair<string, float>[] MFloats;
+        public readonly KeyValuePair<string, Color>[] MColors;
 
         public UnityPropertySheet(ObjectReader reader)
         {

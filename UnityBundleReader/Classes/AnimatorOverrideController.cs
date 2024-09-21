@@ -15,7 +15,7 @@
     public sealed class AnimatorOverrideController : RuntimeAnimatorController
     {
         public PPtr<RuntimeAnimatorController> MController;
-        public AnimationClipOverride[] MClips;
+        public readonly AnimationClipOverride[] MClips;
 
         public AnimatorOverrideController(ObjectReader reader) : base(reader)
         {

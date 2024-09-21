@@ -2,14 +2,14 @@
 {
     public class ObjectReader : EndianBinaryReader
     {
-        public SerializedFile AssetsFile;
-        public long MPathID;
-        public long ByteStart;
-        public uint ByteSize;
-        public ClassIDType Type;
-        public SerializedType SerializedType;
-        public BuildTarget Platform;
-        public SerializedFileFormatVersion MVersion;
+        public readonly SerializedFile AssetsFile;
+        public readonly long MPathID;
+        public readonly long ByteStart;
+        public readonly uint ByteSize;
+        public readonly ClassIDType Type;
+        public readonly SerializedType SerializedType;
+        public readonly BuildTarget Platform;
+        public readonly SerializedFileFormatVersion MVersion;
 
         public int[] Version => AssetsFile.Version;
         public BuildType BuildType => AssetsFile.BuildType;

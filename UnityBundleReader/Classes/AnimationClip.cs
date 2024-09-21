@@ -31,7 +31,7 @@ namespace UnityBundleReader.Classes
 
     public class AnimationCurve<T>
     {
-        public Keyframe<T>[] MCurve;
+        public readonly Keyframe<T>[] MCurve;
         public int MPreInfinity;
         public int MPostInfinity;
         public int MRotationOrder;
@@ -69,11 +69,11 @@ namespace UnityBundleReader.Classes
 
     public class PackedFloatVector
     {
-        public uint MNumItems;
-        public float MRange;
-        public float MStart;
-        public byte[] MData;
-        public byte MBitSize;
+        public readonly uint MNumItems;
+        public readonly float MRange;
+        public readonly float MStart;
+        public readonly byte[] MData;
+        public readonly byte MBitSize;
 
         public PackedFloatVector(ObjectReader reader)
         {
@@ -131,7 +131,7 @@ namespace UnityBundleReader.Classes
     public class PackedIntVector
     {
         public uint MNumItems;
-        public byte[] MData;
+        public readonly byte[] MData;
         public byte MBitSize;
 
         public PackedIntVector(ObjectReader reader)
@@ -175,8 +175,8 @@ namespace UnityBundleReader.Classes
 
     public class PackedQuatVector
     {
-        public uint MNumItems;
-        public byte[] MData;
+        public readonly uint MNumItems;
+        public readonly byte[] MData;
 
         public PackedQuatVector(ObjectReader reader)
         {
@@ -319,7 +319,7 @@ namespace UnityBundleReader.Classes
 
     public class PPtrCurve
     {
-        public PPtrKeyframe[] Curve;
+        public readonly PPtrKeyframe[] Curve;
         public string Attribute;
         public string Path;
         public int ClassID;
@@ -416,11 +416,11 @@ namespace UnityBundleReader.Classes
         public Xform MRootX;
         public Vector3 MLookAtPosition;
         public Vector4 MLookAtWeight;
-        public HumanGoal[] MGoalArray;
+        public readonly HumanGoal[] MGoalArray;
         public HandPose MLeftHandPose;
         public HandPose MRightHandPose;
         public float[] MDoFArray;
-        public Vector3[] MTDoFArray;
+        public readonly Vector3[] MTDoFArray;
 
         public HumanPose(ObjectReader reader)
         {
@@ -455,7 +455,7 @@ namespace UnityBundleReader.Classes
 
     public class StreamedClip
     {
-        public uint[] Data;
+        public readonly uint[] Data;
         public uint CurveCount;
 
         public StreamedClip(ObjectReader reader)
@@ -466,11 +466,11 @@ namespace UnityBundleReader.Classes
 
         public class StreamedCurveKey
         {
-            public int Index;
-            public float[] Coeff;
+            public readonly int Index;
+            public readonly float[] Coeff;
 
-            public float Value;
-            public float OutSlope;
+            public readonly float Value;
+            public readonly float OutSlope;
             public float InSlope;
 
             public StreamedCurveKey(BinaryReader reader)
@@ -501,8 +501,8 @@ namespace UnityBundleReader.Classes
 
         public class StreamedFrame
         {
-            public float Time;
-            public StreamedCurveKey[] KeyList;
+            public readonly float Time;
+            public readonly StreamedCurveKey[] KeyList;
 
             public StreamedFrame(BinaryReader reader)
             {
@@ -581,8 +581,8 @@ namespace UnityBundleReader.Classes
 
     public class ValueConstant
     {
-        public uint MID;
-        public uint MTypeID;
+        public readonly uint MID;
+        public readonly uint MTypeID;
         public uint MType;
         public uint MIndex;
 
@@ -601,7 +601,7 @@ namespace UnityBundleReader.Classes
 
     public class ValueArrayConstant
     {
-        public ValueConstant[] MValueArray;
+        public readonly ValueConstant[] MValueArray;
 
         public ValueArrayConstant(ObjectReader reader)
         {
@@ -619,7 +619,7 @@ namespace UnityBundleReader.Classes
         public StreamedClip MStreamedClip;
         public DenseClip MDenseClip;
         public ConstantClip MConstantClip;
-        public ValueArrayConstant MBinding;
+        public readonly ValueArrayConstant MBinding;
 
         public Clip(ObjectReader reader)
         {
@@ -711,7 +711,7 @@ namespace UnityBundleReader.Classes
         public float MCycleOffset;
         public float MAverageAngularSpeed;
         public int[] MIndexArray;
-        public ValueDelta[] MValueArrayDelta;
+        public readonly ValueDelta[] MValueArrayDelta;
         public float[] MValueArrayReferencePose;
         public bool MMirror;
         public bool MLoopTime;
@@ -826,7 +826,7 @@ namespace UnityBundleReader.Classes
     public class AnimationClipBindingConstant
     {
         public GenericBinding[] GenericBindings;
-        public PPtr<Object>[] PptrCurveMapping;
+        public readonly PPtr<Object>[] PptrCurveMapping;
 
         public AnimationClipBindingConstant() { }
 
@@ -919,24 +919,24 @@ namespace UnityBundleReader.Classes
 
     public sealed class AnimationClip : NamedObject
     {
-        public AnimationType MAnimationType;
+        public readonly AnimationType MAnimationType;
         public bool MLegacy;
         public bool MCompressed;
         public bool MUseHighQualityCurve;
-        public QuaternionCurve[] MRotationCurves;
-        public CompressedAnimationCurve[] MCompressedRotationCurves;
-        public Vector3Curve[] MEulerCurves;
-        public Vector3Curve[] MPositionCurves;
-        public Vector3Curve[] MScaleCurves;
-        public FloatCurve[] MFloatCurves;
-        public PPtrCurve[] MPPtrCurves;
+        public readonly QuaternionCurve[] MRotationCurves;
+        public readonly CompressedAnimationCurve[] MCompressedRotationCurves;
+        public readonly Vector3Curve[] MEulerCurves;
+        public readonly Vector3Curve[] MPositionCurves;
+        public readonly Vector3Curve[] MScaleCurves;
+        public readonly FloatCurve[] MFloatCurves;
+        public readonly PPtrCurve[] MPPtrCurves;
         public float MSampleRate;
         public int MWrapMode;
         public AABB MBounds;
         public uint MMuscleClipSize;
         public ClipMuscleConstant MMuscleClip;
         public AnimationClipBindingConstant MClipBindingConstant;
-        public AnimationEvent[] MEvents;
+        public readonly AnimationEvent[] MEvents;
 
 
         public AnimationClip(ObjectReader reader) : base(reader)

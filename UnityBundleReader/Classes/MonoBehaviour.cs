@@ -5,7 +5,7 @@ namespace UnityBundleReader.Classes
     public sealed class MonoBehaviour : Behaviour
     {
         public PPtr<MonoScript> MScript;
-        public string MName;
+        public readonly string MName;
 
         public MonoBehaviour(ObjectReader reader) : base(reader)
         {

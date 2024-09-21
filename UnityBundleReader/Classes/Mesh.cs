@@ -19,19 +19,19 @@ namespace UnityBundleReader.Classes
 
     public class CompressedMesh
     {
-        public PackedFloatVector MVertices;
-        public PackedFloatVector MUV;
-        public PackedFloatVector MBindPoses;
-        public PackedFloatVector MNormals;
-        public PackedFloatVector MTangents;
-        public PackedIntVector MWeights;
-        public PackedIntVector MNormalSigns;
-        public PackedIntVector MTangentSigns;
-        public PackedFloatVector MFloatColors;
-        public PackedIntVector MBoneIndices;
-        public PackedIntVector MTriangles;
-        public PackedIntVector MColors;
-        public uint MUVInfo;
+        public readonly PackedFloatVector MVertices;
+        public readonly PackedFloatVector MUV;
+        public readonly PackedFloatVector MBindPoses;
+        public readonly PackedFloatVector MNormals;
+        public readonly PackedFloatVector MTangents;
+        public readonly PackedIntVector MWeights;
+        public readonly PackedIntVector MNormalSigns;
+        public readonly PackedIntVector MTangentSigns;
+        public readonly PackedFloatVector MFloatColors;
+        public readonly PackedIntVector MBoneIndices;
+        public readonly PackedIntVector MTriangles;
+        public readonly PackedIntVector MColors;
+        public readonly uint MUVInfo;
 
         public CompressedMesh(ObjectReader reader)
         {
@@ -121,7 +121,7 @@ namespace UnityBundleReader.Classes
     public class VertexData
     {
         public uint MCurrentChannels;
-        public uint MVertexCount;
+        public readonly uint MVertexCount;
         public ChannelInfo[] MChannels;
         public StreamInfo[] MStreams;
         public byte[] MDataSize;
@@ -261,8 +261,8 @@ namespace UnityBundleReader.Classes
 
     public class BoneWeights4
     {
-        public float[] Weight;
-        public int[] BoneIndex;
+        public readonly float[] Weight;
+        public readonly int[] BoneIndex;
 
         public BoneWeights4()
         {
@@ -342,9 +342,9 @@ namespace UnityBundleReader.Classes
 
     public class BlendShapeData
     {
-        public BlendShapeVertex[] Vertices;
-        public MeshBlendShape[] Shapes;
-        public MeshBlendShapeChannel[] Channels;
+        public readonly BlendShapeVertex[] Vertices;
+        public readonly MeshBlendShape[] Shapes;
+        public readonly MeshBlendShapeChannel[] Channels;
         public float[] FullWeights;
 
         public BlendShapeData(ObjectReader reader)
@@ -407,9 +407,9 @@ namespace UnityBundleReader.Classes
 
     public class SubMesh
     {
-        public uint FirstByte;
+        public readonly uint FirstByte;
         public uint IndexCount;
-        public GfxPrimitiveType Topology;
+        public readonly GfxPrimitiveType Topology;
         public uint TriangleCount;
         public uint BaseVertex;
         public uint FirstVertex;
@@ -446,7 +446,7 @@ namespace UnityBundleReader.Classes
     public sealed class Mesh : NamedObject
     {
         private bool _mUse16BitIndices = true;
-        public SubMesh[] MSubMeshes;
+        public readonly SubMesh[] MSubMeshes;
         private uint[] _mIndexBuffer;
         public BlendShapeData MShapes;
         public Matrix4X4[] MBindPose;
@@ -469,7 +469,7 @@ namespace UnityBundleReader.Classes
         private CompressedMesh _mCompressedMesh;
         private StreamingInfo _mStreamData;
 
-        public List<uint> MIndices = new List<uint>();
+        public readonly List<uint> MIndices = new List<uint>();
 
         public Mesh(ObjectReader reader) : base(reader)
         {

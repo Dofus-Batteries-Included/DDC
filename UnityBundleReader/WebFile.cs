@@ -5,7 +5,7 @@ namespace UnityBundleReader
 {
     public class WebFile
     {
-        public StreamFile[] FileList;
+        public readonly StreamFile[] FileList;
 
         private class WebData
         {
