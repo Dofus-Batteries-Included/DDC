@@ -32,12 +32,14 @@ public class WebFile
         for (int i = 0; i < dataList.Count; i++)
         {
             WebData data = dataList[i];
-            StreamFile file = new();
-            file.Path = data.Path;
-            file.FileName = Path.GetFileName(data.Path);
             reader.BaseStream.Position = data.DataOffset;
-            file.Stream = new MemoryStream(reader.ReadBytes(data.DataLength));
-            FileList[i] = file;
+
+            FileList[i] = new StreamFile
+            {
+                Path = data.Path,
+                FileName = Path.GetFileName(data.Path),
+                Stream = new MemoryStream(reader.ReadBytes(data.DataLength))
+            };
         }
     }
 }

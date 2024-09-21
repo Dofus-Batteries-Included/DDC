@@ -45,7 +45,7 @@ public class SerializedFile
         if (Header.MVersion >= SerializedFileFormatVersion.Unknown9)
         {
             Header.MEndianess = reader.ReadByte();
-            Header.MReserved = reader.ReadBytes(3);
+            Header.Reserved = reader.ReadBytes(3);
             fileEndianess = Header.MEndianess;
         }
         else
@@ -152,7 +152,7 @@ public class SerializedFile
                 short mScriptTypeIndex = reader.ReadInt16();
                 if (objectInfo.SerializedType != null)
                 {
-                    objectInfo.SerializedType.MScriptTypeIndex = mScriptTypeIndex;
+                    objectInfo.SerializedType.ScriptTypeIndex = mScriptTypeIndex;
                 }
             }
             if (Header.MVersion == SerializedFileFormatVersion.SupportsStrippedObject || Header.MVersion == SerializedFileFormatVersion.RefactoredClassId)
@@ -240,62 +240,88 @@ public class SerializedFile
 
     SerializedType ReadSerializedType(bool isRefType)
     {
-        SerializedType type = new();
+        int typeClassID = Reader.ReadInt32();
 
-        type.ClassID = Reader.ReadInt32();
 
+        bool typeIsStrippedType = false;
         if (Header.MVersion >= SerializedFileFormatVersion.RefactoredClassId)
         {
-            type.MIsStrippedType = Reader.ReadBoolean();
+            typeIsStrippedType = Reader.ReadBoolean();
         }
 
+
+        short typeScriptTypeIndex = 0;
         if (Header.MVersion >= SerializedFileFormatVersion.RefactorTypeData)
         {
-            type.MScriptTypeIndex = Reader.ReadInt16();
+            typeScriptTypeIndex = Reader.ReadInt16();
         }
 
+
+        byte[]? typeScriptId = null;
+        byte[]? typeOldTypeHash = null;
         if (Header.MVersion >= SerializedFileFormatVersion.HasTypeTreeHashes)
         {
-            if (isRefType && type.MScriptTypeIndex >= 0)
+            if (isRefType && typeScriptTypeIndex >= 0)
             {
-                type.MScriptID = Reader.ReadBytes(16);
+                typeScriptId = Reader.ReadBytes(16);
             }
-            else if (Header.MVersion < SerializedFileFormatVersion.RefactoredClassId && type.ClassID < 0
-                     || Header.MVersion >= SerializedFileFormatVersion.RefactoredClassId && type.ClassID == 114)
+            else if (Header.MVersion < SerializedFileFormatVersion.RefactoredClassId && typeClassID < 0
+                     || Header.MVersion >= SerializedFileFormatVersion.RefactoredClassId && typeClassID == 114)
             {
-                type.MScriptID = Reader.ReadBytes(16);
+                typeScriptId = Reader.ReadBytes(16);
             }
-            type.MOldTypeHash = Reader.ReadBytes(16);
+            typeOldTypeHash = Reader.ReadBytes(16);
         }
 
+        TypeTree? typeTree = null;
+        string? typeClassName = null;
+        string? typeNamespace = null;
+        string? typeAsmName = null;
+        int[]? typeDependencies = null;
         if (_mEnableTypeTree)
         {
-            type.MType = new TypeTree();
-            type.MType.Nodes = [];
-            if (Header.MVersion >= SerializedFileFormatVersion.Unknown12 || Header.MVersion == SerializedFileFormatVersion.Unknown10)
+            typeTree = new TypeTree
             {
-                TypeTreeBlobRead(type.MType);
+                Nodes = []
+            };
+
+            if (Header.MVersion is >= SerializedFileFormatVersion.Unknown12 or SerializedFileFormatVersion.Unknown10)
+            {
+                TypeTreeBlobRead(typeTree);
             }
             else
             {
-                ReadTypeTree(type.MType);
+                ReadTypeTree(typeTree);
             }
+
             if (Header.MVersion >= SerializedFileFormatVersion.StoresTypeDependencies)
             {
                 if (isRefType)
                 {
-                    type.MKlassName = Reader.ReadStringToNull();
-                    type.MNameSpace = Reader.ReadStringToNull();
-                    type.MAsmName = Reader.ReadStringToNull();
+                    typeClassName = Reader.ReadStringToNull();
+                    typeNamespace = Reader.ReadStringToNull();
+                    typeAsmName = Reader.ReadStringToNull();
                 }
                 else
                 {
-                    type.MTypeDependencies = Reader.ReadInt32Array();
+                    typeDependencies = Reader.ReadInt32Array();
                 }
             }
         }
 
-        return type;
+        return new SerializedType
+        {
+            ClassID = typeClassID,
+            ClassName = typeClassName,
+            Namespace = typeNamespace,
+            AsmName = typeAsmName,
+            IsStrippedType = typeIsStrippedType,
+            ScriptTypeIndex = typeScriptTypeIndex,
+            ScriptId = typeScriptId,
+            OldTypeHash = typeOldTypeHash,
+            Type = typeTree,
+            TypeDependencies = typeDependencies
+        };
     }
 
     void ReadTypeTree(TypeTree mType, int level = 0)

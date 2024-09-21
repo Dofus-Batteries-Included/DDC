@@ -35,9 +35,9 @@ public class Object
 
     public string? Dump()
     {
-        if (SerializedType?.MType != null)
+        if (SerializedType?.Type != null)
         {
-            return TypeTreeHelper.ReadTypeString(SerializedType.MType, Reader);
+            return TypeTreeHelper.ReadTypeString(SerializedType.Type, Reader);
         }
         return null;
     }
@@ -53,9 +53,9 @@ public class Object
 
     public OrderedDictionary? ToType()
     {
-        if (SerializedType?.MType != null)
+        if (SerializedType?.Type != null)
         {
-            return TypeTreeHelper.ReadType(SerializedType.MType, Reader);
+            return TypeTreeHelper.ReadType(SerializedType.Type, Reader);
         }
         return null;
     }

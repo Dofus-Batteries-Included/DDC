@@ -92,6 +92,11 @@ struct BitDecoder
 
     public uint Decode(Decoder rangeDecoder)
     {
+        if (rangeDecoder.Stream == null)
+        {
+            throw new InvalidOperationException("Stream is null");
+        }
+
         uint newBound = (rangeDecoder.Range>> KNumBitModelTotalBits) * _prob;
         if (rangeDecoder.Code < newBound)
         {

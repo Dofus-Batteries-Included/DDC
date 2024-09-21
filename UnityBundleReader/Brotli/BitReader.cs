@@ -214,7 +214,7 @@ sealed class BitReader
         // Drain accumulator.
         while (br.BITOffset != 64 && length != 0)
         {
-            data[offset++] = unchecked((byte)(long)((ulong)br.Accumulator>> br.BITOffset));
+            data[offset++] = unchecked((byte)(br.Accumulator>>> br.BITOffset));
             br.BITOffset += 8;
             length--;
         }
@@ -243,7 +243,7 @@ sealed class BitReader
             FillBitWindow(br);
             while (length != 0)
             {
-                data[offset++] = unchecked((byte)(long)((ulong)br.Accumulator>> br.BITOffset));
+                data[offset++] = unchecked((byte)(br.Accumulator>>> br.BITOffset));
                 br.BITOffset += 8;
                 length--;
             }

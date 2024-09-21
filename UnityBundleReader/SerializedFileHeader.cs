@@ -7,5 +7,5 @@ public class SerializedFileHeader
     public SerializedFileFormatVersion MVersion;
     public long MDataOffset;
     public byte MEndianess;
-    public byte[] MReserved;
+    public byte[] Reserved = [];
 }

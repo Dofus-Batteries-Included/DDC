@@ -172,25 +172,31 @@ public class BundleFile
         for (int i = 0; i < _mDirectoryInfo.Length; i++)
         {
             BundleFileNode node = _mDirectoryInfo[i];
-            StreamFile file = new();
-            FileList[i] = file;
-            file.Path = node.Path;
-            file.FileName = Path.GetFileName(node.Path);
+            string nodePath = node.Path;
+            string nodeFilename = Path.GetFileName(nodePath);
+            Stream stream;
             if (node.Size >= int.MaxValue)
             {
                 /*var memoryMappedFile = MemoryMappedFile.CreateNew(null, entryinfo_size);
                 file.stream = memoryMappedFile.CreateViewStream();*/
                 string extractPath = path + "_unpacked" + Path.DirectorySeparatorChar;
                 Directory.CreateDirectory(extractPath);
-                file.Stream = new FileStream(extractPath + file.FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                stream = new FileStream(extractPath + nodeFilename, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
             else
             {
-                file.Stream = new MemoryStream((int)node.Size);
+                stream = new MemoryStream((int)node.Size);
             }
             blocksStream.Position = node.Offset;
-            blocksStream.CopyTo(file.Stream, node.Size);
-            file.Stream.Position = 0;
+            blocksStream.CopyTo(stream, node.Size);
+            stream.Position = 0;
+
+            FileList[i] = new StreamFile
+            {
+                Path = nodePath,
+                FileName = nodeFilename,
+                Stream = stream
+            };
         }
     }
 

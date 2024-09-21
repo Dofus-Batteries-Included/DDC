@@ -14,7 +14,7 @@ sealed class State
 
     internal readonly BitReader BR = new();
 
-    internal byte[] RingBuffer;
+    internal byte[]? RingBuffer;
 
     internal readonly int[] BlockTypeTrees = new int[3 * Huffman.HuffmanMaxTableSize];
 
@@ -58,9 +58,9 @@ sealed class State
 
     internal int InsertLength;
 
-    internal byte[] ContextModes;
+    internal byte[]? ContextModes;
 
-    internal byte[] ContextMap;
+    internal byte[]? ContextMap;
 
     internal int ContextMapSlice;
 
@@ -74,7 +74,7 @@ sealed class State
 
     internal int DistanceCode;
 
-    internal byte[] DistContextMap;
+    internal byte[]? DistContextMap;
 
     internal int NumDirectDistanceCodes;
 
@@ -110,7 +110,7 @@ sealed class State
 
     internal int BytesToWrite;
 
-    internal byte[] Output;
+    internal byte[]? Output;
 
     // Current meta-block header information.
     // TODO: Update to current spec.

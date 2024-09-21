@@ -258,7 +258,7 @@ public class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
         _mPosAlignDecoder.Init();
     }
 
-    public void Code(Stream inStream, Stream outStream, long inSize, long outSize, ICodeProgress progress)
+    public void Code(Stream inStream, Stream outStream, long inSize, long outSize, ICodeProgress? progress)
     {
         Init(inStream, outStream);
 

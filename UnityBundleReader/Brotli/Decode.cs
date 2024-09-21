@@ -38,7 +38,9 @@ sealed class Decode
     static readonly int[] DistanceShortCodeValueOffset = [0, 0, 0, 0, -1, 1, -2, 2, -3, 3, -1, 1, -2, 2, -3, 3];
 
     /// <summary>Static Huffman code for the code length code lengths.</summary>
-    static readonly int[] FixedTable = [0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040001, 0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040005
+    static readonly int[] FixedTable =
+    [
+        0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040001, 0x020000, 0x020004, 0x020003, 0x030002, 0x020000, 0x020004, 0x020003, 0x040005
     ];
 
     /// <summary>Decodes a number in the range [0..255], by reading 1 - 11 bits.</summary>
@@ -294,7 +296,6 @@ sealed class Decode
                     break;
                 }
 
-                case 4:
                 default:
                 {
                     ok = symbols[0] != symbols[1]
@@ -326,7 +327,7 @@ sealed class Decode
             {
                 int codeLenIdx = CodeLengthCodeOrder[i];
                 BitReader.FillBitWindow(br);
-                int p = (int)(long)((ulong)br.Accumulator>> br.BITOffset) & 15;
+                int p = (int)(br.Accumulator>>> br.BITOffset) & 15;
                 // TODO: Demultiplex FIXED_TABLE.
                 br.BITOffset += FixedTable[p]>> 16;
                 int v = FixedTable[p] & 0xFFFF;
@@ -436,9 +437,9 @@ sealed class Decode
         DecodeBlockTypeAndLength(state, 0);
         int literalBlockType = state.BlockTypeRb[1];
         state.ContextMapSlice = literalBlockType<<LiteralContextBits;
-        state.LiteralTreeIndex = state.ContextMap[state.ContextMapSlice] & 0xFF;
+        state.LiteralTreeIndex = state.ContextMap == null ? 0 : state.ContextMap[state.ContextMapSlice] & 0xFF;
         state.LiteralTree = state.HGroup0.Trees[state.LiteralTreeIndex];
-        int contextMode = state.ContextModes[literalBlockType];
+        int contextMode = state.ContextModes == null ? 0 : state.ContextModes[literalBlockType];
         state.ContextLookupOffset1 = Context.LookupOffsets[contextMode];
         state.ContextLookupOffset2 = Context.LookupOffsets[contextMode + 1];
     }
@@ -513,12 +514,12 @@ sealed class Decode
             return;
         }
         // TODO: Reset? Do we need this?
-        state.HGroup0.Codes = null;
-        state.HGroup0.Trees = null;
-        state.HGroup1.Codes = null;
-        state.HGroup1.Trees = null;
-        state.HGroup2.Codes = null;
-        state.HGroup2.Trees = null;
+        state.HGroup0.Codes = [];
+        state.HGroup0.Trees = [];
+        state.HGroup1.Codes = [];
+        state.HGroup1.Trees = [];
+        state.HGroup2.Codes = [];
+        state.HGroup2.Trees = [];
         BitReader.ReadMoreInput(br);
         DecodeMetaBlockLength(br, state);
         if (state.MetaBlockLength == 0 && !state.IsMetadata)
@@ -611,6 +612,11 @@ sealed class Decode
 
     static void CopyUncompressedData(State state)
     {
+        if (state.RingBuffer == null)
+        {
+            throw new InvalidOperationException("Ring buffer is null.");
+        }
+
         BitReader br = state.BR;
         byte[] ringBuffer = state.RingBuffer;
         // Could happen if block ends at ring buffer end.
@@ -638,6 +644,16 @@ sealed class Decode
 
     static bool WriteRingBuffer(State state)
     {
+        if (state.RingBuffer == null)
+        {
+            throw new InvalidOperationException("Ring buffer is null.");
+        }
+
+        if (state.Output == null)
+        {
+            throw new InvalidOperationException("Output is null.");
+        }
+
         /* Ignore custom dictionary bytes. */
         if (state.BytesToIgnore != 0)
         {
@@ -654,7 +670,7 @@ sealed class Decode
         return state.OutputUsed < state.OutputLength;
     }
 
-    internal static void SetCustomDictionary(State state, byte[] data) => state.CustomDictionary = data == null ? [] : data;
+    internal static void SetCustomDictionary(State state, byte[]? data) => state.CustomDictionary = data ?? [];
 
     /// <summary>Actual decompress implementation.</summary>
     internal static void Decompress(State state)
@@ -663,10 +679,27 @@ sealed class Decode
         {
             throw new InvalidOperationException("Can't decompress until initialized");
         }
+
         if (state.RunningState == RunningState.Closed)
         {
             throw new InvalidOperationException("Can't decompress after close");
         }
+
+        if (state.RingBuffer == null)
+        {
+            throw new InvalidOperationException("Ring buffer is null.");
+        }
+
+        if (state.ContextMap == null)
+        {
+            throw new InvalidOperationException("Context map is null.");
+        }
+
+        if (state.DistContextMap == null)
+        {
+            throw new InvalidOperationException("Dist context map is null.");
+        }
+
         BitReader br = state.BR;
         int ringBufferMask = state.RingBufferSize - 1;
         byte[] ringBuffer = state.RingBuffer;
@@ -711,14 +744,14 @@ sealed class Decode
                     state.BlockLength[1]--;
                     BitReader.FillBitWindow(br);
                     int cmdCode = ReadSymbol(state.HGroup1.Codes, state.TreeCommandOffset, br);
-                    int rangeIdx = (int)((uint)cmdCode>> 6);
+                    int rangeIdx = cmdCode>>> 6;
                     state.DistanceCode = 0;
                     if (rangeIdx >= 2)
                     {
                         rangeIdx -= 2;
                         state.DistanceCode = -1;
                     }
-                    int insertCode = Prefix.InsertRangeLut[rangeIdx] + ((int)((uint)cmdCode>> 3) & 7);
+                    int insertCode = Prefix.InsertRangeLut[rangeIdx] + (cmdCode>>> 3 & 7);
                     int copyCode = Prefix.CopyRangeLut[rangeIdx] + (cmdCode & 7);
                     state.InsertLength = Prefix.InsertLengthOffset[insertCode] + BitReader.ReadBits(br, Prefix.InsertLengthNBits[insertCode]);
                     state.CopyLength = Prefix.CopyLengthOffset[copyCode] + BitReader.ReadBits(br, Prefix.CopyLengthNBits[copyCode]);
