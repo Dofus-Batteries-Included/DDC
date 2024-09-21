@@ -31,53 +31,34 @@ public enum CompressionType
 
 public class BundleFile
 {
-    public class Header
-    {
-        public string Signature;
-        public uint Version;
-        public string UnityVersion;
-        public string UnityRevision;
-        public long Size;
-        public uint CompressedBlocksInfoSize;
-        public uint UncompressedBlocksInfoSize;
-        public ArchiveFlags Flags;
-    }
+    public readonly BundleFileHeader Header;
+    BundleFileStorageBlock[] _mBlocksInfo = [];
+    BundleFileNode[] _mDirectoryInfo = [];
 
-    public class StorageBlock
-    {
-        public uint CompressedSize;
-        public uint UncompressedSize;
-        public StorageBlockFlags Flags;
-    }
-
-    public class Node
-    {
-        public long Offset;
-        public long Size;
-        public uint Flags;
-        public string Path;
-    }
-
-    public readonly Header MHeader;
-    StorageBlock[] _mBlocksInfo;
-    Node[] _mDirectoryInfo;
-
-    public StreamFile[] FileList;
+    public StreamFile[] FileList = [];
 
     public BundleFile(FileReader reader)
     {
-        MHeader = new Header();
-        MHeader.Signature = reader.ReadStringToNull();
-        MHeader.Version = reader.ReadUInt32();
-        MHeader.UnityVersion = reader.ReadStringToNull();
-        MHeader.UnityRevision = reader.ReadStringToNull();
-        switch (MHeader.Signature)
+        string signature = reader.ReadStringToNull();
+        uint version = reader.ReadUInt32();
+        string unityVersion = reader.ReadStringToNull();
+        string unityRevision = reader.ReadStringToNull();
+
+        Header = new BundleFileHeader
+        {
+            Signature = signature,
+            Version = version,
+            UnityVersion = unityVersion,
+            UnityRevision = unityRevision
+        };
+
+        switch (Header.Signature)
         {
             case "UnityArchive":
                 break; //TODO
             case "UnityWeb":
             case "UnityRaw":
-                if (MHeader.Version == 6)
+                if (Header.Version == 6)
                 {
                     goto case "UnityFS";
                 }
@@ -102,19 +83,19 @@ public class BundleFile
 
     void ReadHeaderAndBlocksInfo(EndianBinaryReader reader)
     {
-        if (MHeader.Version >= 4)
+        if (Header.Version >= 4)
         {
             byte[] hash = reader.ReadBytes(16);
             uint crc = reader.ReadUInt32();
         }
         uint minimumStreamedBytes = reader.ReadUInt32();
-        MHeader.Size = reader.ReadUInt32();
+        Header.Size = reader.ReadUInt32();
         uint numberOfLevelsToDownloadBeforeStreaming = reader.ReadUInt32();
         int levelCount = reader.ReadInt32();
-        _mBlocksInfo = new StorageBlock[1];
+        _mBlocksInfo = new BundleFileStorageBlock[1];
         for (int i = 0; i < levelCount; i++)
         {
-            StorageBlock storageBlock = new()
+            BundleFileStorageBlock storageBlock = new()
             {
                 CompressedSize = reader.ReadUInt32(),
                 UncompressedSize = reader.ReadUInt32()
@@ -124,15 +105,15 @@ public class BundleFile
                 _mBlocksInfo[0] = storageBlock;
             }
         }
-        if (MHeader.Version >= 2)
+        if (Header.Version >= 2)
         {
             uint completeFileSize = reader.ReadUInt32();
         }
-        if (MHeader.Version >= 3)
+        if (Header.Version >= 3)
         {
             uint fileInfoHeaderSize = reader.ReadUInt32();
         }
-        reader.Position = MHeader.Size;
+        reader.Position = Header.Size;
     }
 
     Stream CreateBlocksStream(string path)
@@ -154,8 +135,8 @@ public class BundleFile
 
     void ReadBlocksAndDirectory(EndianBinaryReader reader, Stream blocksStream)
     {
-        bool isCompressed = MHeader.Signature == "UnityWeb";
-        foreach (StorageBlock? blockInfo in _mBlocksInfo)
+        bool isCompressed = Header.Signature == "UnityWeb";
+        foreach (BundleFileStorageBlock? blockInfo in _mBlocksInfo)
         {
             byte[] uncompressedBytes = reader.ReadBytes((int)blockInfo.CompressedSize);
             if (isCompressed)
@@ -173,10 +154,10 @@ public class BundleFile
         blocksStream.Position = 0;
         EndianBinaryReader blocksReader = new(blocksStream);
         int nodesCount = blocksReader.ReadInt32();
-        _mDirectoryInfo = new Node[nodesCount];
+        _mDirectoryInfo = new BundleFileNode[nodesCount];
         for (int i = 0; i < nodesCount; i++)
         {
-            _mDirectoryInfo[i] = new Node
+            _mDirectoryInfo[i] = new BundleFileNode
             {
                 Path = blocksReader.ReadStringToNull(),
                 Offset = blocksReader.ReadUInt32(),
@@ -190,36 +171,36 @@ public class BundleFile
         FileList = new StreamFile[_mDirectoryInfo.Length];
         for (int i = 0; i < _mDirectoryInfo.Length; i++)
         {
-            Node node = _mDirectoryInfo[i];
+            BundleFileNode node = _mDirectoryInfo[i];
             StreamFile file = new();
             FileList[i] = file;
-            file.path = node.Path;
-            file.fileName = Path.GetFileName(node.Path);
+            file.Path = node.Path;
+            file.FileName = Path.GetFileName(node.Path);
             if (node.Size >= int.MaxValue)
             {
                 /*var memoryMappedFile = MemoryMappedFile.CreateNew(null, entryinfo_size);
                 file.stream = memoryMappedFile.CreateViewStream();*/
                 string extractPath = path + "_unpacked" + Path.DirectorySeparatorChar;
                 Directory.CreateDirectory(extractPath);
-                file.stream = new FileStream(extractPath + file.fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                file.Stream = new FileStream(extractPath + file.FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
             else
             {
-                file.stream = new MemoryStream((int)node.Size);
+                file.Stream = new MemoryStream((int)node.Size);
             }
             blocksStream.Position = node.Offset;
-            blocksStream.CopyTo(file.stream, node.Size);
-            file.stream.Position = 0;
+            blocksStream.CopyTo(file.Stream, node.Size);
+            file.Stream.Position = 0;
         }
     }
 
     void ReadHeader(EndianBinaryReader reader)
     {
-        MHeader.Size = reader.ReadInt64();
-        MHeader.CompressedBlocksInfoSize = reader.ReadUInt32();
-        MHeader.UncompressedBlocksInfoSize = reader.ReadUInt32();
-        MHeader.Flags = (ArchiveFlags)reader.ReadUInt32();
-        if (MHeader.Signature != "UnityFS")
+        Header.Size = reader.ReadInt64();
+        Header.CompressedBlocksInfoSize = reader.ReadUInt32();
+        Header.UncompressedBlocksInfoSize = reader.ReadUInt32();
+        Header.Flags = (ArchiveFlags)reader.ReadUInt32();
+        if (Header.Signature != "UnityFS")
         {
             reader.ReadByte();
         }
@@ -228,24 +209,24 @@ public class BundleFile
     void ReadBlocksInfoAndDirectory(EndianBinaryReader reader)
     {
         byte[] blocksInfoBytes;
-        if (MHeader.Version >= 7)
+        if (Header.Version >= 7)
         {
             reader.AlignStream(16);
         }
-        if ((MHeader.Flags & ArchiveFlags.BlocksInfoAtTheEnd) != 0)
+        if ((Header.Flags & ArchiveFlags.BlocksInfoAtTheEnd) != 0)
         {
             long position = reader.Position;
-            reader.Position = reader.BaseStream.Length - MHeader.CompressedBlocksInfoSize;
-            blocksInfoBytes = reader.ReadBytes((int)MHeader.CompressedBlocksInfoSize);
+            reader.Position = reader.BaseStream.Length - Header.CompressedBlocksInfoSize;
+            blocksInfoBytes = reader.ReadBytes((int)Header.CompressedBlocksInfoSize);
             reader.Position = position;
         }
         else //0x40 BlocksAndDirectoryInfoCombined
         {
-            blocksInfoBytes = reader.ReadBytes((int)MHeader.CompressedBlocksInfoSize);
+            blocksInfoBytes = reader.ReadBytes((int)Header.CompressedBlocksInfoSize);
         }
         MemoryStream blocksInfoUncompresseddStream;
-        uint uncompressedSize = MHeader.UncompressedBlocksInfoSize;
-        CompressionType compressionType = (CompressionType)(MHeader.Flags & ArchiveFlags.CompressionTypeMask);
+        uint uncompressedSize = Header.UncompressedBlocksInfoSize;
+        CompressionType compressionType = (CompressionType)(Header.Flags & ArchiveFlags.CompressionTypeMask);
         switch (compressionType)
         {
             case CompressionType.None:
@@ -258,12 +239,7 @@ public class BundleFile
                 blocksInfoUncompresseddStream = new MemoryStream((int)uncompressedSize);
                 using (MemoryStream blocksInfoCompressedStream = new(blocksInfoBytes))
                 {
-                    SevenZipHelper.StreamDecompress(
-                        blocksInfoCompressedStream,
-                        blocksInfoUncompresseddStream,
-                        MHeader.CompressedBlocksInfoSize,
-                        MHeader.UncompressedBlocksInfoSize
-                    );
+                    SevenZipHelper.StreamDecompress(blocksInfoCompressedStream, blocksInfoUncompresseddStream, Header.CompressedBlocksInfoSize, Header.UncompressedBlocksInfoSize);
                 }
                 blocksInfoUncompresseddStream.Position = 0;
                 break;
@@ -287,10 +263,10 @@ public class BundleFile
         {
             byte[] uncompressedDataHash = blocksInfoReader.ReadBytes(16);
             int blocksInfoCount = blocksInfoReader.ReadInt32();
-            _mBlocksInfo = new StorageBlock[blocksInfoCount];
+            _mBlocksInfo = new BundleFileStorageBlock[blocksInfoCount];
             for (int i = 0; i < blocksInfoCount; i++)
             {
-                _mBlocksInfo[i] = new StorageBlock
+                _mBlocksInfo[i] = new BundleFileStorageBlock
                 {
                     UncompressedSize = blocksInfoReader.ReadUInt32(),
                     CompressedSize = blocksInfoReader.ReadUInt32(),
@@ -299,10 +275,10 @@ public class BundleFile
             }
 
             int nodesCount = blocksInfoReader.ReadInt32();
-            _mDirectoryInfo = new Node[nodesCount];
+            _mDirectoryInfo = new BundleFileNode[nodesCount];
             for (int i = 0; i < nodesCount; i++)
             {
-                _mDirectoryInfo[i] = new Node
+                _mDirectoryInfo[i] = new BundleFileNode
                 {
                     Offset = blocksInfoReader.ReadInt64(),
                     Size = blocksInfoReader.ReadInt64(),
@@ -311,7 +287,7 @@ public class BundleFile
                 };
             }
         }
-        if ((MHeader.Flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0)
+        if ((Header.Flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0)
         {
             reader.AlignStream(16);
         }
@@ -319,7 +295,7 @@ public class BundleFile
 
     void ReadBlocks(EndianBinaryReader reader, Stream blocksStream)
     {
-        foreach (StorageBlock? blockInfo in _mBlocksInfo)
+        foreach (BundleFileStorageBlock? blockInfo in _mBlocksInfo)
         {
             CompressionType compressionType = (CompressionType)(blockInfo.Flags & StorageBlockFlags.CompressionTypeMask);
             switch (compressionType)
@@ -358,4 +334,31 @@ public class BundleFile
         }
         blocksStream.Position = 0;
     }
+}
+
+public class BundleFileHeader
+{
+    public required string Signature;
+    public required uint Version;
+    public required string UnityVersion;
+    public required string UnityRevision;
+    public long Size;
+    public uint CompressedBlocksInfoSize;
+    public uint UncompressedBlocksInfoSize;
+    public ArchiveFlags Flags;
+}
+
+public class BundleFileNode
+{
+    public required long Offset;
+    public required long Size;
+    public required string Path;
+    public uint Flags;
+}
+
+public class BundleFileStorageBlock
+{
+    public uint CompressedSize;
+    public uint UncompressedSize;
+    public StorageBlockFlags Flags;
 }

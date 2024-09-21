@@ -33,10 +33,10 @@ public class WebFile
         {
             WebData data = dataList[i];
             StreamFile file = new();
-            file.path = data.Path;
-            file.fileName = Path.GetFileName(data.Path);
+            file.Path = data.Path;
+            file.FileName = Path.GetFileName(data.Path);
             reader.BaseStream.Position = data.DataOffset;
-            file.stream = new MemoryStream(reader.ReadBytes(data.DataLength));
+            file.Stream = new MemoryStream(reader.ReadBytes(data.DataLength));
             FileList[i] = file;
         }
     }

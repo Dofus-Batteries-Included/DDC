@@ -4,8 +4,8 @@ public class FileIdentifier
 {
     public Guid Guid;
     public int Type; //enum { kNonAssetType = 0, kDeprecatedCachedAssetType = 1, kSerializedAssetType = 2, kMetaAssetType = 3 };
-    public string PathName;
+    public string? PathName;
 
     //custom
-    public string FileName;
+    public required string FileName;
 }

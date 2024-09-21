@@ -26,7 +26,7 @@ public sealed class PPtr<T> where T: Object
             return true;
         }
 
-        if (_fileId > 0 && _fileId - 1 < _assetsFile.MExternals.Count)
+        if (_fileId > 0 && _fileId - 1 < _assetsFile.Externals.Count)
         {
             AssetsManager assetsManager = _assetsFile.AssetsManager;
             List<SerializedFile> assetsFileList = assetsManager.AssetsFileList;
@@ -34,7 +34,7 @@ public sealed class PPtr<T> where T: Object
 
             if (_index == -2)
             {
-                FileIdentifier mExternal = _assetsFile.MExternals[_fileId - 1];
+                FileIdentifier mExternal = _assetsFile.Externals[_fileId - 1];
                 string name = mExternal.FileName;
                 if (!assetsFileIndexCache.TryGetValue(name, out _index))
                 {
@@ -98,16 +98,16 @@ public sealed class PPtr<T> where T: Object
         }
         else
         {
-            _fileId = _assetsFile.MExternals.FindIndex(x => string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase));
+            _fileId = _assetsFile.Externals.FindIndex(x => string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase));
             if (_fileId == -1)
             {
-                _assetsFile.MExternals.Add(
+                _assetsFile.Externals.Add(
                     new FileIdentifier
                     {
                         FileName = mObject.AssetsFile.FileName
                     }
                 );
-                _fileId = _assetsFile.MExternals.Count;
+                _fileId = _assetsFile.Externals.Count;
             }
             else
             {

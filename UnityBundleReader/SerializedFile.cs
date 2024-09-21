@@ -17,20 +17,19 @@ public class SerializedFile
     public readonly Dictionary<long, Object> ObjectsDic;
 
     public readonly SerializedFileHeader Header;
-    readonly byte _mFileEndianess;
     public string UnityVersion = "2.5.0f5";
     public readonly BuildTarget MTargetPlatform = BuildTarget.UnknownPlatform;
     readonly bool _mEnableTypeTree = true;
     public readonly List<SerializedType> MTypes;
     public readonly int BigIDEnabled;
     public readonly List<ObjectInfo> MObjects;
-    readonly List<LocalSerializedObjectIdentifier> _mScriptTypes;
-    public readonly List<FileIdentifier> MExternals;
-    public readonly List<SerializedType> MRefTypes;
+    public readonly List<FileIdentifier> Externals;
+    public readonly List<SerializedType> RefTypes = [];
     public string UserInformation;
 
     public SerializedFile(FileReader reader, AssetsManager assetsManager)
     {
+        byte fileEndianess;
         AssetsManager = assetsManager;
         Reader = reader;
         FullName = reader.FullPath;
@@ -47,12 +46,12 @@ public class SerializedFile
         {
             Header.MEndianess = reader.ReadByte();
             Header.MReserved = reader.ReadBytes(3);
-            _mFileEndianess = Header.MEndianess;
+            fileEndianess = Header.MEndianess;
         }
         else
         {
             reader.Position = Header.MFileSize - Header.MMetadataSize;
-            _mFileEndianess = reader.ReadByte();
+            fileEndianess = reader.ReadByte();
         }
 
         if (Header.MVersion >= SerializedFileFormatVersion.LargeFilesSupport)
@@ -64,7 +63,7 @@ public class SerializedFile
         }
 
         // ReadMetadata
-        if (_mFileEndianess == 0)
+        if (fileEndianess == 0)
         {
             reader.Endian = EndianType.LittleEndian;
         }
@@ -166,7 +165,7 @@ public class SerializedFile
         if (Header.MVersion >= SerializedFileFormatVersion.HasScriptTypeIndex)
         {
             int scriptCount = reader.ReadInt32();
-            _mScriptTypes = new List<LocalSerializedObjectIdentifier>(scriptCount);
+            List<LocalSerializedObjectIdentifier> scriptTypes = new(scriptCount);
             for (int i = 0; i < scriptCount; i++)
             {
                 LocalSerializedObjectIdentifier mScriptType = new();
@@ -180,36 +179,42 @@ public class SerializedFile
                     reader.AlignStream();
                     mScriptType.LocalIdentifierInFile = reader.ReadInt64();
                 }
-                _mScriptTypes.Add(mScriptType);
+                scriptTypes.Add(mScriptType);
             }
         }
 
         int externalsCount = reader.ReadInt32();
-        MExternals = new List<FileIdentifier>(externalsCount);
+        Externals = new List<FileIdentifier>(externalsCount);
         for (int i = 0; i < externalsCount; i++)
         {
-            FileIdentifier mExternal = new();
+            Guid guid = default;
+            int type = default;
+
             if (Header.MVersion >= SerializedFileFormatVersion.Unknown6)
             {
-                string tempEmpty = reader.ReadStringToNull();
+                _ = reader.ReadStringToNull();
             }
+
             if (Header.MVersion >= SerializedFileFormatVersion.Unknown5)
             {
-                mExternal.Guid = new Guid(reader.ReadBytes(16));
-                mExternal.Type = reader.ReadInt32();
+                guid = new Guid(reader.ReadBytes(16));
+                type = reader.ReadInt32();
             }
-            mExternal.PathName = reader.ReadStringToNull();
-            mExternal.FileName = Path.GetFileName(mExternal.PathName);
-            MExternals.Add(mExternal);
+
+            string pathName = reader.ReadStringToNull();
+            string fileName = Path.GetFileName(pathName);
+
+            FileIdentifier external = new() { Guid = guid, Type = type, PathName = pathName, FileName = fileName };
+            Externals.Add(external);
         }
 
         if (Header.MVersion >= SerializedFileFormatVersion.SupportsRefObject)
         {
             int refTypesCount = reader.ReadInt32();
-            MRefTypes = new List<SerializedType>(refTypesCount);
+            RefTypes = new List<SerializedType>(refTypesCount);
             for (int i = 0; i < refTypesCount; i++)
             {
-                MRefTypes.Add(ReadSerializedType(true));
+                RefTypes.Add(ReadSerializedType(true));
             }
         }
 

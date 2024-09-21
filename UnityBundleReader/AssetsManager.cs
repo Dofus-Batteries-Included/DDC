@@ -107,7 +107,7 @@ public class AssetsManager
                 AssetsFileList.Add(assetsFile);
                 _assetsFileListHash.Add(assetsFile.FileName);
 
-                foreach (FileIdentifier? sharedFile in assetsFile.MExternals)
+                foreach (FileIdentifier? sharedFile in assetsFile.Externals)
                 {
                     string sharedFileName = sharedFile.FileName;
 
@@ -189,15 +189,15 @@ public class AssetsManager
             BundleFile bundleFile = new(reader);
             foreach (StreamFile? file in bundleFile.FileList)
             {
-                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", file.fileName);
-                FileReader subReader = new(dummyPath, file.stream);
+                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", file.FileName);
+                FileReader subReader = new(dummyPath, file.Stream);
                 if (subReader.FileType == FileType.AssetsFile)
                 {
-                    LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.MHeader.UnityRevision);
+                    LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.Header.UnityRevision);
                 }
                 else
                 {
-                    ResourceFileReaders[file.fileName] = subReader; //TODO
+                    ResourceFileReaders[file.FileName] = subReader; //TODO
                 }
             }
         }
@@ -224,8 +224,8 @@ public class AssetsManager
             WebFile webFile = new(reader);
             foreach (StreamFile? file in webFile.FileList)
             {
-                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", file.fileName);
-                FileReader subReader = new(dummyPath, file.stream);
+                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", file.FileName);
+                FileReader subReader = new(dummyPath, file.Stream);
                 switch (subReader.FileType)
                 {
                     case FileType.AssetsFile:
@@ -238,7 +238,7 @@ public class AssetsManager
                         LoadWebFile(subReader);
                         break;
                     case FileType.ResourceFile:
-                        ResourceFileReaders[file.fileName] = subReader; //TODO
+                        ResourceFileReaders[file.FileName] = subReader; //TODO
                         break;
                 }
             }
