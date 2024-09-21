@@ -169,19 +169,16 @@ IEnumerable<MonoBehaviour> GetMonoBehaviors(IEnumerable<string> inputs)
 
 string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields)
 {
+    JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
     OrderedDictionary? properties = monoBehaviour.ToType();
 
-    string json1;
     if (fields.Length > 0)
     {
         Dictionary<string, object?> toWrite = ExtractPropertiesOfDictionary(properties, fields);
-        json1 = JsonSerializer.Serialize(toWrite, new JsonSerializerOptions { WriteIndented = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
+        return JsonSerializer.Serialize(toWrite, jsonSerializerOptions);
     }
-    else
-    {
-        json1 = JsonSerializer.Serialize(properties, new JsonSerializerOptions { WriteIndented = true, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals });
-    }
-    return json1;
+
+    return JsonSerializer.Serialize(properties, jsonSerializerOptions);
 }
 
 Dictionary<string, object?> ExtractPropertiesOfDictionary(OrderedDictionary? properties, string[] fields)
