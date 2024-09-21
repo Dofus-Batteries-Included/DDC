@@ -10,7 +10,8 @@ Tools:
 # Download the extracted data
 
 - Directly from the [Releases](https://github.com/Dofus-Batteries-Included/DDC/releases) of this repository: the data will always be packaged in a `data.zip` archive. The archive contains a `metadata.json` file containing a `GameVersion` and `GameBuildId` fields that provide info about the version of the game that the data is extracted from
-- Using the [DDC.Api](https://ddc-gqaacvehagekdtcy.francecentral-01.azurewebsites.net/swagger) application: the application exposes all the releases of this repository through REST APIs. The raw files are available through the endpoints in the 'Raw data' group.
+- Using the [Data Center API](https://api.dofusbatteriesincluded.fr/swagger/index.html?urls.primaryName=data-center): it exposes all the releases of this repository through REST APIs. The raw files are available through the endpoints in the 'Raw data' group.
+See also [DBI.Api](https://github.com/Dofus-Batteries-Included/DBI.Api).
 
 # How does it work?
 

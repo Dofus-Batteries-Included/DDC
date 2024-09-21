@@ -1,9 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDC.Api", "DDC.Api\DDC.Api.csproj", "{A6DF6577-4B2A-49CE-8AF0-A13E38C66A9E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDC", "DDC\DDC.csproj", "{045DC1A4-C340-4396-AE24-4B13D77C8457}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDC.Extractor", "DDC.Extractor\DDC.Extractor.csproj", "{17294840-F56B-4E9F-933E-4699B994C49A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityBundleReader", "UnityBundleReader\UnityBundleReader.csproj", "{D699608C-D88A-48A6-86AC-D20BB8C19516}"
@@ -14,14 +10,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A6DF6577-4B2A-49CE-8AF0-A13E38C66A9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6DF6577-4B2A-49CE-8AF0-A13E38C66A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6DF6577-4B2A-49CE-8AF0-A13E38C66A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6DF6577-4B2A-49CE-8AF0-A13E38C66A9E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{045DC1A4-C340-4396-AE24-4B13D77C8457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{045DC1A4-C340-4396-AE24-4B13D77C8457}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{045DC1A4-C340-4396-AE24-4B13D77C8457}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{045DC1A4-C340-4396-AE24-4B13D77C8457}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17294840-F56B-4E9F-933E-4699B994C49A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17294840-F56B-4E9F-933E-4699B994C49A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17294840-F56B-4E9F-933E-4699B994C49A}.Release|Any CPU.ActiveCfg = Release|Any CPU
