@@ -109,16 +109,16 @@ public class SerializedFile
             ObjectInfo objectInfo = new();
             if (BigIDEnabled != 0)
             {
-                objectInfo.MPathID = reader.ReadInt64();
+                objectInfo.PathId = reader.ReadInt64();
             }
             else if (Header.MVersion < SerializedFileFormatVersion.Unknown14)
             {
-                objectInfo.MPathID = reader.ReadInt32();
+                objectInfo.PathId = reader.ReadInt32();
             }
             else
             {
                 reader.AlignStream();
-                objectInfo.MPathID = reader.ReadInt64();
+                objectInfo.PathId = reader.ReadInt64();
             }
 
             if (Header.MVersion >= SerializedFileFormatVersion.LargeFilesSupport)

@@ -17,7 +17,7 @@ public class ObjectReader : EndianBinaryReader
     public ObjectReader(EndianBinaryReader reader, SerializedFile assetsFile, ObjectInfo objectInfo) : base(reader.BaseStream, reader.Endian)
     {
         AssetsFile = assetsFile;
-        MPathID = objectInfo.MPathID;
+        MPathID = objectInfo.PathId;
         ByteStart = objectInfo.ByteStart;
         ByteSize = objectInfo.ByteSize;
         if (Enum.IsDefined(typeof(ClassIDType), objectInfo.ClassID))

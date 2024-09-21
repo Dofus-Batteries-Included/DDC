@@ -24,6 +24,9 @@ Logger logger = new LoggerConfiguration().WriteTo.Console(outputTemplate: output
 Log.Logger = logger;
 SerilogLoggerFactory loggerFactory = new(logger);
 
+ILogger globalLogger = loggerFactory.CreateLogger("Global");
+UnityBundleReader.Logger.Configure(globalLogger);
+
 try
 {
     Parser parser = new(
@@ -73,7 +76,7 @@ void ListCommand(LineArgs args)
     ILogger log = loggerFactory.CreateLogger("List");
 
     log.LogInformation("Loading bundles from paths: {Paths}.", args.BundlePaths);
-    string[] behaviourNames = GetMonoBehaviors(args.BundlePaths).Select(m => m.Name).ToArray();
+    string[] behaviourNames = GetMonoBehaviors(args.BundlePaths).Select(m => m.Name ?? "__UNNAMED__").ToArray();
 
     log.LogInformation("- Found {Count} behaviours in bundle", behaviourNames.Length);
     foreach (string name in behaviourNames)
@@ -153,7 +156,8 @@ IEnumerable<MonoBehaviour> GetMonoBehaviors(IEnumerable<string> inputs)
         yield break;
     }
 
-    AssetsManager assetsManager = new() { SpecifyUnityVersion = "2022.3.29f1" };
+    ILogger<AssetsManager> log = loggerFactory.CreateLogger<AssetsManager>();
+    AssetsManager assetsManager = new(log) { SpecifyUnityVersion = "2022.3.29f1" };
     assetsManager.LoadFiles(bundlePaths);
 
     foreach (Object obj in assetsManager.AssetsFileList.SelectMany(file => file.Objects))
@@ -203,8 +207,13 @@ Dictionary<string, object?> ExtractPropertiesOfDictionary(OrderedDictionary? pro
     return result;
 }
 
-bool Like(string str, string pattern)
+bool Like(string? str, string pattern)
 {
+    if (str == null)
+    {
+        return false;
+    }
+
     return new Regex("^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".") + "$", RegexOptions.IgnoreCase | RegexOptions.Singleline).IsMatch(str);
 }
 

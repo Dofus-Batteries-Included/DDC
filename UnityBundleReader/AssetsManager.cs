@@ -1,15 +1,14 @@
 using System.IO.Compression;
-using System.Text;
+using Microsoft.Extensions.Logging;
 using UnityBundleReader.Classes;
 using static UnityBundleReader.ImportHelper;
-using Object = UnityBundleReader.Classes.Object;
 
 namespace UnityBundleReader;
 
 public class AssetsManager
 {
     public string? SpecifyUnityVersion;
-    public readonly List<SerializedFile> AssetsFileList = new();
+    public readonly List<SerializedFile> AssetsFileList = [];
 
     internal readonly Dictionary<string, int> AssetsFileIndexCache = new(StringComparer.OrdinalIgnoreCase);
     internal readonly Dictionary<string, BinaryReader> ResourceFileReaders = new(StringComparer.OrdinalIgnoreCase);
@@ -18,6 +17,12 @@ public class AssetsManager
     readonly HashSet<string> _importFilesHash = new(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> _noExistFiles = new(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> _assetsFileListHash = new(StringComparer.OrdinalIgnoreCase);
+    readonly ILogger<AssetsManager> _logger;
+
+    public AssetsManager(ILogger<AssetsManager> logger)
+    {
+        _logger = logger;
+    }
 
     public void LoadFiles(params string[] files)
     {
@@ -57,7 +62,6 @@ public class AssetsManager
         _assetsFileListHash.Clear();
 
         ReadAssets();
-        ProcessAssets();
     }
 
     void LoadFile(string fullName)
@@ -95,7 +99,7 @@ public class AssetsManager
     {
         if (!_assetsFileListHash.Contains(reader.FileName))
         {
-            Logger.Info($"Loading {reader.FullPath}");
+            _logger.LogInformation("Loading {Path}...", reader.FullPath);
             try
             {
                 SerializedFile assetsFile = new(reader, this);
@@ -133,15 +137,15 @@ public class AssetsManager
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception exn)
             {
-                Logger.Error($"Error while reading assets file {reader.FullPath}", e);
+                _logger.LogError(exn, "Error while reading assets file {Path}.", reader.FullPath);
                 reader.Dispose();
             }
         }
         else
         {
-            Logger.Info($"Skipping {reader.FullPath}");
+            _logger.LogInformation("Skipped {Path}.", reader.FullPath);
             reader.Dispose();
         }
     }
@@ -152,8 +156,11 @@ public class AssetsManager
         {
             try
             {
-                SerializedFile assetsFile = new(reader, this);
-                assetsFile.OriginalPath = originalPath;
+                SerializedFile assetsFile = new(reader, this)
+                {
+                    OriginalPath = originalPath
+                };
+
                 if (!string.IsNullOrEmpty(unityVersion) && assetsFile.Header.MVersion < SerializedFileFormatVersion.Unknown7)
                 {
                     assetsFile.SetVersion(unityVersion);
@@ -162,21 +169,21 @@ public class AssetsManager
                 AssetsFileList.Add(assetsFile);
                 _assetsFileListHash.Add(assetsFile.FileName);
             }
-            catch (Exception e)
+            catch (Exception exn)
             {
-                Logger.Error($"Error while reading assets file {reader.FullPath} from {Path.GetFileName(originalPath)}", e);
+                _logger.LogError(exn, "Error while reading assets file {Path} from {FileName}.", reader.FullPath, Path.GetFileName(originalPath));
                 ResourceFileReaders.Add(reader.FileName, reader);
             }
         }
         else
         {
-            Logger.Info($"Skipping {originalPath} ({reader.FileName})");
+            _logger.LogInformation("Skipped {OriginalPath} ({FileName}).", originalPath, reader.FileName);
         }
     }
 
     void LoadBundleFile(FileReader reader, string? originalPath = null)
     {
-        Logger.Info("Loading " + reader.FullPath);
+        _logger.LogInformation("Loading {Path}...", reader.FullPath);
         try
         {
             BundleFile bundleFile = new(reader);
@@ -201,7 +208,7 @@ public class AssetsManager
             {
                 str += $" from {Path.GetFileName(originalPath)}";
             }
-            Logger.Error(str, e);
+            Logger.Error(e, str);
         }
         finally
         {
@@ -211,7 +218,7 @@ public class AssetsManager
 
     void LoadWebFile(FileReader reader)
     {
-        Logger.Info("Loading " + reader.FullPath);
+        _logger.LogInformation("Loading {Path}...", reader.FullPath);
         try
         {
             WebFile webFile = new(reader);
@@ -236,9 +243,9 @@ public class AssetsManager
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception exn)
         {
-            Logger.Error($"Error while reading web file {reader.FullPath}", e);
+            _logger.LogError(exn, "Error while reading web file {Path}.", reader.FullPath);
         }
         finally
         {
@@ -248,96 +255,94 @@ public class AssetsManager
 
     void LoadZipFile(FileReader reader)
     {
-        Logger.Info("Loading " + reader.FileName);
+        _logger.LogInformation("Loading {Path}...", reader.FileName);
         try
         {
-            using (ZipArchive archive = new(reader.BaseStream, ZipArchiveMode.Read))
+            using ZipArchive archive = new(reader.BaseStream, ZipArchiveMode.Read);
+
+            List<string> splitFiles = [];
+            // register all files before parsing the assets so that the external references can be found
+            // and find split files
+            foreach (ZipArchiveEntry entry in archive.Entries)
             {
-                List<string> splitFiles = new();
-                // register all files before parsing the assets so that the external references can be found
-                // and find split files
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                if (entry.Name.Contains(".split"))
                 {
-                    if (entry.Name.Contains(".split"))
+                    string baseName = Path.GetFileNameWithoutExtension(entry.Name);
+                    string basePath = Path.Combine(Path.GetDirectoryName(entry.FullName) ?? ".", baseName);
+                    if (!splitFiles.Contains(basePath))
                     {
-                        string baseName = Path.GetFileNameWithoutExtension(entry.Name);
-                        string basePath = Path.Combine(Path.GetDirectoryName(entry.FullName) ?? ".", baseName);
-                        if (!splitFiles.Contains(basePath))
-                        {
-                            splitFiles.Add(basePath);
-                            _importFilesHash.Add(baseName);
-                        }
-                    }
-                    else
-                    {
-                        _importFilesHash.Add(entry.Name);
+                        splitFiles.Add(basePath);
+                        _importFilesHash.Add(baseName);
                     }
                 }
-
-                // merge split files and load the result
-                foreach (string basePath in splitFiles)
+                else
                 {
-                    try
+                    _importFilesHash.Add(entry.Name);
+                }
+            }
+
+            // merge split files and load the result
+            foreach (string basePath in splitFiles)
+            {
+                try
+                {
+                    Stream splitStream = new MemoryStream();
+                    int i = 0;
+                    while (true)
                     {
-                        Stream splitStream = new MemoryStream();
-                        int i = 0;
-                        while (true)
+                        string path = $"{basePath}.split{i++}";
+                        ZipArchiveEntry? entry = archive.GetEntry(path);
+                        if (entry == null)
                         {
-                            string path = $"{basePath}.split{i++}";
-                            ZipArchiveEntry? entry = archive.GetEntry(path);
-                            if (entry == null)
-                            {
-                                break;
-                            }
-                            using (Stream entryStream = entry.Open())
-                            {
-                                entryStream.CopyTo(splitStream);
-                            }
+                            break;
                         }
-                        splitStream.Seek(0, SeekOrigin.Begin);
-                        FileReader entryReader = new(basePath, splitStream);
-                        LoadFile(entryReader);
+
+                        using Stream entryStream = entry.Open();
+                        entryStream.CopyTo(splitStream);
                     }
-                    catch (Exception e)
+                    splitStream.Seek(0, SeekOrigin.Begin);
+                    FileReader entryReader = new(basePath, splitStream);
+                    LoadFile(entryReader);
+                }
+                catch (Exception exn)
+                {
+                    _logger.LogError(exn, "Error while reading zip split file {Path}.", basePath);
+                }
+            }
+
+            // load all entries
+            foreach (ZipArchiveEntry entry in archive.Entries)
+            {
+                try
+                {
+                    string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", reader.FileName, entry.FullName);
+                    // create a new stream
+                    // - to store the deflated stream in
+                    // - to keep the data for later extraction
+                    Stream streamReader = new MemoryStream();
+                    using (Stream entryStream = entry.Open())
                     {
-                        Logger.Error($"Error while reading zip split file {basePath}", e);
+                        entryStream.CopyTo(streamReader);
+                    }
+                    streamReader.Position = 0;
+
+                    FileReader entryReader = new(dummyPath, streamReader);
+                    LoadFile(entryReader);
+                    if (entryReader.FileType == FileType.ResourceFile)
+                    {
+                        entryReader.Position = 0;
+                        ResourceFileReaders.TryAdd(entry.Name, entryReader);
                     }
                 }
-
-                // load all entries
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                catch (Exception exn)
                 {
-                    try
-                    {
-                        string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", reader.FileName, entry.FullName);
-                        // create a new stream
-                        // - to store the deflated stream in
-                        // - to keep the data for later extraction
-                        Stream streamReader = new MemoryStream();
-                        using (Stream entryStream = entry.Open())
-                        {
-                            entryStream.CopyTo(streamReader);
-                        }
-                        streamReader.Position = 0;
-
-                        FileReader entryReader = new(dummyPath, streamReader);
-                        LoadFile(entryReader);
-                        if (entryReader.FileType == FileType.ResourceFile)
-                        {
-                            entryReader.Position = 0;
-                            ResourceFileReaders.TryAdd(entry.Name, entryReader);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error($"Error while reading zip entry {entry.FullName}", e);
-                    }
+                    _logger.LogError(exn, "Error while reading zip entry {Name}.", entry.FullName);
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception exn)
         {
-            Logger.Error($"Error while reading zip file {reader.FileName}", e);
+            _logger.LogError(exn, "Error while reading zip file {Name}.", reader.FileName);
         }
         finally
         {
@@ -345,7 +350,7 @@ public class AssetsManager
         }
     }
 
-    public void CheckStrippedVersion(SerializedFile assetsFile)
+    void CheckStrippedVersion(SerializedFile assetsFile)
     {
         if (assetsFile.IsVersionStripped && string.IsNullOrEmpty(SpecifyUnityVersion))
         {
@@ -357,133 +362,47 @@ public class AssetsManager
         }
     }
 
-    public void Clear()
-    {
-        foreach (SerializedFile? assetsFile in AssetsFileList)
-        {
-            assetsFile.Objects.Clear();
-            assetsFile.Reader.Close();
-        }
-        AssetsFileList.Clear();
-
-        foreach (KeyValuePair<string, BinaryReader> resourceFileReader in ResourceFileReaders)
-        {
-            resourceFileReader.Value.Close();
-        }
-        ResourceFileReaders.Clear();
-
-        AssetsFileIndexCache.Clear();
-    }
-
     void ReadAssets()
     {
-        Logger.Info("Read assets...");
+        _logger.LogInformation("Reading assets...");
 
         int progressCount = AssetsFileList.Sum(x => x.MObjects.Count);
         int i = 0;
         Progress.Reset();
         foreach (SerializedFile assetsFile in AssetsFileList)
         {
-            Logger.Info($"Reading assets from {assetsFile.FileName}...");
+            _logger.LogInformation("Reading assets from {Name}...", assetsFile.FileName);
 
             foreach (ObjectInfo? objectInfo in assetsFile.MObjects)
             {
                 ObjectReader objectReader = new(assetsFile.Reader, assetsFile, objectInfo);
-                Logger.Info($"Reading object of type {objectReader.Type}...");
                 try
                 {
                     switch (objectReader.Type)
                     {
                         case ClassIDType.MonoBehaviour:
-                            Object obj = new MonoBehaviour(objectReader);
-                            assetsFile.AddObject(obj);
+                            MonoBehaviour mb = new(objectReader);
+                            assetsFile.AddObject(mb);
+                            _logger.LogInformation("Found MonoBehaviour {Name}.", mb.Name ?? "__UNNAMED__");
                             break;
                         default:
-                            Logger.Debug("Object skipped because it is not a MonoBehaviour.");
+                            _logger.LogDebug("Object of type {Type} skipped because it is not a MonoBehaviour.", objectReader.Type);
                             break;
                     }
                 }
-                catch (Exception e)
+                catch (Exception exn)
                 {
-                    StringBuilder sb = new();
-                    sb.AppendLine("Unable to load object")
-                        .AppendLine($"Assets {assetsFile.FileName}")
-                        .AppendLine($"Path {assetsFile.OriginalPath}")
-                        .AppendLine($"Type {objectReader.Type}")
-                        .AppendLine($"PathID {objectInfo.MPathID}")
-                        .Append(e);
-                    Logger.Error(sb.ToString());
+                    _logger.LogError(
+                        exn,
+                        "Unable to load object.\nAssets {Name}\nPath {Path}\nType {Type}\nPathID {PathId}",
+                        assetsFile.FileName,
+                        assetsFile.OriginalPath,
+                        objectReader.Type,
+                        objectInfo.PathId
+                    );
                 }
 
                 Progress.Report(++i, progressCount);
-            }
-        }
-    }
-
-    void ProcessAssets()
-    {
-        Logger.Info("Process Assets...");
-
-        foreach (SerializedFile? assetsFile in AssetsFileList)
-        {
-            foreach (Object? obj in assetsFile.Objects)
-            {
-                switch (obj)
-                {
-                    case GameObject mGameObject:
-                    {
-                        foreach (PPtr<Component>? pptr in mGameObject.MComponents)
-                        {
-                            if (pptr.TryGet(out Component? mComponent))
-                            {
-                                switch (mComponent)
-                                {
-                                    case Transform mTransform:
-                                        mGameObject.MTransform = mTransform;
-                                        break;
-                                    case MeshRenderer mMeshRenderer:
-                                        mGameObject.MMeshRenderer = mMeshRenderer;
-                                        break;
-                                    case MeshFilter mMeshFilter:
-                                        mGameObject.MMeshFilter = mMeshFilter;
-                                        break;
-                                    case SkinnedMeshRenderer mSkinnedMeshRenderer:
-                                        mGameObject.MSkinnedMeshRenderer = mSkinnedMeshRenderer;
-                                        break;
-                                    case Animator mAnimator:
-                                        mGameObject.MAnimator = mAnimator;
-                                        break;
-                                    case Animation mAnimation:
-                                        mGameObject.MAnimation = mAnimation;
-                                        break;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case SpriteAtlas mSpriteAtlas:
-                    {
-                        foreach (PPtr<Sprite>? mPackedSprite in mSpriteAtlas.MPackedSprites)
-                        {
-                            if (mPackedSprite.TryGet(out Sprite? mSprite))
-                            {
-                                if (mSprite.MSpriteAtlas.IsNull)
-                                {
-                                    mSprite.MSpriteAtlas.Set(mSpriteAtlas);
-                                }
-                                else
-                                {
-                                    mSprite.MSpriteAtlas.TryGet(out SpriteAtlas? mSpriteAtlaOld);
-                                    if (mSpriteAtlaOld.MIsVariant)
-                                    {
-                                        mSprite.MSpriteAtlas.Set(mSpriteAtlas);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
             }
         }
     }

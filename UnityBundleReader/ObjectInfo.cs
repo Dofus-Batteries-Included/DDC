@@ -9,6 +9,6 @@ public class ObjectInfo
     public ushort IsDestroyed;
     public byte Stripped;
 
-    public long MPathID;
+    public long PathId;
     public SerializedType? SerializedType;
 }

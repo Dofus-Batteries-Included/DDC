@@ -1,22 +1,17 @@
-﻿using System.Text;
+﻿using Microsoft.Extensions.Logging;
 
 namespace UnityBundleReader;
 
 public static class Logger
 {
-    public static readonly ILogger Default = new DummyLogger();
+    static ILogger? _logger;
 
-    public static void Verbose(string message) => Default.Log(LoggerEvent.Verbose, message);
-    public static void Debug(string message) => Default.Log(LoggerEvent.Debug, message);
-    public static void Info(string message) => Default.Log(LoggerEvent.Info, message);
-    public static void Warning(string message) => Default.Log(LoggerEvent.Warning, message);
-    public static void Error(string message) => Default.Log(LoggerEvent.Error, message);
+    public static void Configure(ILogger logger) => _logger = logger;
 
-    public static void Error(string message, Exception e)
-    {
-        StringBuilder sb = new();
-        sb.AppendLine(message);
-        sb.AppendLine(e.ToString());
-        Default.Log(LoggerEvent.Error, sb.ToString());
-    }
+    public static void Verbose(string message) => _logger?.LogTrace(message);
+    public static void Debug(string message) => _logger?.LogDebug(message);
+    public static void Info(string message) => _logger?.LogInformation(message);
+    public static void Warning(string message) => _logger?.LogWarning(message);
+    public static void Error(string message) => _logger?.LogError(message);
+    public static void Error(Exception exn, string message) => _logger?.LogError(exn, message);
 }
