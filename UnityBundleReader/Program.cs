@@ -26,7 +26,6 @@ SerilogLoggerFactory loggerFactory = new(logger);
 
 try
 {
-    ILogger log = loggerFactory.CreateLogger("UnityBundleReader");
     Parser parser = new(
         with =>
         {
@@ -74,7 +73,7 @@ void ListCommand(LineArgs args)
     ILogger log = loggerFactory.CreateLogger("List");
 
     log.LogInformation("Loading bundles from paths: {Paths}.", args.BundlePaths);
-    string[] behaviourNames = GetMonoBehaviors(args.BundlePaths).Select(m => m.MName).ToArray();
+    string[] behaviourNames = GetMonoBehaviors(args.BundlePaths).Select(m => m.Name).ToArray();
 
     log.LogInformation("- Found {Count} behaviours in bundle", behaviourNames.Length);
     foreach (string name in behaviourNames)
@@ -86,37 +85,41 @@ void ListCommand(LineArgs args)
 void ExtractCommand(ExtractArgs args)
 {
     ILogger log = loggerFactory.CreateLogger("Extract");
-    string[] fields = args.Fields.SelectMany(s => s.Split(',')).ToArray();
+    string[] behaviourNames = args.Behaviours.SelectMany(s => s.Split(',')).ToArray();
+    string[] fieldNames = args.Fields.SelectMany(s => s.Split(',')).ToArray();
 
     log.LogInformation("Loading bundles from paths: {Paths}.", args.BundlePaths);
-    MonoBehaviour[] behaviours = GetMonoBehaviors(args.BundlePaths).ToArray();
+    MonoBehaviour[] behaviours = GetMonoBehaviors(args.BundlePaths).Where(b => behaviourNames.Any(p => Like(b.Name, p))).ToArray();
 
     log.LogInformation("- Found {Count} behaviours in bundle", behaviours.Length);
 
     int count = 0;
     foreach (MonoBehaviour behaviour in behaviours)
     {
+
         string basePath = Path.GetFullPath(args.OutputPath);
         string directory = Path.Join(basePath, Path.GetFileNameWithoutExtension(behaviour.AssetsFile.OriginalPath));
-        string path = Path.Join(directory, $"{behaviour.MName}.json");
+        string path = Path.Join(directory, $"{behaviour.Name}.json");
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
         }
 
+        log.LogDebug("- Extracting {Name} at {Path}...", behaviour.Name, path);
+
         string json;
         try
         {
-            json = ExtractPropertiesOfBehaviour(behaviour, fields);
+            json = ExtractPropertiesOfBehaviour(behaviour, fieldNames);
         }
         catch (Exception exn)
         {
-            log.LogError(exn, "Could not extract properties of behaviour {Name}.", behaviour.MName);
+            log.LogError(exn, "Could not extract properties of behaviour {Name}.", behaviour.Name);
             continue;
         }
 
         File.WriteAllText(path, json);
-        log.LogInformation("\t\t- MonoBehaviour {Name} saved at {Path}", behaviour.MName, path);
+        log.LogInformation("\t\t- MonoBehaviour {Name} saved at {Path}", behaviour.Name, path);
         count++;
     }
 
@@ -183,6 +186,11 @@ string ExtractPropertiesOfBehaviour(MonoBehaviour monoBehaviour, string[] fields
 
 Dictionary<string, object?> ExtractPropertiesOfDictionary(OrderedDictionary? properties, string[] fields)
 {
+    if (properties == null)
+    {
+        return [];
+    }
+
     Dictionary<string, object?> result = new();
 
     foreach (object? key in properties.Keys)
@@ -221,6 +229,9 @@ namespace UnityBundleReader
     {
         [Value(0, Min = 1, MetaName = "bundles", HelpText = "Bundle files.")]
         public IEnumerable<string> BundlePaths { get; set; } = [];
+
+        [Option('b', "behaviours", HelpText = "If set, behaviours to extract. Glob patterns are accepted.")]
+        public IEnumerable<string> Behaviours { get; set; } = [];
 
         [Option('f', "field", HelpText = "If set, fields to extract. Glob patterns are accepted.")]
         public IEnumerable<string> Fields { get; set; } = [];

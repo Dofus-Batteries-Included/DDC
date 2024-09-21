@@ -4,12 +4,12 @@ namespace UnityBundleReader.Classes;
 
 public sealed class MonoBehaviour : Behaviour
 {
-    public PPtr<MonoScript> MScript;
-    public readonly string MName;
+    public PPtr<MonoScript> Script;
+    public readonly string Name;
 
     public MonoBehaviour(ObjectReader reader) : base(reader)
     {
-        MScript = new PPtr<MonoScript>(reader);
-        MName = reader.ReadAlignedString();
+        Script = new PPtr<MonoScript>(reader);
+        Name = reader.ReadAlignedString();
     }
 }
