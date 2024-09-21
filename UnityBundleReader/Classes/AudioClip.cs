@@ -41,7 +41,7 @@ namespace UnityBundleReader.Classes
                 {
                     int mStream = reader.ReadInt32();
                     MSize = reader.ReadInt32();
-                    var tsize = MSize % 4 != 0 ? MSize + 4 - MSize % 4 : MSize;
+                    long tsize = MSize % 4 != 0 ? MSize + 4 - MSize % 4 : MSize;
                     if (reader.ByteSize + reader.ByteStart - reader.Position != tsize)
                     {
                         MOffset = reader.ReadUInt32();

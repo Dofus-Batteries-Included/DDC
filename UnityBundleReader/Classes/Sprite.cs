@@ -64,7 +64,7 @@ namespace UnityBundleReader.Classes
 
         public SpriteVertex(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             Pos = reader.ReadVector3();
             if (version[0] < 4 || (version[0] == 4 && version[1] <= 3)) //4.3 and down
@@ -95,7 +95,7 @@ namespace UnityBundleReader.Classes
 
         public SpriteRenderData(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             Texture = new PPtr<Texture2D>(reader);
             if (version[0] > 5 || (version[0] == 5 && version[1] >= 2)) //5.2 and up
@@ -105,7 +105,7 @@ namespace UnityBundleReader.Classes
 
             if (version[0] >= 2019) //2019 and up
             {
-                var secondaryTexturesSize = reader.ReadInt32();
+                int secondaryTexturesSize = reader.ReadInt32();
                 SecondaryTextures = new SecondarySpriteTexture[secondaryTexturesSize];
                 for (int i = 0; i < secondaryTexturesSize; i++)
                 {
@@ -115,7 +115,7 @@ namespace UnityBundleReader.Classes
 
             if (version[0] > 5 || (version[0] == 5 && version[1] >= 6)) //5.6 and up
             {
-                var mSubMeshesSize = reader.ReadInt32();
+                int mSubMeshesSize = reader.ReadInt32();
                 MSubMeshes = new SubMesh[mSubMeshesSize];
                 for (int i = 0; i < mSubMeshesSize; i++)
                 {
@@ -129,7 +129,7 @@ namespace UnityBundleReader.Classes
             }
             else
             {
-                var verticesSize = reader.ReadInt32();
+                int verticesSize = reader.ReadInt32();
                 Vertices = new SpriteVertex[verticesSize];
                 for (int i = 0; i < verticesSize; i++)
                 {
@@ -146,7 +146,7 @@ namespace UnityBundleReader.Classes
 
                 if (version[0] == 2018 && version[1] < 2) //2018.2 down
                 {
-                    var mSourceSkinSize = reader.ReadInt32();
+                    int mSourceSkinSize = reader.ReadInt32();
                     for (int i = 0; i < mSourceSkinSize; i++)
                     {
                         MSourceSkin[i] = new BoneWeights4(reader);
@@ -232,8 +232,8 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] >= 2017) //2017 and up
             {
-                var first = new Guid(reader.ReadBytes(16));
-                var second = reader.ReadInt64();
+                Guid first = new Guid(reader.ReadBytes(16));
+                long second = reader.ReadInt64();
                 MRenderDataKey = new KeyValuePair<Guid, long>(first, second);
 
                 MAtlasTags = reader.ReadStringArray();
@@ -245,7 +245,7 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] >= 2017) //2017 and up
             {
-                var mPhysicsShapeSize = reader.ReadInt32();
+                int mPhysicsShapeSize = reader.ReadInt32();
                 MPhysicsShape = new Vector2[mPhysicsShapeSize][];
                 for (int i = 0; i < mPhysicsShapeSize; i++)
                 {

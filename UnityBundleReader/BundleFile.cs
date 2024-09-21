@@ -82,7 +82,7 @@ namespace UnityBundleReader
                         goto case "UnityFS";
                     }
                     ReadHeaderAndBlocksInfo(reader);
-                    using (var blocksStream = CreateBlocksStream(reader.FullPath))
+                    using (Stream? blocksStream = CreateBlocksStream(reader.FullPath))
                     {
                         ReadBlocksAndDirectory(reader, blocksStream);
                         ReadFiles(blocksStream, reader.FullPath);
@@ -91,7 +91,7 @@ namespace UnityBundleReader
                 case "UnityFS":
                     ReadHeader(reader);
                     ReadBlocksInfoAndDirectory(reader);
-                    using (var blocksStream = CreateBlocksStream(reader.FullPath))
+                    using (Stream? blocksStream = CreateBlocksStream(reader.FullPath))
                     {
                         ReadBlocks(reader, blocksStream);
                         ReadFiles(blocksStream, reader.FullPath);
@@ -104,17 +104,17 @@ namespace UnityBundleReader
         {
             if (MHeader.Version >= 4)
             {
-                var hash = reader.ReadBytes(16);
-                var crc = reader.ReadUInt32();
+                byte[]? hash = reader.ReadBytes(16);
+                uint crc = reader.ReadUInt32();
             }
-            var minimumStreamedBytes = reader.ReadUInt32();
+            uint minimumStreamedBytes = reader.ReadUInt32();
             MHeader.Size = reader.ReadUInt32();
-            var numberOfLevelsToDownloadBeforeStreaming = reader.ReadUInt32();
-            var levelCount = reader.ReadInt32();
+            uint numberOfLevelsToDownloadBeforeStreaming = reader.ReadUInt32();
+            int levelCount = reader.ReadInt32();
             _mBlocksInfo = new StorageBlock[1];
             for (int i = 0; i < levelCount; i++)
             {
-                var storageBlock = new StorageBlock()
+                StorageBlock? storageBlock = new StorageBlock()
                 {
                     CompressedSize = reader.ReadUInt32(),
                     UncompressedSize = reader.ReadUInt32(),
@@ -126,11 +126,11 @@ namespace UnityBundleReader
             }
             if (MHeader.Version >= 2)
             {
-                var completeFileSize = reader.ReadUInt32();
+                uint completeFileSize = reader.ReadUInt32();
             }
             if (MHeader.Version >= 3)
             {
-                var fileInfoHeaderSize = reader.ReadUInt32();
+                uint fileInfoHeaderSize = reader.ReadUInt32();
             }
             reader.Position = MHeader.Size;
         }
@@ -138,7 +138,7 @@ namespace UnityBundleReader
         private Stream CreateBlocksStream(string path)
         {
             Stream blocksStream;
-            var uncompressedSizeSum = _mBlocksInfo.Sum(x => x.UncompressedSize);
+            long uncompressedSizeSum = _mBlocksInfo.Sum(x => x.UncompressedSize);
             if (uncompressedSizeSum >= int.MaxValue)
             {
                 /*var memoryMappedFile = MemoryMappedFile.CreateNew(null, uncompressedSizeSum);
@@ -154,15 +154,15 @@ namespace UnityBundleReader
 
         private void ReadBlocksAndDirectory(EndianBinaryReader reader, Stream blocksStream)
         {
-            var isCompressed = MHeader.Signature == "UnityWeb";
-            foreach (var blockInfo in _mBlocksInfo)
+            bool isCompressed = MHeader.Signature == "UnityWeb";
+            foreach (StorageBlock? blockInfo in _mBlocksInfo)
             {
-                var uncompressedBytes = reader.ReadBytes((int)blockInfo.CompressedSize);
+                byte[]? uncompressedBytes = reader.ReadBytes((int)blockInfo.CompressedSize);
                 if (isCompressed)
                 {
-                    using (var memoryStream = new MemoryStream(uncompressedBytes))
+                    using (MemoryStream? memoryStream = new MemoryStream(uncompressedBytes))
                     {
-                        using (var decompressStream = SevenZipHelper.StreamDecompress(memoryStream))
+                        using (MemoryStream? decompressStream = SevenZipHelper.StreamDecompress(memoryStream))
                         {
                             uncompressedBytes = decompressStream.ToArray();
                         }
@@ -171,8 +171,8 @@ namespace UnityBundleReader
                 blocksStream.Write(uncompressedBytes, 0, uncompressedBytes.Length);
             }
             blocksStream.Position = 0;
-            var blocksReader = new EndianBinaryReader(blocksStream);
-            var nodesCount = blocksReader.ReadInt32();
+            EndianBinaryReader? blocksReader = new EndianBinaryReader(blocksStream);
+            int nodesCount = blocksReader.ReadInt32();
             _mDirectoryInfo = new Node[nodesCount];
             for (int i = 0; i < nodesCount; i++)
             {
@@ -190,8 +190,8 @@ namespace UnityBundleReader
             FileList = new StreamFile[_mDirectoryInfo.Length];
             for (int i = 0; i < _mDirectoryInfo.Length; i++)
             {
-                var node = _mDirectoryInfo[i];
-                var file = new StreamFile();
+                Node? node = _mDirectoryInfo[i];
+                StreamFile? file = new StreamFile();
                 FileList[i] = file;
                 file.path = node.Path;
                 file.fileName = Path.GetFileName(node.Path);
@@ -199,7 +199,7 @@ namespace UnityBundleReader
                 {
                     /*var memoryMappedFile = MemoryMappedFile.CreateNew(null, entryinfo_size);
                     file.stream = memoryMappedFile.CreateViewStream();*/
-                    var extractPath = path + "_unpacked" + Path.DirectorySeparatorChar;
+                    string? extractPath = path + "_unpacked" + Path.DirectorySeparatorChar;
                     Directory.CreateDirectory(extractPath);
                     file.stream = new FileStream(extractPath + file.fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
                 }
@@ -234,7 +234,7 @@ namespace UnityBundleReader
             }
             if ((MHeader.Flags & ArchiveFlags.BlocksInfoAtTheEnd) != 0)
             {
-                var position = reader.Position;
+                long position = reader.Position;
                 reader.Position = reader.BaseStream.Length - MHeader.CompressedBlocksInfoSize;
                 blocksInfoBytes = reader.ReadBytes((int)MHeader.CompressedBlocksInfoSize);
                 reader.Position = position;
@@ -244,8 +244,8 @@ namespace UnityBundleReader
                 blocksInfoBytes = reader.ReadBytes((int)MHeader.CompressedBlocksInfoSize);
             }
             MemoryStream blocksInfoUncompresseddStream;
-            var uncompressedSize = MHeader.UncompressedBlocksInfoSize;
-            var compressionType = (CompressionType)(MHeader.Flags & ArchiveFlags.CompressionTypeMask);
+            uint uncompressedSize = MHeader.UncompressedBlocksInfoSize;
+            CompressionType compressionType = (CompressionType)(MHeader.Flags & ArchiveFlags.CompressionTypeMask);
             switch (compressionType)
             {
                 case CompressionType.None:
@@ -256,7 +256,7 @@ namespace UnityBundleReader
                 case CompressionType.Lzma:
                     {
                         blocksInfoUncompresseddStream = new MemoryStream((int)(uncompressedSize));
-                        using (var blocksInfoCompressedStream = new MemoryStream(blocksInfoBytes))
+                        using (MemoryStream? blocksInfoCompressedStream = new MemoryStream(blocksInfoBytes))
                         {
                             SevenZipHelper.StreamDecompress(blocksInfoCompressedStream, blocksInfoUncompresseddStream, MHeader.CompressedBlocksInfoSize, MHeader.UncompressedBlocksInfoSize);
                         }
@@ -266,8 +266,8 @@ namespace UnityBundleReader
                 case CompressionType.Lz4:
                 case CompressionType.Lz4Hc:
                     {
-                        var uncompressedBytes = new byte[uncompressedSize];
-                        var numWrite = LZ4Codec.Decode(blocksInfoBytes, uncompressedBytes);
+                        byte[]? uncompressedBytes = new byte[uncompressedSize];
+                        int numWrite = LZ4Codec.Decode(blocksInfoBytes, uncompressedBytes);
                         if (numWrite != uncompressedSize)
                         {
                             throw new IOException($"Lz4 decompression error, write {numWrite} bytes but expected {uncompressedSize} bytes");
@@ -278,10 +278,10 @@ namespace UnityBundleReader
                 default:
                     throw new IOException($"Unsupported compression type {compressionType}");
             }
-            using (var blocksInfoReader = new EndianBinaryReader(blocksInfoUncompresseddStream))
+            using (EndianBinaryReader? blocksInfoReader = new EndianBinaryReader(blocksInfoUncompresseddStream))
             {
-                var uncompressedDataHash = blocksInfoReader.ReadBytes(16);
-                var blocksInfoCount = blocksInfoReader.ReadInt32();
+                byte[]? uncompressedDataHash = blocksInfoReader.ReadBytes(16);
+                int blocksInfoCount = blocksInfoReader.ReadInt32();
                 _mBlocksInfo = new StorageBlock[blocksInfoCount];
                 for (int i = 0; i < blocksInfoCount; i++)
                 {
@@ -293,7 +293,7 @@ namespace UnityBundleReader
                     };
                 }
 
-                var nodesCount = blocksInfoReader.ReadInt32();
+                int nodesCount = blocksInfoReader.ReadInt32();
                 _mDirectoryInfo = new Node[nodesCount];
                 for (int i = 0; i < nodesCount; i++)
                 {
@@ -314,9 +314,9 @@ namespace UnityBundleReader
 
         private void ReadBlocks(EndianBinaryReader reader, Stream blocksStream)
         {
-            foreach (var blockInfo in _mBlocksInfo)
+            foreach (StorageBlock? blockInfo in _mBlocksInfo)
             {
-                var compressionType = (CompressionType)(blockInfo.Flags & StorageBlockFlags.CompressionTypeMask);
+                CompressionType compressionType = (CompressionType)(blockInfo.Flags & StorageBlockFlags.CompressionTypeMask);
                 switch (compressionType)
                 {
                     case CompressionType.None:
@@ -332,12 +332,12 @@ namespace UnityBundleReader
                     case CompressionType.Lz4:
                     case CompressionType.Lz4Hc:
                         {
-                            var compressedSize = (int)blockInfo.CompressedSize;
-                            var compressedBytes = BigArrayPool<byte>.Shared.Rent(compressedSize);
+                            int compressedSize = (int)blockInfo.CompressedSize;
+                            byte[]? compressedBytes = BigArrayPool<byte>.Shared.Rent(compressedSize);
                             reader.Read(compressedBytes, 0, compressedSize);
-                            var uncompressedSize = (int)blockInfo.UncompressedSize;
-                            var uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
-                            var numWrite = LZ4Codec.Decode(compressedBytes, 0, compressedSize, uncompressedBytes, 0, uncompressedSize);
+                            int uncompressedSize = (int)blockInfo.UncompressedSize;
+                            byte[]? uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
+                            int numWrite = LZ4Codec.Decode(compressedBytes, 0, compressedSize, uncompressedBytes, 0, uncompressedSize);
                             if (numWrite != uncompressedSize)
                             {
                                 throw new IOException($"Lz4 decompression error, write {numWrite} bytes but expected {uncompressedSize} bytes");

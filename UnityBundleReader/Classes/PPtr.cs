@@ -26,14 +26,14 @@
 
             if (MFileID > 0 && MFileID - 1 < _assetsFile.MExternals.Count)
             {
-                var assetsManager = _assetsFile.AssetsManager;
-                var assetsFileList = assetsManager.AssetsFileList;
-                var assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
+                AssetsManager? assetsManager = _assetsFile.AssetsManager;
+                List<SerializedFile>? assetsFileList = assetsManager.AssetsFileList;
+                Dictionary<string, int>? assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
 
                 if (_index == -2)
                 {
-                    var mExternal = _assetsFile.MExternals[MFileID - 1];
-                    var name = mExternal.FileName;
+                    FileIdentifier? mExternal = _assetsFile.MExternals[MFileID - 1];
+                    string? name = mExternal.FileName;
                     if (!assetsFileIndexCache.TryGetValue(name, out _index))
                     {
                         _index = assetsFileList.FindIndex(x => x.FileName.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -53,9 +53,9 @@
 
         public bool TryGet(out T result)
         {
-            if (TryGetAssetsFile(out var sourceFile))
+            if (TryGetAssetsFile(out SerializedFile? sourceFile))
             {
-                if (sourceFile.ObjectsDic.TryGetValue(MPathID, out var obj))
+                if (sourceFile.ObjectsDic.TryGetValue(MPathID, out Object? obj))
                 {
                     if (obj is T variable)
                     {
@@ -71,9 +71,9 @@
 
         public bool TryGet<T2>(out T2 result) where T2 : Object
         {
-            if (TryGetAssetsFile(out var sourceFile))
+            if (TryGetAssetsFile(out SerializedFile? sourceFile))
             {
-                if (sourceFile.ObjectsDic.TryGetValue(MPathID, out var obj))
+                if (sourceFile.ObjectsDic.TryGetValue(MPathID, out Object? obj))
                 {
                     if (obj is T2 variable)
                     {
@@ -89,7 +89,7 @@
 
         public void Set(T mObject)
         {
-            var name = mObject.AssetsFile.FileName;
+            string? name = mObject.AssetsFile.FileName;
             if (string.Equals(_assetsFile.FileName, name, StringComparison.OrdinalIgnoreCase))
             {
                 MFileID = 0;
@@ -111,9 +111,9 @@
                 }
             }
 
-            var assetsManager = _assetsFile.AssetsManager;
-            var assetsFileList = assetsManager.AssetsFileList;
-            var assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
+            AssetsManager? assetsManager = _assetsFile.AssetsManager;
+            List<SerializedFile>? assetsFileList = assetsManager.AssetsFileList;
+            Dictionary<string, int>? assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
 
             if (!assetsFileIndexCache.TryGetValue(name, out _index))
             {

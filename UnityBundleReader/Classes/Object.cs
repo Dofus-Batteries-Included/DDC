@@ -29,7 +29,7 @@ namespace UnityBundleReader.Classes
 
             if (Platform == BuildTarget.NoTarget)
             {
-                var mObjectHideFlags = reader.ReadUInt32();
+                uint mObjectHideFlags = reader.ReadUInt32();
             }
         }
 

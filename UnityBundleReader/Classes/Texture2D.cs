@@ -10,7 +10,7 @@ namespace UnityBundleReader.Classes
 
         public StreamingInfo(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] >= 2020) //2020.1 and up
             {
@@ -34,7 +34,7 @@ namespace UnityBundleReader.Classes
 
         public GLTextureSettings(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MFilterMode = reader.ReadInt32();
             MAniso = reader.ReadInt32();
@@ -67,10 +67,10 @@ namespace UnityBundleReader.Classes
         {
             MWidth = reader.ReadInt32();
             MHeight = reader.ReadInt32();
-            var mCompleteImageSize = reader.ReadInt32();
+            int mCompleteImageSize = reader.ReadInt32();
             if (Version[0] >= 2020) //2020.1 and up
             {
-                var mMipsStripped = reader.ReadInt32();
+                int mMipsStripped = reader.ReadInt32();
             }
             MTextureFormat = (TextureFormat)reader.ReadInt32();
             if (Version[0] < 5 || (Version[0] == 5 && Version[1] < 2)) //5.2 down
@@ -83,49 +83,49 @@ namespace UnityBundleReader.Classes
             }
             if (Version[0] > 2 || (Version[0] == 2 && Version[1] >= 6)) //2.6.0 and up
             {
-                var mIsReadable = reader.ReadBoolean();
+                bool mIsReadable = reader.ReadBoolean();
             }
             if (Version[0] >= 2020) //2020.1 and up
             {
-                var mIsPreProcessed = reader.ReadBoolean();
+                bool mIsPreProcessed = reader.ReadBoolean();
             }
             if (Version[0] > 2019 || (Version[0] == 2019 && Version[1] >= 3)) //2019.3 and up
             {
-                var mIgnoreMasterTextureLimit = reader.ReadBoolean();
+                bool mIgnoreMasterTextureLimit = reader.ReadBoolean();
             }
             if (Version[0] >= 3) //3.0.0 - 5.4
             {
                 if (Version[0] < 5 || (Version[0] == 5 && Version[1] <= 4))
                 {
-                    var mReadAllowed = reader.ReadBoolean();
+                    bool mReadAllowed = reader.ReadBoolean();
                 }
             }
             if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 2)) //2018.2 and up
             {
-                var mStreamingMipmaps = reader.ReadBoolean();
+                bool mStreamingMipmaps = reader.ReadBoolean();
             }
             reader.AlignStream();
             if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 2)) //2018.2 and up
             {
-                var mStreamingMipmapsPriority = reader.ReadInt32();
+                int mStreamingMipmapsPriority = reader.ReadInt32();
             }
-            var mImageCount = reader.ReadInt32();
-            var mTextureDimension = reader.ReadInt32();
+            int mImageCount = reader.ReadInt32();
+            int mTextureDimension = reader.ReadInt32();
             MTextureSettings = new GLTextureSettings(reader);
             if (Version[0] >= 3) //3.0 and up
             {
-                var mLightmapFormat = reader.ReadInt32();
+                int mLightmapFormat = reader.ReadInt32();
             }
             if (Version[0] > 3 || (Version[0] == 3 && Version[1] >= 5)) //3.5.0 and up
             {
-                var mColorSpace = reader.ReadInt32();
+                int mColorSpace = reader.ReadInt32();
             }
             if (Version[0] > 2020 || (Version[0] == 2020 && Version[1] >= 2)) //2020.2 and up
             {
-                var mPlatformBlob = reader.ReadUInt8Array();
+                byte[]? mPlatformBlob = reader.ReadUInt8Array();
                 reader.AlignStream();
             }
-            var imageDataSize = reader.ReadInt32();
+            int imageDataSize = reader.ReadInt32();
             if (imageDataSize == 0 && ((Version[0] == 5 && Version[1] >= 3) || Version[0] > 5))//5.3.0 and up
             {
                 MStreamData = new StreamingInfo(reader);

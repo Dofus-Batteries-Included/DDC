@@ -10,15 +10,15 @@ namespace UnityBundleReader.Classes
         {
             if ((Version[0] == 5 && Version[1] >= 5) || Version[0] > 5)//5.5 and up
             {
-                var mLineSpacing = reader.ReadSingle();
-                var mDefaultMaterial = new PPtr<Material>(reader);
-                var mFontSize = reader.ReadSingle();
-                var mTexture = new PPtr<Texture>(reader);
+                float mLineSpacing = reader.ReadSingle();
+                PPtr<Material>? mDefaultMaterial = new PPtr<Material>(reader);
+                float mFontSize = reader.ReadSingle();
+                PPtr<Texture>? mTexture = new PPtr<Texture>(reader);
                 int mAsciiStartOffset = reader.ReadInt32();
-                var mTracking = reader.ReadSingle();
-                var mCharacterSpacing = reader.ReadInt32();
-                var mCharacterPadding = reader.ReadInt32();
-                var mConvertCase = reader.ReadInt32();
+                float mTracking = reader.ReadSingle();
+                int mCharacterSpacing = reader.ReadInt32();
+                int mCharacterPadding = reader.ReadInt32();
+                int mConvertCase = reader.ReadInt32();
                 int mCharacterRectsSize = reader.ReadInt32();
                 for (int i = 0; i < mCharacterRectsSize; i++)
                 {
@@ -29,7 +29,7 @@ namespace UnityBundleReader.Classes
                 {
                     reader.Position += 8;
                 }
-                var mPixelScale = reader.ReadSingle();
+                float mPixelScale = reader.ReadSingle();
                 int mFontDataSize = reader.ReadInt32();
                 if (mFontDataSize > 0)
                 {
@@ -65,7 +65,7 @@ namespace UnityBundleReader.Classes
                 }
 
                 int mConvertCase = reader.ReadInt32();
-                var mDefaultMaterial = new PPtr<Material>(reader);
+                PPtr<Material>? mDefaultMaterial = new PPtr<Material>(reader);
 
                 int mCharacterRectsSize = reader.ReadInt32();
                 for (int i = 0; i < mCharacterRectsSize; i++)
@@ -85,12 +85,12 @@ namespace UnityBundleReader.Classes
 
                     if (Version[0] >= 4)
                     {
-                        var flipped = reader.ReadBoolean();
+                        bool flipped = reader.ReadBoolean();
                         reader.AlignStream();
                     }
                 }
 
-                var mTexture = new PPtr<Texture>(reader);
+                PPtr<Texture>? mTexture = new PPtr<Texture>(reader);
 
                 int mKerningValuesSize = reader.ReadInt32();
                 for (int i = 0; i < mKerningValuesSize; i++)
@@ -102,7 +102,7 @@ namespace UnityBundleReader.Classes
 
                 if (Version[0] <= 3)
                 {
-                    var mGridFont = reader.ReadBoolean();
+                    bool mGridFont = reader.ReadBoolean();
                     reader.AlignStream();
                 }
                 else { float mPixelScale = reader.ReadSingle(); }

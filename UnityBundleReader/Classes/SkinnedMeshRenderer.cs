@@ -11,13 +11,13 @@ namespace UnityBundleReader.Classes
         public SkinnedMeshRenderer(ObjectReader reader) : base(reader)
         {
             int mQuality = reader.ReadInt32();
-            var mUpdateWhenOffscreen = reader.ReadBoolean();
-            var mSkinNormals = reader.ReadBoolean(); //3.1.0 and below
+            bool mUpdateWhenOffscreen = reader.ReadBoolean();
+            bool mSkinNormals = reader.ReadBoolean(); //3.1.0 and below
             reader.AlignStream();
 
             if (Version[0] == 2 && Version[1] < 6) //2.6 down
             {
-                var mDisableAnimationWhenOffscreen = new PPtr<Animation>(reader);
+                PPtr<Animation>? mDisableAnimationWhenOffscreen = new PPtr<Animation>(reader);
             }
 
             MMesh = new PPtr<Mesh>(reader);

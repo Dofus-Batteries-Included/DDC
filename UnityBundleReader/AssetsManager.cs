@@ -21,23 +21,23 @@ namespace UnityBundleReader
 
         public void LoadFiles(params string[] files)
         {
-            var path = Path.GetDirectoryName(Path.GetFullPath(files[0]));
+            string? path = Path.GetDirectoryName(Path.GetFullPath(files[0]));
             MergeSplitAssets(path);
-            var toReadFile = ProcessingSplitFiles(files.ToList());
+            string[]? toReadFile = ProcessingSplitFiles(files.ToList());
             Load(toReadFile);
         }
 
         public void LoadFolder(string path)
         {
             MergeSplitAssets(path, true);
-            var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
-            var toReadFile = ProcessingSplitFiles(files);
+            List<string>? files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
+            string[]? toReadFile = ProcessingSplitFiles(files);
             Load(toReadFile);
         }
 
         private void Load(string[] files)
         {
-            foreach (var file in files)
+            foreach (string? file in files)
             {
                 _importFiles.Add(file);
                 _importFilesHash.Add(Path.GetFileName(file));
@@ -45,7 +45,7 @@ namespace UnityBundleReader
 
             Progress.Reset();
             //use a for loop because list size can change
-            for (var i = 0; i < _importFiles.Count; i++)
+            for (int i = 0; i < _importFiles.Count; i++)
             {
                 LoadFile(_importFiles[i]);
                 Progress.Report(i + 1, _importFiles.Count);
@@ -62,7 +62,7 @@ namespace UnityBundleReader
 
         private void LoadFile(string fullName)
         {
-            var reader = new FileReader(fullName);
+            FileReader? reader = new FileReader(fullName);
             LoadFile(reader);
         }
 
@@ -98,23 +98,23 @@ namespace UnityBundleReader
                 Logger.Info($"Loading {reader.FullPath}");
                 try
                 {
-                    var assetsFile = new SerializedFile(reader, this);
+                    SerializedFile? assetsFile = new SerializedFile(reader, this);
                     CheckStrippedVersion(assetsFile);
                     AssetsFileList.Add(assetsFile);
                     _assetsFileListHash.Add(assetsFile.FileName);
 
-                    foreach (var sharedFile in assetsFile.MExternals)
+                    foreach (FileIdentifier? sharedFile in assetsFile.MExternals)
                     {
-                        var sharedFileName = sharedFile.FileName;
+                        string? sharedFileName = sharedFile.FileName;
 
                         if (!_importFilesHash.Contains(sharedFileName))
                         {
-                            var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
+                            string? sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
                             if (!_noexistFiles.Contains(sharedFilePath))
                             {
                                 if (!File.Exists(sharedFilePath))
                                 {
-                                    var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
+                                    string[]? findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
                                     if (findFiles.Length > 0)
                                     {
                                         sharedFilePath = findFiles[0];
@@ -152,7 +152,7 @@ namespace UnityBundleReader
             {
                 try
                 {
-                    var assetsFile = new SerializedFile(reader, this);
+                    SerializedFile? assetsFile = new SerializedFile(reader, this);
                     assetsFile.OriginalPath = originalPath;
                     if (!string.IsNullOrEmpty(unityVersion) && assetsFile.Header.MVersion < SerializedFileFormatVersion.Unknown7)
                     {
@@ -177,11 +177,11 @@ namespace UnityBundleReader
             Logger.Info("Loading " + reader.FullPath);
             try
             {
-                var bundleFile = new BundleFile(reader);
-                foreach (var file in bundleFile.FileList)
+                BundleFile? bundleFile = new BundleFile(reader);
+                foreach (StreamFile? file in bundleFile.FileList)
                 {
-                    var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
-                    var subReader = new FileReader(dummyPath, file.stream);
+                    string? dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                    FileReader? subReader = new FileReader(dummyPath, file.stream);
                     if (subReader.FileType == FileType.AssetsFile)
                     {
                         LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.MHeader.UnityRevision);
@@ -194,7 +194,7 @@ namespace UnityBundleReader
             }
             catch (Exception e)
             {
-                var str = $"Error while reading bundle file {reader.FullPath}";
+                string? str = $"Error while reading bundle file {reader.FullPath}";
                 if (originalPath != null)
                 {
                     str += $" from {Path.GetFileName(originalPath)}";
@@ -212,11 +212,11 @@ namespace UnityBundleReader
             Logger.Info("Loading " + reader.FullPath);
             try
             {
-                var webFile = new WebFile(reader);
-                foreach (var file in webFile.FileList)
+                WebFile? webFile = new WebFile(reader);
+                foreach (StreamFile? file in webFile.FileList)
                 {
-                    var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
-                    var subReader = new FileReader(dummyPath, file.stream);
+                    string? dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                    FileReader? subReader = new FileReader(dummyPath, file.stream);
                     switch (subReader.FileType)
                     {
                         case FileType.AssetsFile:
@@ -358,14 +358,14 @@ namespace UnityBundleReader
 
         public void Clear()
         {
-            foreach (var assetsFile in AssetsFileList)
+            foreach (SerializedFile? assetsFile in AssetsFileList)
             {
                 assetsFile.Objects.Clear();
                 assetsFile.Reader.Close();
             }
             AssetsFileList.Clear();
 
-            foreach (var resourceFileReader in ResourceFileReaders)
+            foreach (KeyValuePair<string, BinaryReader> resourceFileReader in ResourceFileReaders)
             {
                 resourceFileReader.Value.Close();
             }
@@ -378,14 +378,14 @@ namespace UnityBundleReader
         {
             Logger.Info("Read assets...");
 
-            var progressCount = AssetsFileList.Sum(x => x.MObjects.Count);
+            int progressCount = AssetsFileList.Sum(x => x.MObjects.Count);
             int i = 0;
             Progress.Reset();
-            foreach (var assetsFile in AssetsFileList)
+            foreach (SerializedFile? assetsFile in AssetsFileList)
             {
-                foreach (var objectInfo in assetsFile.MObjects)
+                foreach (ObjectInfo? objectInfo in assetsFile.MObjects)
                 {
-                    var objectReader = new ObjectReader(assetsFile.Reader, assetsFile, objectInfo);
+                    ObjectReader? objectReader = new ObjectReader(assetsFile.Reader, assetsFile, objectInfo);
                     try
                     {
                         Object obj;
@@ -483,7 +483,7 @@ namespace UnityBundleReader
                     }
                     catch (Exception e)
                     {
-                        var sb = new StringBuilder();
+                        StringBuilder? sb = new StringBuilder();
                         sb.AppendLine("Unable to load object")
                             .AppendLine($"Assets {assetsFile.FileName}")
                             .AppendLine($"Path {assetsFile.OriginalPath}")
@@ -502,15 +502,15 @@ namespace UnityBundleReader
         {
             Logger.Info("Process Assets...");
 
-            foreach (var assetsFile in AssetsFileList)
+            foreach (SerializedFile? assetsFile in AssetsFileList)
             {
-                foreach (var obj in assetsFile.Objects)
+                foreach (Object? obj in assetsFile.Objects)
                 {
                     if (obj is GameObject mGameObject)
                     {
-                        foreach (var pptr in mGameObject.MComponents)
+                        foreach (PPtr<Component>? pptr in mGameObject.MComponents)
                         {
-                            if (pptr.TryGet(out var mComponent))
+                            if (pptr.TryGet(out Component? mComponent))
                             {
                                 switch (mComponent)
                                 {
@@ -538,9 +538,9 @@ namespace UnityBundleReader
                     }
                     else if (obj is SpriteAtlas mSpriteAtlas)
                     {
-                        foreach (var mPackedSprite in mSpriteAtlas.MPackedSprites)
+                        foreach (PPtr<Sprite>? mPackedSprite in mSpriteAtlas.MPackedSprites)
                         {
-                            if (mPackedSprite.TryGet(out var mSprite))
+                            if (mPackedSprite.TryGet(out Sprite? mSprite))
                             {
                                 if (mSprite.MSpriteAtlas.IsNull)
                                 {
@@ -548,7 +548,7 @@ namespace UnityBundleReader
                                 }
                                 else
                                 {
-                                    mSprite.MSpriteAtlas.TryGet(out var mSpriteAtlaOld);
+                                    mSprite.MSpriteAtlas.TryGet(out SpriteAtlas? mSpriteAtlaOld);
                                     if (mSpriteAtlaOld.MIsVariant)
                                     {
                                         mSprite.MSpriteAtlas.Set(mSpriteAtlas);

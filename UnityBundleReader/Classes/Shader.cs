@@ -19,10 +19,10 @@ namespace UnityBundleReader.Classes
 
         public StructParameter(BinaryReader reader)
         {
-            var mNameIndex = reader.ReadInt32();
-            var mIndex = reader.ReadInt32();
-            var mArraySize = reader.ReadInt32();
-            var mStructSize = reader.ReadInt32();
+            int mNameIndex = reader.ReadInt32();
+            int mIndex = reader.ReadInt32();
+            int mArraySize = reader.ReadInt32();
+            int mStructSize = reader.ReadInt32();
 
             int numVectorParams = reader.ReadInt32();
             MVectorParams = new VectorParameter[numVectorParams];
@@ -230,7 +230,7 @@ namespace UnityBundleReader.Classes
 
         public SerializedShaderState(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MName = reader.ReadAlignedString();
             RTBlend = new SerializedShaderRTBlendState[8];
@@ -351,14 +351,14 @@ namespace UnityBundleReader.Classes
 
         public TextureParameter(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MNameIndex = reader.ReadInt32();
             MIndex = reader.ReadInt32();
             MSamplerIndex = reader.ReadInt32();
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 3)) //2017.3 and up
             {
-                var mMultiSampled = reader.ReadBoolean();
+                bool mMultiSampled = reader.ReadBoolean();
             }
             MDim = reader.ReadSByte();
             reader.AlignStream();
@@ -373,7 +373,7 @@ namespace UnityBundleReader.Classes
 
         public BufferBinding(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MNameIndex = reader.ReadInt32();
             MIndex = reader.ReadInt32();
@@ -395,7 +395,7 @@ namespace UnityBundleReader.Classes
 
         public ConstantBuffer(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MNameIndex = reader.ReadInt32();
 
@@ -576,16 +576,16 @@ namespace UnityBundleReader.Classes
 
         public SerializedSubProgram(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MBlobIndex = reader.ReadUInt32();
             MChannels = new ParserBindChannels(reader);
 
             if ((version[0] >= 2019 && version[0] < 2021) || (version[0] == 2021 && version[1] < 2)) //2019 ~2021.1
             {
-                var mGlobalKeywordIndices = reader.ReadUInt16Array();
+                ushort[]? mGlobalKeywordIndices = reader.ReadUInt16Array();
                 reader.AlignStream();
-                var mLocalKeywordIndices = reader.ReadUInt16Array();
+                ushort[]? mLocalKeywordIndices = reader.ReadUInt16Array();
                 reader.AlignStream();
             }
             else
@@ -675,11 +675,11 @@ namespace UnityBundleReader.Classes
             {
                 if (version[0] >= 2021) //2021.1 and up
                 {
-                    var mShaderRequirements = reader.ReadInt64();
+                    long mShaderRequirements = reader.ReadInt64();
                 }
                 else
                 {
-                    var mShaderRequirements = reader.ReadInt32();
+                    int mShaderRequirements = reader.ReadInt32();
                 }
             }
         }
@@ -693,7 +693,7 @@ namespace UnityBundleReader.Classes
 
         public SerializedProgram(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             int numSubPrograms = reader.ReadInt32();
             MSubPrograms = new SerializedSubProgram[numSubPrograms];
@@ -751,7 +751,7 @@ namespace UnityBundleReader.Classes
 
         public SerializedPass(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
             {
@@ -795,7 +795,7 @@ namespace UnityBundleReader.Classes
             MHasInstancingVariant = reader.ReadBoolean();
             if (version[0] >= 2018) //2018 and up
             {
-                var mHasProceduralInstancingVariant = reader.ReadBoolean();
+                bool mHasProceduralInstancingVariant = reader.ReadBoolean();
             }
             reader.AlignStream();
             MUseName = reader.ReadAlignedString();
@@ -884,7 +884,7 @@ namespace UnityBundleReader.Classes
 
         public SerializedShader(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MPropInfo = new SerializedProperties(reader);
 
@@ -993,7 +993,7 @@ namespace UnityBundleReader.Classes
                 CompressedBlob = reader.ReadUInt8Array();
                 reader.AlignStream();
 
-                var mDependenciesCount = reader.ReadInt32();
+                int mDependenciesCount = reader.ReadInt32();
                 for (int i = 0; i < mDependenciesCount; i++)
                 {
                     new PPtr<Shader>(reader);
@@ -1001,22 +1001,22 @@ namespace UnityBundleReader.Classes
 
                 if (Version[0] >= 2018)
                 {
-                    var mNonModifiableTexturesCount = reader.ReadInt32();
+                    int mNonModifiableTexturesCount = reader.ReadInt32();
                     for (int i = 0; i < mNonModifiableTexturesCount; i++)
                     {
-                        var first = reader.ReadAlignedString();
+                        string? first = reader.ReadAlignedString();
                         new PPtr<Texture>(reader);
                     }
                 }
 
-                var mShaderIsBaked = reader.ReadBoolean();
+                bool mShaderIsBaked = reader.ReadBoolean();
                 reader.AlignStream();
             }
             else
             {
                 MScript = reader.ReadUInt8Array();
                 reader.AlignStream();
-                var mPathName = reader.ReadAlignedString();
+                string? mPathName = reader.ReadAlignedString();
                 if (Version[0] == 5 && Version[1] >= 3) //5.3 - 5.4
                 {
                     DecompressedSize = reader.ReadUInt32();

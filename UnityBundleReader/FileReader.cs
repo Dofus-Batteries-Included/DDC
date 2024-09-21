@@ -24,7 +24,7 @@ namespace UnityBundleReader
 
         private FileType CheckFileType()
         {
-            var signature = this.ReadStringToNull(20);
+            string? signature = this.ReadStringToNull(20);
             Position = 0;
             switch (signature)
             {
@@ -65,17 +65,17 @@ namespace UnityBundleReader
 
         private bool IsSerializedFile()
         {
-            var fileSize = BaseStream.Length;
+            long fileSize = BaseStream.Length;
             if (fileSize < 20)
             {
                 return false;
             }
-            var mMetadataSize = ReadUInt32();
+            uint mMetadataSize = ReadUInt32();
             long mFileSize = ReadUInt32();
-            var mVersion = ReadUInt32();
+            uint mVersion = ReadUInt32();
             long mDataOffset = ReadUInt32();
-            var mEndianess = ReadByte();
-            var mReserved = ReadBytes(3);
+            byte mEndianess = ReadByte();
+            byte[]? mReserved = ReadBytes(3);
             if (mVersion >= 22)
             {
                 if (fileSize < 48)

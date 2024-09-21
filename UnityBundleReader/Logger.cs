@@ -14,7 +14,7 @@ namespace UnityBundleReader
 
         public static void Error(string message, Exception e)
         {
-            var sb = new StringBuilder();
+            StringBuilder? sb = new StringBuilder();
             sb.AppendLine(message);
             sb.AppendLine(e.ToString());
             Default.Log(LoggerEvent.Error, sb.ToString());

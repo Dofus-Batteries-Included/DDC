@@ -8,12 +8,12 @@ namespace UnityBundleReader.Classes
 
         public BuildSettings(ObjectReader reader) : base(reader)
         {
-            var levels = reader.ReadStringArray();
+            string[]? levels = reader.ReadStringArray();
 
-            var hasRenderTexture = reader.ReadBoolean();
-            var hasProVersion = reader.ReadBoolean();
-            var hasPublishingRights = reader.ReadBoolean();
-            var hasShadows = reader.ReadBoolean();
+            bool hasRenderTexture = reader.ReadBoolean();
+            bool hasProVersion = reader.ReadBoolean();
+            bool hasPublishingRights = reader.ReadBoolean();
+            bool hasShadows = reader.ReadBoolean();
 
             MVersion = reader.ReadAlignedString();
         }

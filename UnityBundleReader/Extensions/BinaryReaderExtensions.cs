@@ -12,8 +12,8 @@ namespace UnityBundleReader.Extensions
 
         public static void AlignStream(this BinaryReader reader, int alignment)
         {
-            var pos = reader.BaseStream.Position;
-            var mod = pos % alignment;
+            long pos = reader.BaseStream.Position;
+            long mod = pos % alignment;
             if (mod != 0)
             {
                 reader.BaseStream.Position += alignment - mod;
@@ -22,11 +22,11 @@ namespace UnityBundleReader.Extensions
 
         public static string ReadAlignedString(this BinaryReader reader)
         {
-            var length = reader.ReadInt32();
+            int length = reader.ReadInt32();
             if (length > 0 && length <= reader.BaseStream.Length - reader.BaseStream.Position)
             {
-                var stringData = reader.ReadBytes(length);
-                var result = Encoding.UTF8.GetString(stringData);
+                byte[]? stringData = reader.ReadBytes(length);
+                string? result = Encoding.UTF8.GetString(stringData);
                 reader.AlignStream(4);
                 return result;
             }
@@ -35,11 +35,11 @@ namespace UnityBundleReader.Extensions
 
         public static string ReadStringToNull(this BinaryReader reader, int maxLength = 32767)
         {
-            var bytes = new List<byte>();
+            List<byte>? bytes = new List<byte>();
             int count = 0;
             while (reader.BaseStream.Position != reader.BaseStream.Length && count < maxLength)
             {
-                var b = reader.ReadByte();
+                byte b = reader.ReadByte();
                 if (b == 0)
                 {
                     break;
@@ -82,7 +82,7 @@ namespace UnityBundleReader.Extensions
 
         private static T[] ReadArray<T>(Func<T> del, int length)
         {
-            var array = new T[length];
+            T[]? array = new T[length];
             for (int i = 0; i < length; i++)
             {
                 array[i] = del();

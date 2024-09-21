@@ -35,7 +35,7 @@ namespace UnityBundleReader.Classes
 
         public CompressedMesh(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MVertices = new PackedFloatVector(reader);
             MUV = new PackedFloatVector(reader);
@@ -81,7 +81,7 @@ namespace UnityBundleReader.Classes
 
         public StreamInfo(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             ChannelMask = reader.ReadUInt32();
             Offset = reader.ReadUInt32();
@@ -128,7 +128,7 @@ namespace UnityBundleReader.Classes
 
         public VertexData(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] < 2018)//2018 down
             {
@@ -139,7 +139,7 @@ namespace UnityBundleReader.Classes
 
             if (version[0] >= 4) //4.0 and up
             {
-                var mChannelsSize = reader.ReadInt32();
+                int mChannelsSize = reader.ReadInt32();
                 MChannels = new ChannelInfo[mChannelsSize];
                 for (int i = 0; i < mChannelsSize; i++)
                 {
@@ -179,7 +179,7 @@ namespace UnityBundleReader.Classes
 
         private void GetStreams(int[] version)
         {
-            var streamCount = MChannels.Max(x => x.Stream) + 1;
+            int streamCount = MChannels.Max(x => x.Stream) + 1;
             MStreams = new StreamInfo[streamCount];
             uint offset = 0;
             for (int s = 0; s < streamCount; s++)
@@ -188,7 +188,7 @@ namespace UnityBundleReader.Classes
                 uint stride = 0;
                 for (int chn = 0; chn < MChannels.Length; chn++)
                 {
-                    var mChannel = MChannels[chn];
+                    ChannelInfo? mChannel = MChannels[chn];
                     if (mChannel.Stream == s)
                     {
                         if (mChannel.Dimension > 0)
@@ -219,16 +219,16 @@ namespace UnityBundleReader.Classes
             {
                 MChannels[i] = new ChannelInfo();
             }
-            for (var s = 0; s < MStreams.Length; s++)
+            for (int s = 0; s < MStreams.Length; s++)
             {
-                var mStream = MStreams[s];
-                var channelMask = new BitArray(new[] { (int)mStream.ChannelMask });
+                StreamInfo? mStream = MStreams[s];
+                BitArray? channelMask = new BitArray(new[] { (int)mStream.ChannelMask });
                 byte offset = 0;
                 for (int i = 0; i < 6; i++)
                 {
                     if (channelMask.Get(i))
                     {
-                        var mChannel = MChannels[i];
+                        ChannelInfo? mChannel = MChannels[i];
                         mChannel.Stream = (byte)s;
                         mChannel.Offset = offset;
                         switch (i)
@@ -302,18 +302,18 @@ namespace UnityBundleReader.Classes
 
         public MeshBlendShape(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] == 4 && version[1] < 3) //4.3 down
             {
-                var name = reader.ReadAlignedString();
+                string? name = reader.ReadAlignedString();
             }
             FirstVertex = reader.ReadUInt32();
             VertexCount = reader.ReadUInt32();
             if (version[0] == 4 && version[1] < 3) //4.3 down
             {
-                var aabbMinDelta = reader.ReadVector3();
-                var aabbMaxDelta = reader.ReadVector3();
+                Vector3 aabbMinDelta = reader.ReadVector3();
+                Vector3 aabbMaxDelta = reader.ReadVector3();
             }
             HasNormals = reader.ReadBoolean();
             HasTangents = reader.ReadBoolean();
@@ -349,7 +349,7 @@ namespace UnityBundleReader.Classes
 
         public BlendShapeData(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
             {
@@ -378,15 +378,15 @@ namespace UnityBundleReader.Classes
             }
             else
             {
-                var mShapesSize = reader.ReadInt32();
-                var mShapes = new MeshBlendShape[mShapesSize];
+                int mShapesSize = reader.ReadInt32();
+                MeshBlendShape[]? mShapes = new MeshBlendShape[mShapesSize];
                 for (int i = 0; i < mShapesSize; i++)
                 {
                     mShapes[i] = new MeshBlendShape(reader);
                 }
                 reader.AlignStream();
-                var mShapeVerticesSize = reader.ReadInt32();
-                var mShapeVertices = new BlendShapeVertex[mShapeVerticesSize]; //MeshBlendShapeVertex
+                int mShapeVerticesSize = reader.ReadInt32();
+                BlendShapeVertex[]? mShapeVertices = new BlendShapeVertex[mShapeVerticesSize]; //MeshBlendShapeVertex
                 for (int i = 0; i < mShapeVerticesSize; i++)
                 {
                     mShapeVertices[i] = new BlendShapeVertex(reader);
@@ -418,7 +418,7 @@ namespace UnityBundleReader.Classes
 
         public SubMesh(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             FirstByte = reader.ReadUInt32();
             IndexCount = reader.ReadUInt32();
@@ -513,33 +513,33 @@ namespace UnityBundleReader.Classes
             {
                 MBindPose = reader.ReadMatrixArray();
                 MBoneNameHashes = reader.ReadUInt32Array();
-                var mRootBoneNameHash = reader.ReadUInt32();
+                uint mRootBoneNameHash = reader.ReadUInt32();
             }
 
             if (Version[0] > 2 || (Version[0] == 2 && Version[1] >= 6)) //2.6.0 and up
             {
                 if (Version[0] >= 2019) //2019 and up
                 {
-                    var mBonesAABBSize = reader.ReadInt32();
-                    var mBonesAABB = new MinMaxAABB[mBonesAABBSize];
+                    int mBonesAABBSize = reader.ReadInt32();
+                    MinMaxAABB[]? mBonesAABB = new MinMaxAABB[mBonesAABBSize];
                     for (int i = 0; i < mBonesAABBSize; i++)
                     {
                         mBonesAABB[i] = new MinMaxAABB(reader);
                     }
 
-                    var mVariableBoneCountWeights = reader.ReadUInt32Array();
+                    uint[]? mVariableBoneCountWeights = reader.ReadUInt32Array();
                 }
 
-                var mMeshCompression = reader.ReadByte();
+                byte mMeshCompression = reader.ReadByte();
                 if (Version[0] >= 4)
                 {
                     if (Version[0] < 5)
                     {
-                        var mStreamCompression = reader.ReadByte();
+                        byte mStreamCompression = reader.ReadByte();
                     }
-                    var mIsReadable = reader.ReadBoolean();
-                    var mKeepVertices = reader.ReadBoolean();
-                    var mKeepIndices = reader.ReadBoolean();
+                    bool mIsReadable = reader.ReadBoolean();
+                    bool mKeepVertices = reader.ReadBoolean();
+                    bool mKeepIndices = reader.ReadBoolean();
                 }
                 reader.AlignStream();
 
@@ -548,7 +548,7 @@ namespace UnityBundleReader.Classes
                     ((Version[0] == 2017 && Version[1] == 3 && Version[2] == 1) && BuildType.IsPatch) || //fixed after 2017.3.1px
                     ((Version[0] == 2017 && Version[1] == 3) && mMeshCompression == 0))//2017.3.xfx with no compression
                 {
-                    var mIndexFormat = reader.ReadInt32();
+                    int mIndexFormat = reader.ReadInt32();
                     _mUse16BitIndices = mIndexFormat == 0;
                 }
 
@@ -657,15 +657,15 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] >= 5) //5.0 and up
             {
-                var mBakedConvexCollisionMesh = reader.ReadUInt8Array();
+                byte[]? mBakedConvexCollisionMesh = reader.ReadUInt8Array();
                 reader.AlignStream();
-                var mBakedTriangleCollisionMesh = reader.ReadUInt8Array();
+                byte[]? mBakedTriangleCollisionMesh = reader.ReadUInt8Array();
                 reader.AlignStream();
             }
 
             if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 2)) //2018.2 and up
             {
-                var mMeshMetrics = new float[2];
+                float[]? mMeshMetrics = new float[2];
                 mMeshMetrics[0] = reader.ReadSingle();
                 mMeshMetrics[1] = reader.ReadSingle();
             }
@@ -685,7 +685,7 @@ namespace UnityBundleReader.Classes
             {
                 if (_mVertexData.MVertexCount > 0)
                 {
-                    var resourceReader = new ResourceReader(_mStreamData.Path, AssetsFile, _mStreamData.Offset, _mStreamData.Size);
+                    ResourceReader? resourceReader = new ResourceReader(_mStreamData.Path, AssetsFile, _mStreamData.Offset, _mStreamData.Size);
                     _mVertexData.MDataSize = resourceReader.GetData();
                 }
             }
@@ -706,13 +706,13 @@ namespace UnityBundleReader.Classes
         {
             MVertexCount = (int)_mVertexData.MVertexCount;
 
-            for (var chn = 0; chn < _mVertexData.MChannels.Length; chn++)
+            for (int chn = 0; chn < _mVertexData.MChannels.Length; chn++)
             {
-                var mChannel = _mVertexData.MChannels[chn];
+                ChannelInfo? mChannel = _mVertexData.MChannels[chn];
                 if (mChannel.Dimension > 0)
                 {
-                    var mStream = _mVertexData.MStreams[mChannel.Stream];
-                    var channelMask = new BitArray(new[] { (int)mStream.ChannelMask });
+                    StreamInfo? mStream = _mVertexData.MStreams[mChannel.Stream];
+                    BitArray? channelMask = new BitArray(new[] { (int)mStream.ChannelMask });
                     if (channelMask.Get(chn))
                     {
                         if (Version[0] < 2018 && chn == 2 && mChannel.Format == 2) //kShaderChannelColor && kChannelFormatColor
@@ -720,24 +720,24 @@ namespace UnityBundleReader.Classes
                             mChannel.Dimension = 4;
                         }
 
-                        var vertexFormat = MeshHelper.ToVertexFormat(mChannel.Format, Version);
-                        var componentByteSize = (int)MeshHelper.GetFormatSize(vertexFormat);
-                        var componentBytes = new byte[MVertexCount * mChannel.Dimension * componentByteSize];
+                        MeshHelper.VertexFormat vertexFormat = MeshHelper.ToVertexFormat(mChannel.Format, Version);
+                        int componentByteSize = (int)MeshHelper.GetFormatSize(vertexFormat);
+                        byte[]? componentBytes = new byte[MVertexCount * mChannel.Dimension * componentByteSize];
                         for (int v = 0; v < MVertexCount; v++)
                         {
-                            var vertexOffset = (int)mStream.Offset + mChannel.Offset + (int)mStream.Stride * v;
+                            int vertexOffset = (int)mStream.Offset + mChannel.Offset + (int)mStream.Stride * v;
                             for (int d = 0; d < mChannel.Dimension; d++)
                             {
-                                var componentOffset = vertexOffset + componentByteSize * d;
+                                int componentOffset = vertexOffset + componentByteSize * d;
                                 Buffer.BlockCopy(_mVertexData.MDataSize, componentOffset, componentBytes, componentByteSize * (v * mChannel.Dimension + d), componentByteSize);
                             }
                         }
 
                         if (Reader.Endian == EndianType.BigEndian && componentByteSize > 1) //swap bytes
                         {
-                            for (var i = 0; i < componentBytes.Length / componentByteSize; i++)
+                            for (int i = 0; i < componentBytes.Length / componentByteSize; i++)
                             {
-                                var buff = new byte[componentByteSize];
+                                byte[]? buff = new byte[componentByteSize];
                                 Buffer.BlockCopy(componentBytes, i * componentByteSize, buff, 0, componentByteSize);
                                 buff = buff.Reverse().ToArray();
                                 Buffer.BlockCopy(buff, 0, componentBytes, i * componentByteSize, componentByteSize);
@@ -873,7 +873,7 @@ namespace UnityBundleReader.Classes
             //UV
             if (_mCompressedMesh.MUV.MNumItems > 0)
             {
-                var mUVInfo = _mCompressedMesh.MUVInfo;
+                uint mUVInfo = _mCompressedMesh.MUVInfo;
                 if (mUVInfo != 0)
                 {
                     const int kInfoBitsPerUV = 4;
@@ -884,12 +884,12 @@ namespace UnityBundleReader.Classes
                     int uvSrcOffset = 0;
                     for (int uv = 0; uv < kMaxTexCoordShaderChannels; uv++)
                     {
-                        var texCoordBits = mUVInfo >> (uv * kInfoBitsPerUV);
+                        uint texCoordBits = mUVInfo >> (uv * kInfoBitsPerUV);
                         texCoordBits &= (1u << kInfoBitsPerUV) - 1u;
                         if ((texCoordBits & kUVChannelExists) != 0)
                         {
-                            var uvDim = 1 + (int)(texCoordBits & kUVDimensionMask);
-                            var mUV = _mCompressedMesh.MUV.UnpackFloats(uvDim, uvDim * 4, uvSrcOffset, MVertexCount);
+                            int uvDim = 1 + (int)(texCoordBits & kUVDimensionMask);
+                            float[]? mUV = _mCompressedMesh.MUV.UnpackFloats(uvDim, uvDim * 4, uvSrcOffset, MVertexCount);
                             SetUV(uv, mUV);
                             uvSrcOffset += uvDim * MVertexCount;
                         }
@@ -910,8 +910,8 @@ namespace UnityBundleReader.Classes
                 if (_mCompressedMesh.MBindPoses.MNumItems > 0)
                 {
                     MBindPose = new Matrix4X4[_mCompressedMesh.MBindPoses.MNumItems / 16];
-                    var mBindPosesUnpacked = _mCompressedMesh.MBindPoses.UnpackFloats(16, 4 * 16);
-                    var buffer = new float[16];
+                    float[]? mBindPosesUnpacked = _mCompressedMesh.MBindPoses.UnpackFloats(16, 4 * 16);
+                    float[]? buffer = new float[16];
                     for (int i = 0; i < MBindPose.Length; i++)
                     {
                         Array.Copy(mBindPosesUnpacked, i * 16, buffer, 0, 16);
@@ -922,21 +922,21 @@ namespace UnityBundleReader.Classes
             //Normal
             if (_mCompressedMesh.MNormals.MNumItems > 0)
             {
-                var normalData = _mCompressedMesh.MNormals.UnpackFloats(2, 4 * 2);
-                var signs = _mCompressedMesh.MNormalSigns.UnpackInts();
+                float[]? normalData = _mCompressedMesh.MNormals.UnpackFloats(2, 4 * 2);
+                int[]? signs = _mCompressedMesh.MNormalSigns.UnpackInts();
                 MNormals = new float[_mCompressedMesh.MNormals.MNumItems / 2 * 3];
                 for (int i = 0; i < _mCompressedMesh.MNormals.MNumItems / 2; ++i)
                 {
-                    var x = normalData[i * 2 + 0];
-                    var y = normalData[i * 2 + 1];
-                    var zsqr = 1 - x * x - y * y;
+                    float x = normalData[i * 2 + 0];
+                    float y = normalData[i * 2 + 1];
+                    float zsqr = 1 - x * x - y * y;
                     float z;
                     if (zsqr >= 0f)
                         z = (float)System.Math.Sqrt(zsqr);
                     else
                     {
                         z = 0;
-                        var normal = new Vector3(x, y, z);
+                        Vector3 normal = new Vector3(x, y, z);
                         normal.Normalize();
                         x = normal.X;
                         y = normal.Y;
@@ -952,21 +952,21 @@ namespace UnityBundleReader.Classes
             //Tangent
             if (_mCompressedMesh.MTangents.MNumItems > 0)
             {
-                var tangentData = _mCompressedMesh.MTangents.UnpackFloats(2, 4 * 2);
-                var signs = _mCompressedMesh.MTangentSigns.UnpackInts();
+                float[]? tangentData = _mCompressedMesh.MTangents.UnpackFloats(2, 4 * 2);
+                int[]? signs = _mCompressedMesh.MTangentSigns.UnpackInts();
                 MTangents = new float[_mCompressedMesh.MTangents.MNumItems / 2 * 4];
                 for (int i = 0; i < _mCompressedMesh.MTangents.MNumItems / 2; ++i)
                 {
-                    var x = tangentData[i * 2 + 0];
-                    var y = tangentData[i * 2 + 1];
-                    var zsqr = 1 - x * x - y * y;
+                    float x = tangentData[i * 2 + 0];
+                    float y = tangentData[i * 2 + 1];
+                    float zsqr = 1 - x * x - y * y;
                     float z;
                     if (zsqr >= 0f)
                         z = (float)System.Math.Sqrt(zsqr);
                     else
                     {
                         z = 0;
-                        var vector3F = new Vector3(x, y, z);
+                        Vector3 vector3F = new Vector3(x, y, z);
                         vector3F.Normalize();
                         x = vector3F.X;
                         y = vector3F.Y;
@@ -974,7 +974,7 @@ namespace UnityBundleReader.Classes
                     }
                     if (signs[i * 2 + 0] == 0)
                         z = -z;
-                    var w = signs[i * 2 + 1] > 0 ? 1.0f : -1.0f;
+                    float w = signs[i * 2 + 1] > 0 ? 1.0f : -1.0f;
                     MTangents[i * 4] = x;
                     MTangents[i * 4 + 1] = y;
                     MTangents[i * 4 + 2] = z;
@@ -992,8 +992,8 @@ namespace UnityBundleReader.Classes
             //Skin
             if (_mCompressedMesh.MWeights.MNumItems > 0)
             {
-                var weights = _mCompressedMesh.MWeights.UnpackInts();
-                var boneIndices = _mCompressedMesh.MBoneIndices.UnpackInts();
+                int[]? weights = _mCompressedMesh.MWeights.UnpackInts();
+                int[]? boneIndices = _mCompressedMesh.MBoneIndices.UnpackInts();
 
                 InitMSkin();
 
@@ -1044,7 +1044,7 @@ namespace UnityBundleReader.Classes
             {
                 _mCompressedMesh.MColors.MNumItems *= 4;
                 _mCompressedMesh.MColors.MBitSize /= 4;
-                var tempColors = _mCompressedMesh.MColors.UnpackInts();
+                int[]? tempColors = _mCompressedMesh.MColors.UnpackInts();
                 MColors = new float[_mCompressedMesh.MColors.MNumItems];
                 for (int v = 0; v < _mCompressedMesh.MColors.MNumItems; v++)
                 {
@@ -1055,15 +1055,15 @@ namespace UnityBundleReader.Classes
 
         private void GetTriangles()
         {
-            foreach (var mSubMesh in MSubMeshes)
+            foreach (SubMesh? mSubMesh in MSubMeshes)
             {
-                var firstIndex = mSubMesh.FirstByte / 2;
+                uint firstIndex = mSubMesh.FirstByte / 2;
                 if (!_mUse16BitIndices)
                 {
                     firstIndex /= 2;
                 }
-                var indexCount = mSubMesh.IndexCount;
-                var topology = mSubMesh.Topology;
+                uint indexCount = mSubMesh.IndexCount;
+                GfxPrimitiveType topology = mSubMesh.Topology;
                 if (topology == GfxPrimitiveType.Triangles)
                 {
                     for (int i = 0; i < indexCount; i += 3)
@@ -1079,9 +1079,9 @@ namespace UnityBundleReader.Classes
                     uint triIndex = 0;
                     for (int i = 0; i < indexCount - 2; i++)
                     {
-                        var a = _mIndexBuffer[firstIndex + i];
-                        var b = _mIndexBuffer[firstIndex + i + 1];
-                        var c = _mIndexBuffer[firstIndex + i + 2];
+                        uint a = _mIndexBuffer[firstIndex + i];
+                        uint b = _mIndexBuffer[firstIndex + i + 1];
+                        uint c = _mIndexBuffer[firstIndex + i + 2];
 
                         // skip degenerates
                         if (a == b || a == c || b == c)
@@ -1328,9 +1328,9 @@ namespace UnityBundleReader.Classes
 
         public static float[] BytesToFloatArray(byte[] inputBytes, VertexFormat format)
         {
-            var size = GetFormatSize(format);
-            var len = inputBytes.Length / size;
-            var result = new float[len];
+            uint size = GetFormatSize(format);
+            long len = inputBytes.Length / size;
+            float[]? result = new float[len];
             for (int i = 0; i < len; i++)
             {
                 switch (format)
@@ -1360,9 +1360,9 @@ namespace UnityBundleReader.Classes
 
         public static int[] BytesToIntArray(byte[] inputBytes, VertexFormat format)
         {
-            var size = GetFormatSize(format);
-            var len = inputBytes.Length / size;
-            var result = new int[len];
+            uint size = GetFormatSize(format);
+            long len = inputBytes.Length / size;
+            int[]? result = new int[len];
             for (int i = 0; i < len; i++)
             {
                 switch (format)

@@ -26,7 +26,7 @@ namespace UnityBundleReader.Classes
 
         public UnityPropertySheet(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             int mTexEnvsSize = reader.ReadInt32();
             MTexEnvs = new KeyValuePair<string, UnityTexEnv>[mTexEnvsSize];
@@ -72,49 +72,49 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] == 4 && Version[1] >= 1) //4.x
             {
-                var mShaderKeywords = reader.ReadStringArray();
+                string[]? mShaderKeywords = reader.ReadStringArray();
             }
 
             if (Version[0] > 2021 || (Version[0] == 2021 && Version[1] >= 3)) //2021.3 and up
             {
-                var mValidKeywords = reader.ReadStringArray();
-                var mInvalidKeywords = reader.ReadStringArray();
+                string[]? mValidKeywords = reader.ReadStringArray();
+                string[]? mInvalidKeywords = reader.ReadStringArray();
             }
             else if (Version[0] >= 5) //5.0 ~ 2021.2
             {
-                var mShaderKeywords = reader.ReadAlignedString();
+                string? mShaderKeywords = reader.ReadAlignedString();
             }
 
             if (Version[0] >= 5) //5.0 and up
             {
-                var mLightmapFlags = reader.ReadUInt32();
+                uint mLightmapFlags = reader.ReadUInt32();
             }
 
             if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 6)) //5.6 and up
             {
-                var mEnableInstancingVariants = reader.ReadBoolean();
+                bool mEnableInstancingVariants = reader.ReadBoolean();
                 //var m_DoubleSidedGI = a_Stream.ReadBoolean(); //2017 and up
                 reader.AlignStream();
             }
 
             if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 3)) //4.3 and up
             {
-                var mCustomRenderQueue = reader.ReadInt32();
+                int mCustomRenderQueue = reader.ReadInt32();
             }
 
             if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 1)) //5.1 and up
             {
-                var stringTagMapSize = reader.ReadInt32();
+                int stringTagMapSize = reader.ReadInt32();
                 for (int i = 0; i < stringTagMapSize; i++)
                 {
-                    var first = reader.ReadAlignedString();
-                    var second = reader.ReadAlignedString();
+                    string? first = reader.ReadAlignedString();
+                    string? second = reader.ReadAlignedString();
                 }
             }
 
             if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 6)) //5.6 and up
             {
-                var disabledShaderPasses = reader.ReadStringArray();
+                string[]? disabledShaderPasses = reader.ReadStringArray();
             }
 
             MSavedProperties = new UnityPropertySheet(reader);

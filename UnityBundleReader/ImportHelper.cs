@@ -7,21 +7,21 @@ namespace UnityBundleReader
     {
         public static void MergeSplitAssets(string path, bool allDirectories = false)
         {
-            var splitFiles = Directory.GetFiles(path, "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-            foreach (var splitFile in splitFiles)
+            string[]? splitFiles = Directory.GetFiles(path, "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            foreach (string? splitFile in splitFiles)
             {
-                var destFile = Path.GetFileNameWithoutExtension(splitFile);
-                var destPath = Path.GetDirectoryName(splitFile);
-                var destFull = Path.Combine(destPath, destFile);
+                string? destFile = Path.GetFileNameWithoutExtension(splitFile);
+                string? destPath = Path.GetDirectoryName(splitFile);
+                string? destFull = Path.Combine(destPath, destFile);
                 if (!File.Exists(destFull))
                 {
-                    var splitParts = Directory.GetFiles(destPath, destFile + ".split*");
-                    using (var destStream = File.Create(destFull))
+                    string[]? splitParts = Directory.GetFiles(destPath, destFile + ".split*");
+                    using (FileStream? destStream = File.Create(destFull))
                     {
                         for (int i = 0; i < splitParts.Length; i++)
                         {
-                            var splitPart = destFull + ".split" + i;
-                            using (var sourceStream = File.OpenRead(splitPart))
+                            string? splitPart = destFull + ".split" + i;
+                            using (FileStream? sourceStream = File.OpenRead(splitPart))
                             {
                                 sourceStream.CopyTo(destStream);
                             }
@@ -33,12 +33,12 @@ namespace UnityBundleReader
 
         public static string[] ProcessingSplitFiles(List<string> selectFile)
         {
-            var splitFiles = selectFile.Where(x => x.Contains(".split"))
+            List<string>? splitFiles = selectFile.Where(x => x.Contains(".split"))
                 .Select(x => Path.Combine(Path.GetDirectoryName(x), Path.GetFileNameWithoutExtension(x)))
                 .Distinct()
                 .ToList();
             selectFile.RemoveAll(x => x.Contains(".split"));
-            foreach (var file in splitFiles)
+            foreach (string? file in splitFiles)
             {
                 if (File.Exists(file))
                 {
@@ -52,8 +52,8 @@ namespace UnityBundleReader
         {
             using (reader)
             {
-                var stream = new MemoryStream();
-                using (var gs = new GZipStream(reader.BaseStream, CompressionMode.Decompress))
+                MemoryStream? stream = new MemoryStream();
+                using (GZipStream? gs = new GZipStream(reader.BaseStream, CompressionMode.Decompress))
                 {
                     gs.CopyTo(stream);
                 }
@@ -66,8 +66,8 @@ namespace UnityBundleReader
         {
             using (reader)
             {
-                var stream = new MemoryStream();
-                using (var brotliStream = new BrotliInputStream(reader.BaseStream))
+                MemoryStream? stream = new MemoryStream();
+                using (BrotliInputStream? brotliStream = new BrotliInputStream(reader.BaseStream))
                 {
                     brotliStream.CopyTo(stream);
                 }

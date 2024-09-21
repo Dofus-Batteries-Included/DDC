@@ -11,10 +11,10 @@ namespace UnityBundleReader.Classes
         {
             if (Version[0] > 5 || (Version[0] == 5 && Version[1] >= 4)) //5.4.0 nad up
             {
-                var productGuid = reader.ReadBytes(16);
+                byte[]? productGuid = reader.ReadBytes(16);
             }
 
-            var androidProfiler = reader.ReadBoolean();
+            bool androidProfiler = reader.ReadBoolean();
             //bool AndroidFilterTouchesWhenObscured 2017.2 and up
             //bool AndroidEnableSustainedPerformanceMode 2018 and up
             reader.AlignStream();
@@ -27,19 +27,19 @@ namespace UnityBundleReader.Classes
                     int targetPlatform = reader.ReadInt32(); //4.0 and up targetGlesGraphics
                     if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 6)) //4.6 and up
                     {
-                        var targetIOSGraphics = reader.ReadInt32();
+                        int targetIOSGraphics = reader.ReadInt32();
                     }
                 }
                 int targetResolution = reader.ReadInt32();
             }
             else
             {
-                var useOnDemandResources = reader.ReadBoolean();
+                bool useOnDemandResources = reader.ReadBoolean();
                 reader.AlignStream();
             }
             if (Version[0] > 3 || (Version[0] == 3 && Version[1] >= 5)) //3.5 and up
             {
-                var accelerometerFrequency = reader.ReadInt32();
+                int accelerometerFrequency = reader.ReadInt32();
             }
             CompanyName = reader.ReadAlignedString();
             ProductName = reader.ReadAlignedString();

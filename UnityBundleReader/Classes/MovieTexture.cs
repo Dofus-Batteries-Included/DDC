@@ -9,7 +9,7 @@ namespace UnityBundleReader.Classes
 
         public MovieTexture(ObjectReader reader) : base(reader)
         {
-            var mLoop = reader.ReadBoolean();
+            bool mLoop = reader.ReadBoolean();
             reader.AlignStream();
             MAudioClip = new PPtr<AudioClip>(reader);
             MMovieData = reader.ReadUInt8Array();

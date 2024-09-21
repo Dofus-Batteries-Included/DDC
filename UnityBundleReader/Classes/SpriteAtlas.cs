@@ -17,7 +17,7 @@ namespace UnityBundleReader.Classes
 
         public SpriteAtlasData(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             Texture = new PPtr<Texture2D>(reader);
             AlphaTexture = new PPtr<Texture2D>(reader);
             TextureRect = new Rectf(reader);
@@ -31,7 +31,7 @@ namespace UnityBundleReader.Classes
             SettingsRaw = new SpriteSettings(reader);
             if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
             {
-                var secondaryTexturesSize = reader.ReadInt32();
+                int secondaryTexturesSize = reader.ReadInt32();
                 SecondaryTextures = new SecondarySpriteTexture[secondaryTexturesSize];
                 for (int i = 0; i < secondaryTexturesSize; i++)
                 {
@@ -50,25 +50,25 @@ namespace UnityBundleReader.Classes
 
         public SpriteAtlas(ObjectReader reader) : base(reader)
         {
-            var mPackedSpritesSize = reader.ReadInt32();
+            int mPackedSpritesSize = reader.ReadInt32();
             MPackedSprites = new PPtr<Sprite>[mPackedSpritesSize];
             for (int i = 0; i < mPackedSpritesSize; i++)
             {
                 MPackedSprites[i] = new PPtr<Sprite>(reader);
             }
 
-            var mPackedSpriteNamesToIndex = reader.ReadStringArray();
+            string[]? mPackedSpriteNamesToIndex = reader.ReadStringArray();
 
-            var mRenderDataMapSize = reader.ReadInt32();
+            int mRenderDataMapSize = reader.ReadInt32();
             MRenderDataMap = new Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData>(mRenderDataMapSize);
             for (int i = 0; i < mRenderDataMapSize; i++)
             {
-                var first = new Guid(reader.ReadBytes(16));
-                var second = reader.ReadInt64();
-                var value = new SpriteAtlasData(reader);
+                Guid first = new Guid(reader.ReadBytes(16));
+                long second = reader.ReadInt64();
+                SpriteAtlasData? value = new SpriteAtlasData(reader);
                 MRenderDataMap.Add(new KeyValuePair<Guid, long>(first, second), value);
             }
-            var mTag = reader.ReadAlignedString();
+            string? mTag = reader.ReadAlignedString();
             MIsVariant = reader.ReadBoolean();
             reader.AlignStream();
         }

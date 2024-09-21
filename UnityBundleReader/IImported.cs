@@ -30,8 +30,8 @@ namespace UnityBundleReader
         {
             get
             {
-                var frame = this;
-                var path = frame.Name;
+                ImportedFrame? frame = this;
+                string? path = frame.Name;
                 while (frame.Parent != null)
                 {
                     frame = frame.Parent;
@@ -60,8 +60,8 @@ namespace UnityBundleReader
 
         public ImportedFrame FindFrameByPath(string path)
         {
-            var name = path.Substring(path.LastIndexOf('/') + 1);
-            foreach (var frame in FindChilds(name))
+            string? name = path.Substring(path.LastIndexOf('/') + 1);
+            foreach (ImportedFrame? frame in FindChilds(name))
             {
                 if (frame.Path.EndsWith(path, StringComparison.Ordinal))
                 {
@@ -73,8 +73,8 @@ namespace UnityBundleReader
 
         public ImportedFrame FindRelativeFrameWithPath(string path)
         {
-            var subs = path.Split(new[] { '/' }, 2);
-            foreach (var child in _children)
+            string[]? subs = path.Split(new[] { '/' }, 2);
+            foreach (ImportedFrame? child in _children)
             {
                 if (child.Name == subs[0])
                 {
@@ -84,7 +84,7 @@ namespace UnityBundleReader
                     }
                     else
                     {
-                        var result = child.FindRelativeFrameWithPath(subs[1]);
+                        ImportedFrame? result = child.FindRelativeFrameWithPath(subs[1]);
                         if (result != null)
                             return result;
                     }
@@ -99,9 +99,9 @@ namespace UnityBundleReader
             {
                 return this;
             }
-            foreach (var child in _children)
+            foreach (ImportedFrame? child in _children)
             {
-                var frame = child.FindFrame(name);
+                ImportedFrame? frame = child.FindFrame(name);
                 if (frame != null)
                 {
                     return frame;
@@ -112,11 +112,11 @@ namespace UnityBundleReader
 
         public ImportedFrame FindChild(string name, bool recursive = true)
         {
-            foreach (var child in _children)
+            foreach (ImportedFrame? child in _children)
             {
                 if (recursive)
                 {
-                    var frame = child.FindFrame(name);
+                    ImportedFrame? frame = child.FindFrame(name);
                     if (frame != null)
                     {
                         return frame;
@@ -139,9 +139,9 @@ namespace UnityBundleReader
             {
                 yield return this;
             }
-            foreach (var child in _children)
+            foreach (ImportedFrame? child in _children)
             {
-                foreach (var item in child.FindChilds(name))
+                foreach (ImportedFrame? item in child.FindChilds(name))
                 {
                     yield return item;
                 }
@@ -231,7 +231,7 @@ namespace UnityBundleReader
 
         public ImportedAnimationKeyframedTrack FindTrack(string path)
         {
-            var track = TrackList.Find(x => x.Path == path);
+            ImportedAnimationKeyframedTrack? track = TrackList.Find(x => x.Path == path);
             if (track == null)
             {
                 track = new ImportedAnimationKeyframedTrack { Path = path };
@@ -299,7 +299,7 @@ namespace UnityBundleReader
     {
         public static ImportedMesh FindMesh(string path, List<ImportedMesh> importedMeshList)
         {
-            foreach (var mesh in importedMeshList)
+            foreach (ImportedMesh? mesh in importedMeshList)
             {
                 if (mesh.Path == path)
                 {
@@ -312,7 +312,7 @@ namespace UnityBundleReader
 
         public static ImportedMaterial FindMaterial(string name, List<ImportedMaterial> importedMats)
         {
-            foreach (var mat in importedMats)
+            foreach (ImportedMaterial? mat in importedMats)
             {
                 if (mat.Name == name)
                 {
@@ -330,7 +330,7 @@ namespace UnityBundleReader
                 return null;
             }
 
-            foreach (var tex in importedTextureList)
+            foreach (ImportedTexture? tex in importedTextureList)
             {
                 if (tex.Name == name)
                 {

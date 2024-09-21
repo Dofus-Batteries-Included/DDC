@@ -6,8 +6,8 @@
         {
             if (Platform == BuildTarget.NoTarget)
             {
-                var mPrefabParentObject = new PPtr<EditorExtension>(reader);
-                var mPrefabInternal = new PPtr<Object>(reader); //PPtr<Prefab>
+                PPtr<EditorExtension>? mPrefabParentObject = new PPtr<EditorExtension>(reader);
+                PPtr<Object>? mPrefabInternal = new PPtr<Object>(reader); //PPtr<Prefab>
             }
         }
     }

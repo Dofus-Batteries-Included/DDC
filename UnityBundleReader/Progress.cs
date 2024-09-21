@@ -13,7 +13,7 @@
 
         public static void Report(int current, int total)
         {
-            var value = (int)(current * 100f / total);
+            int value = (int)(current * 100f / total);
             Report(value);
         }
 

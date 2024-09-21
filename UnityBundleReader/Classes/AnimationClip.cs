@@ -38,7 +38,7 @@ namespace UnityBundleReader.Classes
 
         public AnimationCurve(ObjectReader reader, Func<T> readerFunc)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             int numCurves = reader.ReadInt32();
             MCurve = new Keyframe<T>[numCurves];
             for (int i = 0; i < numCurves; i++)
@@ -98,9 +98,9 @@ namespace UnityBundleReader.Classes
             float scale = 1.0f / MRange;
             if (numChunks == -1)
                 numChunks = (int)MNumItems / itemCountInChunk;
-            var end = chunkStride * numChunks / 4;
-            var data = new List<float>();
-            for (var index = 0; index != end; index += chunkStride / 4)
+            int end = chunkStride * numChunks / 4;
+            List<float>? data = new List<float>();
+            for (int index = 0; index != end; index += chunkStride / 4)
             {
                 for (int i = 0; i < itemCountInChunk; ++i)
                 {
@@ -148,7 +148,7 @@ namespace UnityBundleReader.Classes
 
         public int[] UnpackInts()
         {
-            var data = new int[MNumItems];
+            int[]? data = new int[MNumItems];
             int indexPos = 0;
             int bitPos = 0;
             for (int i = 0; i < MNumItems; i++)
@@ -190,7 +190,7 @@ namespace UnityBundleReader.Classes
 
         public Quaternion[] UnpackQuats()
         {
-            var data = new Quaternion[MNumItems];
+            Quaternion[]? data = new Quaternion[MNumItems];
             int indexPos = 0;
             int bitPos = 0;
 
@@ -214,7 +214,7 @@ namespace UnityBundleReader.Classes
                 flags &= 7;
 
 
-                var q = new Quaternion();
+                Quaternion q = new Quaternion();
                 float sum = 0;
                 for (int j = 0; j < 4; j++)
                 {
@@ -362,7 +362,7 @@ namespace UnityBundleReader.Classes
 
         public Xform(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             T = version[0] > 5 || (version[0] == 5 && version[1] >= 4) ? reader.ReadVector3() : (Vector3)reader.ReadVector4();//5.4 and up
             Q = reader.ReadQuaternion();
             S = version[0] > 5 || (version[0] == 5 && version[1] >= 4) ? reader.ReadVector3() : (Vector3)reader.ReadVector4();//5.4 and up
@@ -399,7 +399,7 @@ namespace UnityBundleReader.Classes
 
         public HumanGoal(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             MX = new Xform(reader);
             MWeightT = reader.ReadSingle();
             MWeightR = reader.ReadSingle();
@@ -424,7 +424,7 @@ namespace UnityBundleReader.Classes
 
         public HumanPose(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             MRootX = new Xform(reader);
             MLookAtPosition = version[0] > 5 || (version[0] == 5 && version[1] >= 4) ? reader.ReadVector3() : (Vector3)reader.ReadVector4();//5.4 and up
             MLookAtWeight = reader.ReadVector4();
@@ -491,10 +491,10 @@ namespace UnityBundleReader.Classes
                 }
 
                 dx = System.Math.Max(dx, 0.0001f);
-                var dy = rhs.Value - Value;
-                var length = 1.0f / (dx * dx);
-                var d1 = OutSlope * dx;
-                var d2 = dy + dy + dy - d1 - d1 - Coeff[1] / length;
+                float dy = rhs.Value - Value;
+                float length = 1.0f / (dx * dx);
+                float d1 = OutSlope * dx;
+                float d2 = dy + dy + dy - d1 - d1 - Coeff[1] / length;
                 return d2 / dx;
             }
         }
@@ -519,10 +519,10 @@ namespace UnityBundleReader.Classes
 
         public List<StreamedFrame> ReadData()
         {
-            var frameList = new List<StreamedFrame>();
-            var buffer = new byte[Data.Length * 4];
+            List<StreamedFrame>? frameList = new List<StreamedFrame>();
+            byte[]? buffer = new byte[Data.Length * 4];
             Buffer.BlockCopy(Data, 0, buffer, 0, buffer.Length);
-            using (var reader = new BinaryReader(new MemoryStream(buffer)))
+            using (BinaryReader? reader = new BinaryReader(new MemoryStream(buffer)))
             {
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
@@ -532,13 +532,13 @@ namespace UnityBundleReader.Classes
 
             for (int frameIndex = 2; frameIndex < frameList.Count - 1; frameIndex++)
             {
-                var frame = frameList[frameIndex];
-                foreach (var curveKey in frame.KeyList)
+                StreamedFrame? frame = frameList[frameIndex];
+                foreach (StreamedCurveKey? curveKey in frame.KeyList)
                 {
                     for (int i = frameIndex - 1; i >= 0; i--)
                     {
-                        var preFrame = frameList[i];
-                        var preCurveKey = preFrame.KeyList.FirstOrDefault(x => x.Index == curveKey.Index);
+                        StreamedFrame? preFrame = frameList[i];
+                        StreamedCurveKey? preCurveKey = preFrame.KeyList.FirstOrDefault(x => x.Index == curveKey.Index);
                         if (preCurveKey != null)
                         {
                             curveKey.InSlope = preCurveKey.CalculateNextInSlope(frame.Time - preFrame.Time, curveKey);
@@ -588,7 +588,7 @@ namespace UnityBundleReader.Classes
 
         public ValueConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             MID = reader.ReadUInt32();
             if (version[0] < 5 || (version[0] == 5 && version[1] < 5))//5.5 down
             {
@@ -623,7 +623,7 @@ namespace UnityBundleReader.Classes
 
         public Clip(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             MStreamedClip = new StreamedClip(reader);
             MDenseClip = new DenseClip(reader);
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
@@ -638,14 +638,14 @@ namespace UnityBundleReader.Classes
 
         public AnimationClipBindingConstant ConvertValueArrayToGenericBinding()
         {
-            var bindings = new AnimationClipBindingConstant();
-            var genericBindings = new List<GenericBinding>();
-            var values = MBinding;
+            AnimationClipBindingConstant? bindings = new AnimationClipBindingConstant();
+            List<GenericBinding>? genericBindings = new List<GenericBinding>();
+            ValueArrayConstant? values = MBinding;
             for (int i = 0; i < values.MValueArray.Length;)
             {
-                var curveID = values.MValueArray[i].MID;
-                var curveTypeID = values.MValueArray[i].MTypeID;
-                var binding = new GenericBinding();
+                uint curveID = values.MValueArray[i].MID;
+                uint curveTypeID = values.MValueArray[i].MTypeID;
+                GenericBinding? binding = new GenericBinding();
                 genericBindings.Add(binding);
                 if (curveTypeID == 4174552735) //CRC(PositionX))
                 {
@@ -727,7 +727,7 @@ namespace UnityBundleReader.Classes
 
         public ClipMuscleConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             MDeltaPose = new HumanPose(reader);
             MStartX = new Xform(reader);
             if (version[0] > 5 || (version[0] == 5 && version[1] >= 5))//5.5 and up
@@ -753,7 +753,7 @@ namespace UnityBundleReader.Classes
             MIndexArray = reader.ReadInt32Array();
             if (version[0] < 4 || (version[0] == 4 && version[1] < 3)) //4.3 down
             {
-                var mAdditionalCurveIndexArray = reader.ReadInt32Array();
+                int[]? mAdditionalCurveIndexArray = reader.ReadInt32Array();
             }
             int numDeltas = reader.ReadInt32();
             MValueArrayDelta = new ValueDelta[numDeltas];
@@ -801,7 +801,7 @@ namespace UnityBundleReader.Classes
 
         public GenericBinding(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
             Path = reader.ReadUInt32();
             Attribute = reader.ReadUInt32();
             Script = new PPtr<Object>(reader);
@@ -850,7 +850,7 @@ namespace UnityBundleReader.Classes
         public GenericBinding FindBinding(int index)
         {
             int curves = 0;
-            foreach (var b in GenericBindings)
+            foreach (GenericBinding? b in GenericBindings)
             {
                 if (b.TypeID == ClassIDType.Transform)
                 {
@@ -895,7 +895,7 @@ namespace UnityBundleReader.Classes
 
         public AnimationEvent(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             Time = reader.ReadSingle();
             FunctionName = reader.ReadAlignedString();
@@ -1033,8 +1033,8 @@ namespace UnityBundleReader.Classes
             }
             if (Version[0] > 2018 || (Version[0] == 2018 && Version[1] >= 3)) //2018.3 and up
             {
-                var mHasGenericRootTransform = reader.ReadBoolean();
-                var mHasMotionFloatCurves = reader.ReadBoolean();
+                bool mHasGenericRootTransform = reader.ReadBoolean();
+                bool mHasMotionFloatCurves = reader.ReadBoolean();
                 reader.AlignStream();
             }
             int numEvents = reader.ReadInt32();

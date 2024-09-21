@@ -23,14 +23,14 @@ namespace UnityBundleReader.Classes
 
         public AssetBundle(ObjectReader reader) : base(reader)
         {
-            var mPreloadTableSize = reader.ReadInt32();
+            int mPreloadTableSize = reader.ReadInt32();
             MPreloadTable = new PPtr<Object>[mPreloadTableSize];
             for (int i = 0; i < mPreloadTableSize; i++)
             {
                 MPreloadTable[i] = new PPtr<Object>(reader);
             }
 
-            var mContainerSize = reader.ReadInt32();
+            int mContainerSize = reader.ReadInt32();
             MContainer = new KeyValuePair<string, AssetInfo>[mContainerSize];
             for (int i = 0; i < mContainerSize; i++)
             {

@@ -106,7 +106,7 @@ namespace UnityBundleReader
             ObjectsDic = new Dictionary<long, Object>(objectCount);
             for (int i = 0; i < objectCount; i++)
             {
-                var objectInfo = new ObjectInfo();
+                ObjectInfo? objectInfo = new ObjectInfo();
                 if (BigIDEnabled != 0)
                 {
                     objectInfo.MPathID = reader.ReadInt64();
@@ -136,7 +136,7 @@ namespace UnityBundleReader
                 }
                 else
                 {
-                    var type = MTypes[objectInfo.TypeID];
+                    SerializedType? type = MTypes[objectInfo.TypeID];
                     objectInfo.SerializedType = type;
                     objectInfo.ClassID = type.ClassID;
                 }
@@ -146,7 +146,7 @@ namespace UnityBundleReader
                 }
                 if (Header.MVersion >= SerializedFileFormatVersion.HasScriptTypeIndex && Header.MVersion < SerializedFileFormatVersion.RefactorTypeData)
                 {
-                    var mScriptTypeIndex = reader.ReadInt16();
+                    short mScriptTypeIndex = reader.ReadInt16();
                     if (objectInfo.SerializedType != null)
                         objectInfo.SerializedType.MScriptTypeIndex = mScriptTypeIndex;
                 }
@@ -163,7 +163,7 @@ namespace UnityBundleReader
                 _mScriptTypes = new List<LocalSerializedObjectIdentifier>(scriptCount);
                 for (int i = 0; i < scriptCount; i++)
                 {
-                    var mScriptType = new LocalSerializedObjectIdentifier();
+                    LocalSerializedObjectIdentifier? mScriptType = new LocalSerializedObjectIdentifier();
                     mScriptType.LocalSerializedFileIndex = reader.ReadInt32();
                     if (Header.MVersion < SerializedFileFormatVersion.Unknown14)
                     {
@@ -182,10 +182,10 @@ namespace UnityBundleReader
             MExternals = new List<FileIdentifier>(externalsCount);
             for (int i = 0; i < externalsCount; i++)
             {
-                var mExternal = new FileIdentifier();
+                FileIdentifier? mExternal = new FileIdentifier();
                 if (Header.MVersion >= SerializedFileFormatVersion.Unknown6)
                 {
-                    var tempEmpty = reader.ReadStringToNull();
+                    string? tempEmpty = reader.ReadStringToNull();
                 }
                 if (Header.MVersion >= SerializedFileFormatVersion.Unknown5)
                 {
@@ -220,16 +220,16 @@ namespace UnityBundleReader
             if (stringVersion != StrippedVersion)
             {
                 UnityVersion = stringVersion;
-                var buildSplit = Regex.Replace(stringVersion, @"\d", "").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+                string[]? buildSplit = Regex.Replace(stringVersion, @"\d", "").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
                 BuildType = new BuildType(buildSplit[0]);
-                var versionSplit = Regex.Replace(stringVersion, @"\D", ".").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+                string[]? versionSplit = Regex.Replace(stringVersion, @"\D", ".").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
                 Version = versionSplit.Select(int.Parse).ToArray();
             }
         }
 
         private SerializedType ReadSerializedType(bool isRefType)
         {
-            var type = new SerializedType();
+            SerializedType? type = new SerializedType();
 
             type.ClassID = Reader.ReadInt32();
 
@@ -288,7 +288,7 @@ namespace UnityBundleReader
 
         private void ReadTypeTree(TypeTree mType, int level = 0)
         {
-            var typeTreeNode = new TypeTreeNode();
+            TypeTreeNode? typeTreeNode = new TypeTreeNode();
             mType.m_Nodes.Add(typeTreeNode);
             typeTreeNode.MLevel = level;
             typeTreeNode.MType = Reader.ReadStringToNull();
@@ -296,7 +296,7 @@ namespace UnityBundleReader
             typeTreeNode.MByteSize = Reader.ReadInt32();
             if (Header.MVersion == SerializedFileFormatVersion.Unknown2)
             {
-                var variableCount = Reader.ReadInt32();
+                int variableCount = Reader.ReadInt32();
             }
             if (Header.MVersion != SerializedFileFormatVersion.Unknown3)
             {
@@ -322,7 +322,7 @@ namespace UnityBundleReader
             int stringBufferSize = Reader.ReadInt32();
             for (int i = 0; i < numberOfNodes; i++)
             {
-                var typeTreeNode = new TypeTreeNode();
+                TypeTreeNode? typeTreeNode = new TypeTreeNode();
                 mType.m_Nodes.Add(typeTreeNode);
                 typeTreeNode.MVersion = Reader.ReadUInt16();
                 typeTreeNode.MLevel = Reader.ReadByte();
@@ -339,11 +339,11 @@ namespace UnityBundleReader
             }
             mType.m_StringBuffer = Reader.ReadBytes(stringBufferSize);
 
-            using (var stringBufferReader = new BinaryReader(new MemoryStream(mType.m_StringBuffer)))
+            using (BinaryReader? stringBufferReader = new BinaryReader(new MemoryStream(mType.m_StringBuffer)))
             {
                 for (int i = 0; i < numberOfNodes; i++)
                 {
-                    var mNode = mType.m_Nodes[i];
+                    TypeTreeNode? mNode = mType.m_Nodes[i];
                     mNode.MType = ReadString(stringBufferReader, mNode.MTypeStrOffset);
                     mNode.MName = ReadString(stringBufferReader, mNode.MNameStrOffset);
                 }
@@ -351,14 +351,14 @@ namespace UnityBundleReader
 
             string ReadString(BinaryReader stringBufferReader, uint value)
             {
-                var isOffset = (value & 0x80000000) == 0;
+                bool isOffset = (value & 0x80000000) == 0;
                 if (isOffset)
                 {
                     stringBufferReader.BaseStream.Position = value;
                     return stringBufferReader.ReadStringToNull();
                 }
-                var offset = value & 0x7FFFFFFF;
-                if (CommonString.StringBuffer.TryGetValue(offset, out var str))
+                uint offset = value & 0x7FFFFFFF;
+                if (CommonString.StringBuffer.TryGetValue(offset, out string? str))
                 {
                     return str;
                 }

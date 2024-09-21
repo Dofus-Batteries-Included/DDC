@@ -27,7 +27,7 @@ namespace UnityBundleReader.Classes
                 MComponents[i] = new PPtr<Component>(reader);
             }
 
-            var mLayer = reader.ReadInt32();
+            int mLayer = reader.ReadInt32();
             MName = reader.ReadAlignedString();
         }
     }

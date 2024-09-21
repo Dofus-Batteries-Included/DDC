@@ -11,7 +11,7 @@ namespace UnityBundleReader.Classes
 
         public HumanPoseMask(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             Word0 = reader.ReadUInt32();
             Word1 = reader.ReadUInt32();
@@ -63,7 +63,7 @@ namespace UnityBundleReader.Classes
 
         public LayerConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             MStateMachineIndex = reader.ReadUInt32();
             MStateMachineMotionSetIndex = reader.ReadUInt32();
@@ -119,7 +119,7 @@ namespace UnityBundleReader.Classes
 
         public TransitionConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             int numConditions = reader.ReadInt32();
             MConditionConstantArray = new ConditionConstant[numConditions];
@@ -248,7 +248,7 @@ namespace UnityBundleReader.Classes
 
         public BlendTreeNodeConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 1)) //4.1 and up
             {
@@ -302,7 +302,7 @@ namespace UnityBundleReader.Classes
 
         public BlendTreeConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             int numNodes = reader.ReadInt32();
             MNodeArray = new BlendTreeNodeConstant[numNodes];
@@ -341,7 +341,7 @@ namespace UnityBundleReader.Classes
 
         public StateConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             int numTransistions = reader.ReadInt32();
             MTransitionConstantArray = new TransitionConstant[numTransistions];
@@ -389,7 +389,7 @@ namespace UnityBundleReader.Classes
 
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 2)) //2017.2 and up
             {
-                var mTimeParamID = reader.ReadUInt32();
+                uint mTimeParamID = reader.ReadUInt32();
             }
 
             MSpeed = reader.ReadSingle();
@@ -462,7 +462,7 @@ namespace UnityBundleReader.Classes
 
         public StateMachineConstant(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             int numStates = reader.ReadInt32();
             MStateConstantArray = new StateConstant[numStates];
@@ -505,7 +505,7 @@ namespace UnityBundleReader.Classes
 
         public ValueArray(ObjectReader reader)
         {
-            var version = reader.Version;
+            int[]? version = reader.Version;
 
             if (version[0] < 5 || (version[0] == 5 && version[1] < 5)) //5.5 down
             {
@@ -582,11 +582,11 @@ namespace UnityBundleReader.Classes
 
         public AnimatorController(ObjectReader reader) : base(reader)
         {
-            var mControllerSize = reader.ReadUInt32();
-            var mController = new ControllerConstant(reader);
+            uint mControllerSize = reader.ReadUInt32();
+            ControllerConstant? mController = new ControllerConstant(reader);
 
             int tosSize = reader.ReadInt32();
-            var mTos = new KeyValuePair<uint, string>[tosSize];
+            KeyValuePair<uint, string>[]? mTos = new KeyValuePair<uint, string>[tosSize];
             for (int i = 0; i < tosSize; i++)
             {
                 mTos[i] = new KeyValuePair<uint, string>(reader.ReadUInt32(), reader.ReadAlignedString());

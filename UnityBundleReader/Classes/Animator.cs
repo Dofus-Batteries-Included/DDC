@@ -12,14 +12,14 @@ namespace UnityBundleReader.Classes
         {
             MAvatar = new PPtr<Avatar>(reader);
             MController = new PPtr<RuntimeAnimatorController>(reader);
-            var mCullingMode = reader.ReadInt32();
+            int mCullingMode = reader.ReadInt32();
 
             if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 5)) //4.5 and up
             {
-                var mUpdateMode = reader.ReadInt32();
+                int mUpdateMode = reader.ReadInt32();
             }
 
-            var mApplyRootMotion = reader.ReadBoolean();
+            bool mApplyRootMotion = reader.ReadBoolean();
             if (Version[0] == 4 && Version[1] >= 5) //4.5 and up - 5.0 down
             {
                 reader.AlignStream();
@@ -27,17 +27,17 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] >= 5) //5.0 and up
             {
-                var mLinearVelocityBlending = reader.ReadBoolean();
+                bool mLinearVelocityBlending = reader.ReadBoolean();
                 if (Version[0] > 2021 || (Version[0] == 2021 && Version[1] >= 2)) //2021.2 and up
                 {
-                    var mStabilizeFeet = reader.ReadBoolean();
+                    bool mStabilizeFeet = reader.ReadBoolean();
                 }
                 reader.AlignStream();
             }
 
             if (Version[0] < 4 || (Version[0] == 4 && Version[1] < 5)) //4.5 down
             {
-                var mAnimatePhysics = reader.ReadBoolean();
+                bool mAnimatePhysics = reader.ReadBoolean();
             }
 
             if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 3)) //4.3 and up
@@ -47,7 +47,7 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] > 4 || (Version[0] == 4 && Version[1] >= 5)) //4.5 and up
             {
-                var mAllowConstantClipSamplingOptimization = reader.ReadBoolean();
+                bool mAllowConstantClipSamplingOptimization = reader.ReadBoolean();
             }
             if (Version[0] >= 5 && Version[0] < 2018) //5.0 and up - 2018 down
             {
@@ -56,7 +56,7 @@ namespace UnityBundleReader.Classes
 
             if (Version[0] >= 2018) //2018 and up
             {
-                var mKeepAnimatorControllerStateOnDisable = reader.ReadBoolean();
+                bool mKeepAnimatorControllerStateOnDisable = reader.ReadBoolean();
                 reader.AlignStream();
             }
         }

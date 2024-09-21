@@ -25,36 +25,36 @@ namespace UnityBundleReader.Classes
         public VideoClip(ObjectReader reader) : base(reader)
         {
             MOriginalPath = reader.ReadAlignedString();
-            var mProxyWidth = reader.ReadUInt32();
-            var mProxyHeight = reader.ReadUInt32();
-            var width = reader.ReadUInt32();
-            var height = reader.ReadUInt32();
+            uint mProxyWidth = reader.ReadUInt32();
+            uint mProxyHeight = reader.ReadUInt32();
+            uint width = reader.ReadUInt32();
+            uint height = reader.ReadUInt32();
             if (Version[0] > 2017 || (Version[0] == 2017 && Version[1] >= 2)) //2017.2 and up
             {
-                var mPixelAspecRatioNum = reader.ReadUInt32();
-                var mPixelAspecRatioDen = reader.ReadUInt32();
+                uint mPixelAspecRatioNum = reader.ReadUInt32();
+                uint mPixelAspecRatioDen = reader.ReadUInt32();
             }
-            var mFrameRate = reader.ReadDouble();
-            var mFrameCount = reader.ReadUInt64();
-            var mFormat = reader.ReadInt32();
-            var mAudioChannelCount = reader.ReadUInt16Array();
+            double mFrameRate = reader.ReadDouble();
+            ulong mFrameCount = reader.ReadUInt64();
+            int mFormat = reader.ReadInt32();
+            ushort[]? mAudioChannelCount = reader.ReadUInt16Array();
             reader.AlignStream();
-            var mAudioSampleRate = reader.ReadUInt32Array();
-            var mAudioLanguage = reader.ReadStringArray();
+            uint[]? mAudioSampleRate = reader.ReadUInt32Array();
+            string[]? mAudioLanguage = reader.ReadStringArray();
             if (Version[0] >= 2020) //2020.1 and up
             {
-                var mVideoShadersSize = reader.ReadInt32();
-                var mVideoShaders = new PPtr<Shader>[mVideoShadersSize];
+                int mVideoShadersSize = reader.ReadInt32();
+                PPtr<Shader>[]? mVideoShaders = new PPtr<Shader>[mVideoShadersSize];
                 for (int i = 0; i < mVideoShadersSize; i++)
                 {
                     mVideoShaders[i] = new PPtr<Shader>(reader);
                 }
             }
             MExternalResources = new StreamedResource(reader);
-            var mHasSplitAlpha = reader.ReadBoolean();
+            bool mHasSplitAlpha = reader.ReadBoolean();
             if (Version[0] >= 2020) //2020.1 and up
             {
-                var mSRGB = reader.ReadBoolean();
+                bool mSRGB = reader.ReadBoolean();
             }
 
             ResourceReader resourceReader;

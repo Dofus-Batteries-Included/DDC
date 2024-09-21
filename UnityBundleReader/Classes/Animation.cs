@@ -6,7 +6,7 @@
 
         public Animation(ObjectReader reader) : base(reader)
         {
-            var mAnimation = new PPtr<AnimationClip>(reader);
+            PPtr<AnimationClip>? mAnimation = new PPtr<AnimationClip>(reader);
             int numAnimations = reader.ReadInt32();
             MAnimations = new PPtr<AnimationClip>[numAnimations];
             for (int i = 0; i < numAnimations; i++)

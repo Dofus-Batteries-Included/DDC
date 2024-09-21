@@ -72,10 +72,10 @@ namespace UnityBundleReader.Math
 
         public void Normalize()
         {
-            var length = Length();
+            float length = Length();
             if (length > KEpsilon)
             {
-                var invNorm = 1.0f / length;
+                float invNorm = 1.0f / length;
                 X *= invNorm;
                 Y *= invNorm;
                 Z *= invNorm;

@@ -9,13 +9,13 @@ namespace UnityBundleReader
         public static string ReadTypeString(TypeTree mType, ObjectReader reader)
         {
             reader.Reset();
-            var sb = new StringBuilder();
-            var mNodes = mType.m_Nodes;
+            StringBuilder? sb = new StringBuilder();
+            List<TypeTreeNode>? mNodes = mType.m_Nodes;
             for (int i = 0; i < mNodes.Count; i++)
             {
                 ReadStringValue(sb, mNodes, reader, ref i);
             }
-            var readed = reader.Position - reader.ByteStart;
+            long readed = reader.Position - reader.ByteStart;
             if (readed != reader.ByteSize)
             {
                 Logger.Info($"Error while read type, read {readed} bytes but expected {reader.ByteSize} bytes");
@@ -25,13 +25,13 @@ namespace UnityBundleReader
 
         private static void ReadStringValue(StringBuilder sb, List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
         {
-            var mNode = mNodes[i];
-            var level = mNode.MLevel;
-            var varTypeStr = mNode.MType;
-            var varNameStr = mNode.MName;
+            TypeTreeNode? mNode = mNodes[i];
+            int level = mNode.MLevel;
+            string? varTypeStr = mNode.MType;
+            string? varNameStr = mNode.MName;
             object value = null;
-            var append = true;
-            var align = (mNode.MMetaFlag & 0x4000) != 0;
+            bool append = true;
+            bool align = (mNode.MMetaFlag & 0x4000) != 0;
             switch (varTypeStr)
             {
                 case "SInt8":
@@ -80,9 +80,9 @@ namespace UnityBundleReader
                     break;
                 case "string":
                     append = false;
-                    var str = reader.ReadAlignedString();
+                    string? str = reader.ReadAlignedString();
                     sb.AppendFormat("{0}{1} {2} = \"{3}\"\r\n", (new string('\t', level)), varTypeStr, varNameStr, str);
-                    var toSkip = GetNodes(mNodes, i);
+                    List<TypeTreeNode>? toSkip = GetNodes(mNodes, i);
                     i += toSkip.Count - 1;
                     break;
                 case "map":
@@ -92,13 +92,13 @@ namespace UnityBundleReader
                         append = false;
                         sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
                         sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level + 1)), "Array", "Array");
-                        var size = reader.ReadInt32();
+                        int size = reader.ReadInt32();
                         sb.AppendFormat("{0}{1} {2} = {3}\r\n", (new string('\t', level + 1)), "int", "size", size);
-                        var map = GetNodes(mNodes, i);
+                        List<TypeTreeNode>? map = GetNodes(mNodes, i);
                         i += map.Count - 1;
-                        var first = GetNodes(map, 4);
-                        var next = 4 + first.Count;
-                        var second = GetNodes(map, next);
+                        List<TypeTreeNode>? first = GetNodes(map, 4);
+                        int next = 4 + first.Count;
+                        List<TypeTreeNode>? second = GetNodes(map, next);
                         for (int j = 0; j < size; j++)
                         {
                             sb.AppendFormat("{0}[{1}]\r\n", (new string('\t', level + 2)), j);
@@ -113,7 +113,7 @@ namespace UnityBundleReader
                 case "TypelessData":
                     {
                         append = false;
-                        var size = reader.ReadInt32();
+                        int size = reader.ReadInt32();
                         reader.ReadBytes(size);
                         i += 2;
                         sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
@@ -129,9 +129,9 @@ namespace UnityBundleReader
                             append = false;
                             sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
                             sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level + 1)), "Array", "Array");
-                            var size = reader.ReadInt32();
+                            int size = reader.ReadInt32();
                             sb.AppendFormat("{0}{1} {2} = {3}\r\n", (new string('\t', level + 1)), "int", "size", size);
-                            var vector = GetNodes(mNodes, i);
+                            List<TypeTreeNode>? vector = GetNodes(mNodes, i);
                             i += vector.Count - 1;
                             for (int j = 0; j < size; j++)
                             {
@@ -145,7 +145,7 @@ namespace UnityBundleReader
                         {
                             append = false;
                             sb.AppendFormat("{0}{1} {2}\r\n", (new string('\t', level)), varTypeStr, varNameStr);
-                            var @class = GetNodes(mNodes, i);
+                            List<TypeTreeNode>? @class = GetNodes(mNodes, i);
                             i += @class.Count - 1;
                             for (int j = 1; j < @class.Count; j++)
                             {
@@ -164,15 +164,15 @@ namespace UnityBundleReader
         public static OrderedDictionary ReadType(TypeTree mTypes, ObjectReader reader)
         {
             reader.Reset();
-            var obj = new OrderedDictionary();
-            var mNodes = mTypes.m_Nodes;
+            OrderedDictionary? obj = new OrderedDictionary();
+            List<TypeTreeNode>? mNodes = mTypes.m_Nodes;
             for (int i = 1; i < mNodes.Count; i++)
             {
-                var mNode = mNodes[i];
-                var varNameStr = mNode.MName;
+                TypeTreeNode? mNode = mNodes[i];
+                string? varNameStr = mNode.MName;
                 obj[varNameStr] = ReadValue(mNodes, reader, ref i);
             }
-            var readed = reader.Position - reader.ByteStart;
+            long readed = reader.Position - reader.ByteStart;
             if (readed != reader.ByteSize)
             {
                 Logger.Info($"Error while read type, read {readed} bytes but expected {reader.ByteSize} bytes");
@@ -182,10 +182,10 @@ namespace UnityBundleReader
 
         private static object ReadValue(List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
         {
-            var mNode = mNodes[i];
-            var varTypeStr = mNode.MType;
+            TypeTreeNode? mNode = mNodes[i];
+            string? varTypeStr = mNode.MType;
             object value;
-            var align = (mNode.MMetaFlag & 0x4000) != 0;
+            bool align = (mNode.MMetaFlag & 0x4000) != 0;
             switch (varTypeStr)
             {
                 case "SInt8":
@@ -234,20 +234,20 @@ namespace UnityBundleReader
                     break;
                 case "string":
                     value = reader.ReadAlignedString();
-                    var toSkip = GetNodes(mNodes, i);
+                    List<TypeTreeNode>? toSkip = GetNodes(mNodes, i);
                     i += toSkip.Count - 1;
                     break;
                 case "map":
                     {
                         if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
                             align = true;
-                        var map = GetNodes(mNodes, i);
+                        List<TypeTreeNode>? map = GetNodes(mNodes, i);
                         i += map.Count - 1;
-                        var first = GetNodes(map, 4);
-                        var next = 4 + first.Count;
-                        var second = GetNodes(map, next);
-                        var size = reader.ReadInt32();
-                        var dic = new List<KeyValuePair<object, object>>(size);
+                        List<TypeTreeNode>? first = GetNodes(map, 4);
+                        int next = 4 + first.Count;
+                        List<TypeTreeNode>? second = GetNodes(map, next);
+                        int size = reader.ReadInt32();
+                        List<KeyValuePair<object, object>>? dic = new List<KeyValuePair<object, object>>(size);
                         for (int j = 0; j < size; j++)
                         {
                             int tmp1 = 0;
@@ -259,7 +259,7 @@ namespace UnityBundleReader
                     }
                 case "TypelessData":
                     {
-                        var size = reader.ReadInt32();
+                        int size = reader.ReadInt32();
                         value = reader.ReadBytes(size);
                         i += 2;
                         break;
@@ -270,10 +270,10 @@ namespace UnityBundleReader
                         {
                             if ((mNodes[i + 1].MMetaFlag & 0x4000) != 0)
                                 align = true;
-                            var vector = GetNodes(mNodes, i);
+                            List<TypeTreeNode>? vector = GetNodes(mNodes, i);
                             i += vector.Count - 1;
-                            var size = reader.ReadInt32();
-                            var list = new List<object>(size);
+                            int size = reader.ReadInt32();
+                            List<object>? list = new List<object>(size);
                             for (int j = 0; j < size; j++)
                             {
                                 int tmp = 3;
@@ -284,13 +284,13 @@ namespace UnityBundleReader
                         }
                         else //Class
                         {
-                            var @class = GetNodes(mNodes, i);
+                            List<TypeTreeNode>? @class = GetNodes(mNodes, i);
                             i += @class.Count - 1;
-                            var obj = new OrderedDictionary();
+                            OrderedDictionary? obj = new OrderedDictionary();
                             for (int j = 1; j < @class.Count; j++)
                             {
-                                var classmember = @class[j];
-                                var name = classmember.MName;
+                                TypeTreeNode? classmember = @class[j];
+                                string? name = classmember.MName;
                                 obj[name] = ReadValue(@class, reader, ref j);
                             }
                             value = obj;
@@ -305,13 +305,13 @@ namespace UnityBundleReader
 
         private static List<TypeTreeNode> GetNodes(List<TypeTreeNode> mNodes, int index)
         {
-            var nodes = new List<TypeTreeNode>();
+            List<TypeTreeNode>? nodes = new List<TypeTreeNode>();
             nodes.Add(mNodes[index]);
-            var level = mNodes[index].MLevel;
+            int level = mNodes[index].MLevel;
             for (int i = index + 1; i < mNodes.Count; i++)
             {
-                var member = mNodes[i];
-                var level2 = member.MLevel;
+                TypeTreeNode? member = mNodes[i];
+                int level2 = member.MLevel;
                 if (level2 <= level)
                 {
                     return nodes;
