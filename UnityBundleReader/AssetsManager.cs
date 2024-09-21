@@ -109,12 +109,12 @@ public class AssetsManager
 
                     if (!_importFilesHash.Contains(sharedFileName))
                     {
-                        string sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
+                        string sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", sharedFileName);
                         if (!_noexistFiles.Contains(sharedFilePath))
                         {
                             if (!File.Exists(sharedFilePath))
                             {
-                                string[] findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
+                                string[] findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath) ?? ".", sharedFileName, SearchOption.AllDirectories);
                                 if (findFiles.Length > 0)
                                 {
                                     sharedFilePath = findFiles[0];
@@ -174,7 +174,7 @@ public class AssetsManager
         }
     }
 
-    void LoadBundleFile(FileReader reader, string originalPath = null)
+    void LoadBundleFile(FileReader reader, string? originalPath = null)
     {
         Logger.Info("Loading " + reader.FullPath);
         try
@@ -182,7 +182,7 @@ public class AssetsManager
             BundleFile bundleFile = new(reader);
             foreach (StreamFile? file in bundleFile.FileList)
             {
-                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath) ?? ".", file.fileName);
                 FileReader subReader = new(dummyPath, file.stream);
                 if (subReader.FileType == FileType.AssetsFile)
                 {

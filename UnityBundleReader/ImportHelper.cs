@@ -5,9 +5,9 @@ namespace UnityBundleReader;
 
 public static class ImportHelper
 {
-    public static void MergeSplitAssets(string path, bool allDirectories = false)
+    public static void MergeSplitAssets(string? path, bool allDirectories = false)
     {
-        string[] splitFiles = Directory.GetFiles(path, "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        string[] splitFiles = Directory.GetFiles(path ?? ".", "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         foreach (string? splitFile in splitFiles)
         {
             string destFile = Path.GetFileNameWithoutExtension(splitFile);
