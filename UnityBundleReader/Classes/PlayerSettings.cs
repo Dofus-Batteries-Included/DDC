@@ -11,7 +11,7 @@ public sealed class PlayerSettings : Object
     {
         if (Version[0] > 5 || Version[0] == 5 && Version[1] >= 4) //5.4.0 nad up
         {
-            byte[]? productGuid = reader.ReadBytes(16);
+            byte[] productGuid = reader.ReadBytes(16);
         }
 
         bool androidProfiler = reader.ReadBoolean();

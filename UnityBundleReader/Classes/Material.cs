@@ -26,7 +26,7 @@ public class UnityPropertySheet
 
     public UnityPropertySheet(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         int mTexEnvsSize = reader.ReadInt32();
         MTexEnvs = new KeyValuePair<string, UnityTexEnv>[mTexEnvsSize];
@@ -72,17 +72,17 @@ public sealed class Material : NamedObject
 
         if (Version[0] == 4 && Version[1] >= 1) //4.x
         {
-            string[]? mShaderKeywords = reader.ReadStringArray();
+            string[] mShaderKeywords = reader.ReadStringArray();
         }
 
         if (Version[0] > 2021 || Version[0] == 2021 && Version[1] >= 3) //2021.3 and up
         {
-            string[]? mValidKeywords = reader.ReadStringArray();
-            string[]? mInvalidKeywords = reader.ReadStringArray();
+            string[] mValidKeywords = reader.ReadStringArray();
+            string[] mInvalidKeywords = reader.ReadStringArray();
         }
         else if (Version[0] >= 5) //5.0 ~ 2021.2
         {
-            string? mShaderKeywords = reader.ReadAlignedString();
+            string mShaderKeywords = reader.ReadAlignedString();
         }
 
         if (Version[0] >= 5) //5.0 and up
@@ -107,14 +107,14 @@ public sealed class Material : NamedObject
             int stringTagMapSize = reader.ReadInt32();
             for (int i = 0; i < stringTagMapSize; i++)
             {
-                string? first = reader.ReadAlignedString();
-                string? second = reader.ReadAlignedString();
+                string first = reader.ReadAlignedString();
+                string second = reader.ReadAlignedString();
             }
         }
 
         if (Version[0] > 5 || Version[0] == 5 && Version[1] >= 6) //5.6 and up
         {
-            string[]? disabledShaderPasses = reader.ReadStringArray();
+            string[] disabledShaderPasses = reader.ReadStringArray();
         }
 
         MSavedProperties = new UnityPropertySheet(reader);

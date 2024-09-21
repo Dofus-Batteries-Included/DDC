@@ -35,7 +35,7 @@ public class CompressedMesh
 
     public CompressedMesh(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MVertices = new PackedFloatVector(reader);
         MUV = new PackedFloatVector(reader);
@@ -81,7 +81,7 @@ public class StreamInfo
 
     public StreamInfo(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         ChannelMask = reader.ReadUInt32();
         Offset = reader.ReadUInt32();
@@ -128,7 +128,7 @@ public class VertexData
 
     public VertexData(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] < 2018) //2018 down
         {
@@ -188,7 +188,7 @@ public class VertexData
             uint stride = 0;
             for (int chn = 0; chn < MChannels.Length; chn++)
             {
-                ChannelInfo? mChannel = MChannels[chn];
+                ChannelInfo mChannel = MChannels[chn];
                 if (mChannel.Stream == s)
                 {
                     if (mChannel.Dimension > 0)
@@ -221,14 +221,14 @@ public class VertexData
         }
         for (int s = 0; s < MStreams.Length; s++)
         {
-            StreamInfo? mStream = MStreams[s];
-            BitArray? channelMask = new(new[] { (int)mStream.ChannelMask });
+            StreamInfo mStream = MStreams[s];
+            BitArray channelMask = new(new[] { (int)mStream.ChannelMask });
             byte offset = 0;
             for (int i = 0; i < 6; i++)
             {
                 if (channelMask.Get(i))
                 {
-                    ChannelInfo? mChannel = MChannels[i];
+                    ChannelInfo mChannel = MChannels[i];
                     mChannel.Stream = (byte)s;
                     mChannel.Offset = offset;
                     switch (i)
@@ -302,11 +302,11 @@ public class MeshBlendShape
 
     public MeshBlendShape(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] == 4 && version[1] < 3) //4.3 down
         {
-            string? name = reader.ReadAlignedString();
+            string name = reader.ReadAlignedString();
         }
         FirstVertex = reader.ReadUInt32();
         VertexCount = reader.ReadUInt32();
@@ -349,7 +349,7 @@ public class BlendShapeData
 
     public BlendShapeData(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] > 4 || version[0] == 4 && version[1] >= 3) //4.3 and up
         {
@@ -379,14 +379,14 @@ public class BlendShapeData
         else
         {
             int mShapesSize = reader.ReadInt32();
-            MeshBlendShape[]? mShapes = new MeshBlendShape[mShapesSize];
+            MeshBlendShape[] mShapes = new MeshBlendShape[mShapesSize];
             for (int i = 0; i < mShapesSize; i++)
             {
                 mShapes[i] = new MeshBlendShape(reader);
             }
             reader.AlignStream();
             int mShapeVerticesSize = reader.ReadInt32();
-            BlendShapeVertex[]? mShapeVertices = new BlendShapeVertex[mShapeVerticesSize]; //MeshBlendShapeVertex
+            BlendShapeVertex[] mShapeVertices = new BlendShapeVertex[mShapeVerticesSize]; //MeshBlendShapeVertex
             for (int i = 0; i < mShapeVerticesSize; i++)
             {
                 mShapeVertices[i] = new BlendShapeVertex(reader);
@@ -418,7 +418,7 @@ public class SubMesh
 
     public SubMesh(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         FirstByte = reader.ReadUInt32();
         IndexCount = reader.ReadUInt32();
@@ -521,13 +521,13 @@ public sealed class Mesh : NamedObject
             if (Version[0] >= 2019) //2019 and up
             {
                 int mBonesAABBSize = reader.ReadInt32();
-                MinMaxAABB[]? mBonesAABB = new MinMaxAABB[mBonesAABBSize];
+                MinMaxAABB[] mBonesAABB = new MinMaxAABB[mBonesAABBSize];
                 for (int i = 0; i < mBonesAABBSize; i++)
                 {
                     mBonesAABB[i] = new MinMaxAABB(reader);
                 }
 
-                uint[]? mVariableBoneCountWeights = reader.ReadUInt32Array();
+                uint[] mVariableBoneCountWeights = reader.ReadUInt32Array();
             }
 
             byte mMeshCompression = reader.ReadByte();
@@ -660,15 +660,15 @@ public sealed class Mesh : NamedObject
 
         if (Version[0] >= 5) //5.0 and up
         {
-            byte[]? mBakedConvexCollisionMesh = reader.ReadUInt8Array();
+            byte[] mBakedConvexCollisionMesh = reader.ReadUInt8Array();
             reader.AlignStream();
-            byte[]? mBakedTriangleCollisionMesh = reader.ReadUInt8Array();
+            byte[] mBakedTriangleCollisionMesh = reader.ReadUInt8Array();
             reader.AlignStream();
         }
 
         if (Version[0] > 2018 || Version[0] == 2018 && Version[1] >= 2) //2018.2 and up
         {
-            float[]? mMeshMetrics = new float[2];
+            float[] mMeshMetrics = new float[2];
             mMeshMetrics[0] = reader.ReadSingle();
             mMeshMetrics[1] = reader.ReadSingle();
         }
@@ -688,7 +688,7 @@ public sealed class Mesh : NamedObject
         {
             if (_mVertexData.MVertexCount > 0)
             {
-                ResourceReader? resourceReader = new(_mStreamData.Path, AssetsFile, _mStreamData.Offset, _mStreamData.Size);
+                ResourceReader resourceReader = new(_mStreamData.Path, AssetsFile, _mStreamData.Offset, _mStreamData.Size);
                 _mVertexData.MDataSize = resourceReader.GetData();
             }
         }
@@ -711,11 +711,11 @@ public sealed class Mesh : NamedObject
 
         for (int chn = 0; chn < _mVertexData.MChannels.Length; chn++)
         {
-            ChannelInfo? mChannel = _mVertexData.MChannels[chn];
+            ChannelInfo mChannel = _mVertexData.MChannels[chn];
             if (mChannel.Dimension > 0)
             {
-                StreamInfo? mStream = _mVertexData.MStreams[mChannel.Stream];
-                BitArray? channelMask = new(new[] { (int)mStream.ChannelMask });
+                StreamInfo mStream = _mVertexData.MStreams[mChannel.Stream];
+                BitArray channelMask = new(new[] { (int)mStream.ChannelMask });
                 if (channelMask.Get(chn))
                 {
                     if (Version[0] < 2018 && chn == 2 && mChannel.Format == 2) //kShaderChannelColor && kChannelFormatColor
@@ -725,7 +725,7 @@ public sealed class Mesh : NamedObject
 
                     MeshHelper.VertexFormat vertexFormat = MeshHelper.ToVertexFormat(mChannel.Format, Version);
                     int componentByteSize = (int)MeshHelper.GetFormatSize(vertexFormat);
-                    byte[]? componentBytes = new byte[MVertexCount * mChannel.Dimension * componentByteSize];
+                    byte[] componentBytes = new byte[MVertexCount * mChannel.Dimension * componentByteSize];
                     for (int v = 0; v < MVertexCount; v++)
                     {
                         int vertexOffset = (int)mStream.Offset + mChannel.Offset + (int)mStream.Stride * v;
@@ -740,7 +740,7 @@ public sealed class Mesh : NamedObject
                     {
                         for (int i = 0; i < componentBytes.Length / componentByteSize; i++)
                         {
-                            byte[]? buff = new byte[componentByteSize];
+                            byte[] buff = new byte[componentByteSize];
                             Buffer.BlockCopy(componentBytes, i * componentByteSize, buff, 0, componentByteSize);
                             buff = buff.Reverse().ToArray();
                             Buffer.BlockCopy(buff, 0, componentBytes, i * componentByteSize, componentByteSize);
@@ -896,7 +896,7 @@ public sealed class Mesh : NamedObject
                     if ((texCoordBits & kUVChannelExists) != 0)
                     {
                         int uvDim = 1 + (int)(texCoordBits & kUVDimensionMask);
-                        float[]? mUV = _mCompressedMesh.MUV.UnpackFloats(uvDim, uvDim * 4, uvSrcOffset, MVertexCount);
+                        float[] mUV = _mCompressedMesh.MUV.UnpackFloats(uvDim, uvDim * 4, uvSrcOffset, MVertexCount);
                         SetUV(uv, mUV);
                         uvSrcOffset += uvDim * MVertexCount;
                     }
@@ -917,8 +917,8 @@ public sealed class Mesh : NamedObject
             if (_mCompressedMesh.MBindPoses.MNumItems > 0)
             {
                 MBindPose = new Matrix4X4[_mCompressedMesh.MBindPoses.MNumItems / 16];
-                float[]? mBindPosesUnpacked = _mCompressedMesh.MBindPoses.UnpackFloats(16, 4 * 16);
-                float[]? buffer = new float[16];
+                float[] mBindPosesUnpacked = _mCompressedMesh.MBindPoses.UnpackFloats(16, 4 * 16);
+                float[] buffer = new float[16];
                 for (int i = 0; i < MBindPose.Length; i++)
                 {
                     Array.Copy(mBindPosesUnpacked, i * 16, buffer, 0, 16);
@@ -929,8 +929,8 @@ public sealed class Mesh : NamedObject
         //Normal
         if (_mCompressedMesh.MNormals.MNumItems > 0)
         {
-            float[]? normalData = _mCompressedMesh.MNormals.UnpackFloats(2, 4 * 2);
-            int[]? signs = _mCompressedMesh.MNormalSigns.UnpackInts();
+            float[] normalData = _mCompressedMesh.MNormals.UnpackFloats(2, 4 * 2);
+            int[] signs = _mCompressedMesh.MNormalSigns.UnpackInts();
             MNormals = new float[_mCompressedMesh.MNormals.MNumItems / 2 * 3];
             for (int i = 0; i < _mCompressedMesh.MNormals.MNumItems / 2; ++i)
             {
@@ -963,8 +963,8 @@ public sealed class Mesh : NamedObject
         //Tangent
         if (_mCompressedMesh.MTangents.MNumItems > 0)
         {
-            float[]? tangentData = _mCompressedMesh.MTangents.UnpackFloats(2, 4 * 2);
-            int[]? signs = _mCompressedMesh.MTangentSigns.UnpackInts();
+            float[] tangentData = _mCompressedMesh.MTangents.UnpackFloats(2, 4 * 2);
+            int[] signs = _mCompressedMesh.MTangentSigns.UnpackInts();
             MTangents = new float[_mCompressedMesh.MTangents.MNumItems / 2 * 4];
             for (int i = 0; i < _mCompressedMesh.MTangents.MNumItems / 2; ++i)
             {
@@ -1007,8 +1007,8 @@ public sealed class Mesh : NamedObject
         //Skin
         if (_mCompressedMesh.MWeights.MNumItems > 0)
         {
-            int[]? weights = _mCompressedMesh.MWeights.UnpackInts();
-            int[]? boneIndices = _mCompressedMesh.MBoneIndices.UnpackInts();
+            int[] weights = _mCompressedMesh.MWeights.UnpackInts();
+            int[] boneIndices = _mCompressedMesh.MBoneIndices.UnpackInts();
 
             InitMSkin();
 
@@ -1059,7 +1059,7 @@ public sealed class Mesh : NamedObject
         {
             _mCompressedMesh.MColors.MNumItems *= 4;
             _mCompressedMesh.MColors.MBitSize /= 4;
-            int[]? tempColors = _mCompressedMesh.MColors.UnpackInts();
+            int[] tempColors = _mCompressedMesh.MColors.UnpackInts();
             MColors = new float[_mCompressedMesh.MColors.MNumItems];
             for (int v = 0; v < _mCompressedMesh.MColors.MNumItems; v++)
             {
@@ -1341,7 +1341,7 @@ public static class MeshHelper
     {
         uint size = GetFormatSize(format);
         long len = inputBytes.Length / size;
-        float[]? result = new float[len];
+        float[] result = new float[len];
         for (int i = 0; i < len; i++)
         {
             switch (format)
@@ -1373,7 +1373,7 @@ public static class MeshHelper
     {
         uint size = GetFormatSize(format);
         long len = inputBytes.Length / size;
-        int[]? result = new int[len];
+        int[] result = new int[len];
         for (int i = 0; i < len; i++)
         {
             switch (format)

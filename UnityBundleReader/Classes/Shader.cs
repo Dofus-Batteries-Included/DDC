@@ -231,7 +231,7 @@ public class SerializedShaderState
 
     public SerializedShaderState(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MName = reader.ReadAlignedString();
         RTBlend = new SerializedShaderRTBlendState[8];
@@ -352,7 +352,7 @@ public class TextureParameter
 
     public TextureParameter(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MNameIndex = reader.ReadInt32();
         MIndex = reader.ReadInt32();
@@ -374,7 +374,7 @@ public class BufferBinding
 
     public BufferBinding(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MNameIndex = reader.ReadInt32();
         MIndex = reader.ReadInt32();
@@ -396,7 +396,7 @@ public class ConstantBuffer
 
     public ConstantBuffer(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MNameIndex = reader.ReadInt32();
 
@@ -578,16 +578,16 @@ public class SerializedSubProgram
 
     public SerializedSubProgram(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MBlobIndex = reader.ReadUInt32();
         MChannels = new ParserBindChannels(reader);
 
         if (version[0] >= 2019 && version[0] < 2021 || version[0] == 2021 && version[1] < 2) //2019 ~2021.1
         {
-            ushort[]? mGlobalKeywordIndices = reader.ReadUInt16Array();
+            ushort[] mGlobalKeywordIndices = reader.ReadUInt16Array();
             reader.AlignStream();
-            ushort[]? mLocalKeywordIndices = reader.ReadUInt16Array();
+            ushort[] mLocalKeywordIndices = reader.ReadUInt16Array();
             reader.AlignStream();
         }
         else
@@ -696,7 +696,7 @@ public class SerializedProgram
 
     public SerializedProgram(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         int numSubPrograms = reader.ReadInt32();
         MSubPrograms = new SerializedSubProgram[numSubPrograms];
@@ -755,7 +755,7 @@ public class SerializedPass
 
     public SerializedPass(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] > 2020 || version[0] == 2020 && version[1] >= 2) //2020.2 and up
         {
@@ -888,7 +888,7 @@ public class SerializedShader
 
     public SerializedShader(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MPropInfo = new SerializedProperties(reader);
 
@@ -1008,7 +1008,7 @@ public class Shader : NamedObject
                 int mNonModifiableTexturesCount = reader.ReadInt32();
                 for (int i = 0; i < mNonModifiableTexturesCount; i++)
                 {
-                    string? first = reader.ReadAlignedString();
+                    string first = reader.ReadAlignedString();
                     new PPtr<Texture>(reader);
                 }
             }
@@ -1020,7 +1020,7 @@ public class Shader : NamedObject
         {
             MScript = reader.ReadUInt8Array();
             reader.AlignStream();
-            string? mPathName = reader.ReadAlignedString();
+            string mPathName = reader.ReadAlignedString();
             if (Version[0] == 5 && Version[1] >= 3) //5.3 - 5.4
             {
                 DecompressedSize = reader.ReadUInt32();

@@ -64,7 +64,7 @@ public class SpriteVertex
 
     public SpriteVertex(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         Pos = reader.ReadVector3();
         if (version[0] < 4 || version[0] == 4 && version[1] <= 3) //4.3 and down
@@ -95,7 +95,7 @@ public class SpriteRenderData
 
     public SpriteRenderData(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         Texture = new PPtr<Texture2D>(reader);
         if (version[0] > 5 || version[0] == 5 && version[1] >= 2) //5.2 and up

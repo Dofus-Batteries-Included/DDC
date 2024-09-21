@@ -106,7 +106,7 @@ public class SerializedFile
         ObjectsDic = new Dictionary<long, Object>(objectCount);
         for (int i = 0; i < objectCount; i++)
         {
-            ObjectInfo? objectInfo = new();
+            ObjectInfo objectInfo = new();
             if (BigIDEnabled != 0)
             {
                 objectInfo.MPathID = reader.ReadInt64();
@@ -140,7 +140,7 @@ public class SerializedFile
             }
             else
             {
-                SerializedType? type = MTypes[objectInfo.TypeID];
+                SerializedType type = MTypes[objectInfo.TypeID];
                 objectInfo.SerializedType = type;
                 objectInfo.ClassID = type.ClassID;
             }
@@ -169,7 +169,7 @@ public class SerializedFile
             _mScriptTypes = new List<LocalSerializedObjectIdentifier>(scriptCount);
             for (int i = 0; i < scriptCount; i++)
             {
-                LocalSerializedObjectIdentifier? mScriptType = new();
+                LocalSerializedObjectIdentifier mScriptType = new();
                 mScriptType.LocalSerializedFileIndex = reader.ReadInt32();
                 if (Header.MVersion < SerializedFileFormatVersion.Unknown14)
                 {
@@ -188,10 +188,10 @@ public class SerializedFile
         MExternals = new List<FileIdentifier>(externalsCount);
         for (int i = 0; i < externalsCount; i++)
         {
-            FileIdentifier? mExternal = new();
+            FileIdentifier mExternal = new();
             if (Header.MVersion >= SerializedFileFormatVersion.Unknown6)
             {
-                string? tempEmpty = reader.ReadStringToNull();
+                string tempEmpty = reader.ReadStringToNull();
             }
             if (Header.MVersion >= SerializedFileFormatVersion.Unknown5)
             {
@@ -226,16 +226,16 @@ public class SerializedFile
         if (stringVersion != StrippedVersion)
         {
             UnityVersion = stringVersion;
-            string[]? buildSplit = Regex.Replace(stringVersion, @"\d", "").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+            string[] buildSplit = Regex.Replace(stringVersion, @"\d", "").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
             BuildType = new BuildType(buildSplit[0]);
-            string[]? versionSplit = Regex.Replace(stringVersion, @"\D", ".").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+            string[] versionSplit = Regex.Replace(stringVersion, @"\D", ".").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
             Version = versionSplit.Select(int.Parse).ToArray();
         }
     }
 
     SerializedType ReadSerializedType(bool isRefType)
     {
-        SerializedType? type = new();
+        SerializedType type = new();
 
         type.ClassID = Reader.ReadInt32();
 
@@ -295,7 +295,7 @@ public class SerializedFile
 
     void ReadTypeTree(TypeTree mType, int level = 0)
     {
-        TypeTreeNode? typeTreeNode = new();
+        TypeTreeNode typeTreeNode = new();
         mType.Nodes.Add(typeTreeNode);
         typeTreeNode.MLevel = level;
         typeTreeNode.MType = Reader.ReadStringToNull();
@@ -329,7 +329,7 @@ public class SerializedFile
         int stringBufferSize = Reader.ReadInt32();
         for (int i = 0; i < numberOfNodes; i++)
         {
-            TypeTreeNode? typeTreeNode = new();
+            TypeTreeNode typeTreeNode = new();
             mType.Nodes.Add(typeTreeNode);
             typeTreeNode.MVersion = Reader.ReadUInt16();
             typeTreeNode.MLevel = Reader.ReadByte();
@@ -346,11 +346,11 @@ public class SerializedFile
         }
         mType.StringBuffer = Reader.ReadBytes(stringBufferSize);
 
-        using (BinaryReader? stringBufferReader = new(new MemoryStream(mType.StringBuffer)))
+        using (BinaryReader stringBufferReader = new(new MemoryStream(mType.StringBuffer)))
         {
             for (int i = 0; i < numberOfNodes; i++)
             {
-                TypeTreeNode? mNode = mType.Nodes[i];
+                TypeTreeNode mNode = mType.Nodes[i];
                 mNode.MType = ReadString(stringBufferReader, mNode.MTypeStrOffset);
                 mNode.MName = ReadString(stringBufferReader, mNode.MNameStrOffset);
             }

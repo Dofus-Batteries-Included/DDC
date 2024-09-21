@@ -28,8 +28,8 @@ public class ImportedFrame
 
     public string Path {
         get {
-            ImportedFrame? frame = this;
-            string? path = frame.Name;
+            ImportedFrame frame = this;
+            string path = frame.Name;
             while (frame.Parent != null)
             {
                 frame = frame.Parent;
@@ -55,7 +55,7 @@ public class ImportedFrame
 
     public ImportedFrame FindFrameByPath(string path)
     {
-        string? name = path.Substring(path.LastIndexOf('/') + 1);
+        string name = path.Substring(path.LastIndexOf('/') + 1);
         foreach (ImportedFrame? frame in FindChilds(name))
         {
             if (frame.Path.EndsWith(path, StringComparison.Ordinal))
@@ -68,7 +68,7 @@ public class ImportedFrame
 
     public ImportedFrame FindRelativeFrameWithPath(string path)
     {
-        string[]? subs = path.Split(new[] { '/' }, 2);
+        string[] subs = path.Split(new[] { '/' }, 2);
         foreach (ImportedFrame? child in _children)
         {
             if (child.Name == subs[0])

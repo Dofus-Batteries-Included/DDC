@@ -7,21 +7,21 @@ public static class ImportHelper
 {
     public static void MergeSplitAssets(string path, bool allDirectories = false)
     {
-        string[]? splitFiles = Directory.GetFiles(path, "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        string[] splitFiles = Directory.GetFiles(path, "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
         foreach (string? splitFile in splitFiles)
         {
-            string? destFile = Path.GetFileNameWithoutExtension(splitFile);
+            string destFile = Path.GetFileNameWithoutExtension(splitFile);
             string? destPath = Path.GetDirectoryName(splitFile);
-            string? destFull = Path.Combine(destPath, destFile);
+            string destFull = Path.Combine(destPath ?? ".", destFile);
             if (!File.Exists(destFull))
             {
-                string[]? splitParts = Directory.GetFiles(destPath, destFile + ".split*");
-                using (FileStream? destStream = File.Create(destFull))
+                string[] splitParts = Directory.GetFiles(destPath ?? ".", destFile + ".split*");
+                using (FileStream destStream = File.Create(destFull))
                 {
                     for (int i = 0; i < splitParts.Length; i++)
                     {
-                        string? splitPart = destFull + ".split" + i;
-                        using (FileStream? sourceStream = File.OpenRead(splitPart))
+                        string splitPart = destFull + ".split" + i;
+                        using (FileStream sourceStream = File.OpenRead(splitPart))
                         {
                             sourceStream.CopyTo(destStream);
                         }
@@ -33,8 +33,8 @@ public static class ImportHelper
 
     public static string[] ProcessingSplitFiles(List<string> selectFile)
     {
-        List<string>? splitFiles = selectFile.Where(x => x.Contains(".split"))
-            .Select(x => Path.Combine(Path.GetDirectoryName(x), Path.GetFileNameWithoutExtension(x)))
+        List<string> splitFiles = selectFile.Where(x => x.Contains(".split"))
+            .Select(x => Path.Combine(Path.GetDirectoryName(x) ?? ".", Path.GetFileNameWithoutExtension(x)))
             .Distinct()
             .ToList();
         selectFile.RemoveAll(x => x.Contains(".split"));
@@ -52,8 +52,8 @@ public static class ImportHelper
     {
         using (reader)
         {
-            MemoryStream? stream = new();
-            using (GZipStream? gs = new(reader.BaseStream, CompressionMode.Decompress))
+            MemoryStream stream = new();
+            using (GZipStream gs = new(reader.BaseStream, CompressionMode.Decompress))
             {
                 gs.CopyTo(stream);
             }
@@ -66,8 +66,8 @@ public static class ImportHelper
     {
         using (reader)
         {
-            MemoryStream? stream = new();
-            using (BrotliInputStream? brotliStream = new(reader.BaseStream))
+            MemoryStream stream = new();
+            using (BrotliInputStream brotliStream = new(reader.BaseStream))
             {
                 brotliStream.CopyTo(stream);
             }

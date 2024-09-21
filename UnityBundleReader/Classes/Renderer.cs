@@ -113,13 +113,13 @@ public abstract class Renderer : Component
                 MSubsetIndices = reader.ReadUInt32Array();
             }
 
-            PPtr<Transform>? mStaticBatchRoot = new(reader);
+            PPtr<Transform> mStaticBatchRoot = new(reader);
         }
 
         if (Version[0] > 5 || Version[0] == 5 && Version[1] >= 4) //5.4 and up
         {
-            PPtr<Transform>? mProbeAnchor = new(reader);
-            PPtr<GameObject>? mLightProbeVolumeOverride = new(reader);
+            PPtr<Transform> mProbeAnchor = new(reader);
+            PPtr<GameObject> mLightProbeVolumeOverride = new(reader);
         }
         else if (Version[0] > 3 || Version[0] == 3 && Version[1] >= 5) //3.5 - 5.3
         {
@@ -131,7 +131,7 @@ public abstract class Renderer : Component
                 int mReflectionProbeUsage = reader.ReadInt32();
             }
 
-            PPtr<Transform>? mLightProbeAnchor = new(reader); //5.0 and up m_ProbeAnchor
+            PPtr<Transform> mLightProbeAnchor = new(reader); //5.0 and up m_ProbeAnchor
         }
 
         if (Version[0] > 4 || Version[0] == 4 && Version[1] >= 3) //4.3 and up

@@ -24,7 +24,7 @@ public class FileReader : EndianBinaryReader
 
     FileType CheckFileType()
     {
-        string? signature = this.ReadStringToNull(20);
+        string signature = this.ReadStringToNull(20);
         Position = 0;
         switch (signature)
         {
@@ -77,7 +77,7 @@ public class FileReader : EndianBinaryReader
         uint mVersion = ReadUInt32();
         long mDataOffset = ReadUInt32();
         byte mEndianess = ReadByte();
-        byte[]? mReserved = ReadBytes(3);
+        byte[] mReserved = ReadBytes(3);
         if (mVersion >= 22)
         {
             if (fileSize < 48)

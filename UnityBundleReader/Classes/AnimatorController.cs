@@ -11,7 +11,7 @@ public class HumanPoseMask
 
     public HumanPoseMask(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         Word0 = reader.ReadUInt32();
         Word1 = reader.ReadUInt32();
@@ -63,7 +63,7 @@ public class LayerConstant
 
     public LayerConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MStateMachineIndex = reader.ReadUInt32();
         MStateMachineMotionSetIndex = reader.ReadUInt32();
@@ -119,7 +119,7 @@ public class TransitionConstant
 
     public TransitionConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         int numConditions = reader.ReadInt32();
         MConditionConstantArray = new ConditionConstant[numConditions];
@@ -248,7 +248,7 @@ public class BlendTreeNodeConstant
 
     public BlendTreeNodeConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] > 4 || version[0] == 4 && version[1] >= 1) //4.1 and up
         {
@@ -300,7 +300,7 @@ public class BlendTreeConstant
 
     public BlendTreeConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         int numNodes = reader.ReadInt32();
         MNodeArray = new BlendTreeNodeConstant[numNodes];
@@ -338,7 +338,7 @@ public class StateConstant
 
     public StateConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         int numTransistions = reader.ReadInt32();
         MTransitionConstantArray = new TransitionConstant[numTransistions];
@@ -459,7 +459,7 @@ public class StateMachineConstant
 
     public StateMachineConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         int numStates = reader.ReadInt32();
         MStateConstantArray = new StateConstant[numStates];
@@ -502,7 +502,7 @@ public class ValueArray
 
     public ValueArray(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] < 5 || version[0] == 5 && version[1] < 5) //5.5 down
         {
@@ -580,10 +580,10 @@ public sealed class AnimatorController : RuntimeAnimatorController
     public AnimatorController(ObjectReader reader) : base(reader)
     {
         uint mControllerSize = reader.ReadUInt32();
-        ControllerConstant? mController = new(reader);
+        ControllerConstant mController = new(reader);
 
         int tosSize = reader.ReadInt32();
-        KeyValuePair<uint, string>[]? mTos = new KeyValuePair<uint, string>[tosSize];
+        KeyValuePair<uint, string>[] mTos = new KeyValuePair<uint, string>[tosSize];
         for (int i = 0; i < tosSize; i++)
         {
             mTos[i] = new KeyValuePair<uint, string>(reader.ReadUInt32(), reader.ReadAlignedString());

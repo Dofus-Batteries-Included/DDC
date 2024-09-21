@@ -82,7 +82,7 @@ public class BundleFile
                     goto case "UnityFS";
                 }
                 ReadHeaderAndBlocksInfo(reader);
-                using (Stream? blocksStream = CreateBlocksStream(reader.FullPath))
+                using (Stream blocksStream = CreateBlocksStream(reader.FullPath))
                 {
                     ReadBlocksAndDirectory(reader, blocksStream);
                     ReadFiles(blocksStream, reader.FullPath);
@@ -91,7 +91,7 @@ public class BundleFile
             case "UnityFS":
                 ReadHeader(reader);
                 ReadBlocksInfoAndDirectory(reader);
-                using (Stream? blocksStream = CreateBlocksStream(reader.FullPath))
+                using (Stream blocksStream = CreateBlocksStream(reader.FullPath))
                 {
                     ReadBlocks(reader, blocksStream);
                     ReadFiles(blocksStream, reader.FullPath);
@@ -104,7 +104,7 @@ public class BundleFile
     {
         if (MHeader.Version >= 4)
         {
-            byte[]? hash = reader.ReadBytes(16);
+            byte[] hash = reader.ReadBytes(16);
             uint crc = reader.ReadUInt32();
         }
         uint minimumStreamedBytes = reader.ReadUInt32();
@@ -114,7 +114,7 @@ public class BundleFile
         _mBlocksInfo = new StorageBlock[1];
         for (int i = 0; i < levelCount; i++)
         {
-            StorageBlock? storageBlock = new()
+            StorageBlock storageBlock = new()
             {
                 CompressedSize = reader.ReadUInt32(),
                 UncompressedSize = reader.ReadUInt32()
@@ -157,12 +157,12 @@ public class BundleFile
         bool isCompressed = MHeader.Signature == "UnityWeb";
         foreach (StorageBlock? blockInfo in _mBlocksInfo)
         {
-            byte[]? uncompressedBytes = reader.ReadBytes((int)blockInfo.CompressedSize);
+            byte[] uncompressedBytes = reader.ReadBytes((int)blockInfo.CompressedSize);
             if (isCompressed)
             {
-                using (MemoryStream? memoryStream = new(uncompressedBytes))
+                using (MemoryStream memoryStream = new(uncompressedBytes))
                 {
-                    using (MemoryStream? decompressStream = SevenZipHelper.StreamDecompress(memoryStream))
+                    using (MemoryStream decompressStream = SevenZipHelper.StreamDecompress(memoryStream))
                     {
                         uncompressedBytes = decompressStream.ToArray();
                     }
@@ -171,7 +171,7 @@ public class BundleFile
             blocksStream.Write(uncompressedBytes, 0, uncompressedBytes.Length);
         }
         blocksStream.Position = 0;
-        EndianBinaryReader? blocksReader = new(blocksStream);
+        EndianBinaryReader blocksReader = new(blocksStream);
         int nodesCount = blocksReader.ReadInt32();
         _mDirectoryInfo = new Node[nodesCount];
         for (int i = 0; i < nodesCount; i++)
@@ -190,8 +190,8 @@ public class BundleFile
         FileList = new StreamFile[_mDirectoryInfo.Length];
         for (int i = 0; i < _mDirectoryInfo.Length; i++)
         {
-            Node? node = _mDirectoryInfo[i];
-            StreamFile? file = new();
+            Node node = _mDirectoryInfo[i];
+            StreamFile file = new();
             FileList[i] = file;
             file.path = node.Path;
             file.fileName = Path.GetFileName(node.Path);
@@ -199,7 +199,7 @@ public class BundleFile
             {
                 /*var memoryMappedFile = MemoryMappedFile.CreateNew(null, entryinfo_size);
                 file.stream = memoryMappedFile.CreateViewStream();*/
-                string? extractPath = path + "_unpacked" + Path.DirectorySeparatorChar;
+                string extractPath = path + "_unpacked" + Path.DirectorySeparatorChar;
                 Directory.CreateDirectory(extractPath);
                 file.stream = new FileStream(extractPath + file.fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
@@ -256,7 +256,7 @@ public class BundleFile
             case CompressionType.Lzma:
             {
                 blocksInfoUncompresseddStream = new MemoryStream((int)uncompressedSize);
-                using (MemoryStream? blocksInfoCompressedStream = new(blocksInfoBytes))
+                using (MemoryStream blocksInfoCompressedStream = new(blocksInfoBytes))
                 {
                     SevenZipHelper.StreamDecompress(
                         blocksInfoCompressedStream,
@@ -271,7 +271,7 @@ public class BundleFile
             case CompressionType.Lz4:
             case CompressionType.Lz4Hc:
             {
-                byte[]? uncompressedBytes = new byte[uncompressedSize];
+                byte[] uncompressedBytes = new byte[uncompressedSize];
                 int numWrite = LZ4Codec.Decode(blocksInfoBytes, uncompressedBytes);
                 if (numWrite != uncompressedSize)
                 {
@@ -283,9 +283,9 @@ public class BundleFile
             default:
                 throw new IOException($"Unsupported compression type {compressionType}");
         }
-        using (EndianBinaryReader? blocksInfoReader = new(blocksInfoUncompresseddStream))
+        using (EndianBinaryReader blocksInfoReader = new(blocksInfoUncompresseddStream))
         {
-            byte[]? uncompressedDataHash = blocksInfoReader.ReadBytes(16);
+            byte[] uncompressedDataHash = blocksInfoReader.ReadBytes(16);
             int blocksInfoCount = blocksInfoReader.ReadInt32();
             _mBlocksInfo = new StorageBlock[blocksInfoCount];
             for (int i = 0; i < blocksInfoCount; i++)
@@ -338,10 +338,10 @@ public class BundleFile
                 case CompressionType.Lz4Hc:
                 {
                     int compressedSize = (int)blockInfo.CompressedSize;
-                    byte[]? compressedBytes = BigArrayPool<byte>.Shared.Rent(compressedSize);
+                    byte[] compressedBytes = BigArrayPool<byte>.Shared.Rent(compressedSize);
                     reader.Read(compressedBytes, 0, compressedSize);
                     int uncompressedSize = (int)blockInfo.UncompressedSize;
-                    byte[]? uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
+                    byte[] uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
                     int numWrite = LZ4Codec.Decode(compressedBytes, 0, compressedSize, uncompressedBytes, 0, uncompressedSize);
                     if (numWrite != uncompressedSize)
                     {

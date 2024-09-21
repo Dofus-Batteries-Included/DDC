@@ -17,12 +17,12 @@ public class WebFile
     public WebFile(EndianBinaryReader reader)
     {
         reader.Endian = EndianType.LittleEndian;
-        string? signature = reader.ReadStringToNull();
+        string signature = reader.ReadStringToNull();
         int headLength = reader.ReadInt32();
-        List<WebData>? dataList = new();
+        List<WebData> dataList = new();
         while (reader.BaseStream.Position < headLength)
         {
-            WebData? data = new();
+            WebData data = new();
             data.DataOffset = reader.ReadInt32();
             data.DataLength = reader.ReadInt32();
             int pathLength = reader.ReadInt32();
@@ -32,8 +32,8 @@ public class WebFile
         FileList = new StreamFile[dataList.Count];
         for (int i = 0; i < dataList.Count; i++)
         {
-            WebData? data = dataList[i];
-            StreamFile? file = new();
+            WebData data = dataList[i];
+            StreamFile file = new();
             file.path = data.Path;
             file.fileName = Path.GetFileName(data.Path);
             reader.BaseStream.Position = data.DataOffset;

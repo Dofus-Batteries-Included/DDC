@@ -8,7 +8,7 @@ namespace UnityBundleReader;
 
 public class AssetsManager
 {
-    public string SpecifyUnityVersion;
+    public string? SpecifyUnityVersion;
     public readonly List<SerializedFile> AssetsFileList = new();
 
     internal readonly Dictionary<string, int> AssetsFileIndexCache = new(StringComparer.OrdinalIgnoreCase);
@@ -23,15 +23,15 @@ public class AssetsManager
     {
         string? path = Path.GetDirectoryName(Path.GetFullPath(files[0]));
         MergeSplitAssets(path);
-        string[]? toReadFile = ProcessingSplitFiles(files.ToList());
+        string[] toReadFile = ProcessingSplitFiles(files.ToList());
         Load(toReadFile);
     }
 
     public void LoadFolder(string path)
     {
         MergeSplitAssets(path, true);
-        List<string>? files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
-        string[]? toReadFile = ProcessingSplitFiles(files);
+        List<string> files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
+        string[] toReadFile = ProcessingSplitFiles(files);
         Load(toReadFile);
     }
 
@@ -62,7 +62,7 @@ public class AssetsManager
 
     void LoadFile(string fullName)
     {
-        FileReader? reader = new(fullName);
+        FileReader reader = new(fullName);
         LoadFile(reader);
     }
 
@@ -98,23 +98,23 @@ public class AssetsManager
             Logger.Info($"Loading {reader.FullPath}");
             try
             {
-                SerializedFile? assetsFile = new(reader, this);
+                SerializedFile assetsFile = new(reader, this);
                 CheckStrippedVersion(assetsFile);
                 AssetsFileList.Add(assetsFile);
                 _assetsFileListHash.Add(assetsFile.FileName);
 
                 foreach (FileIdentifier? sharedFile in assetsFile.MExternals)
                 {
-                    string? sharedFileName = sharedFile.FileName;
+                    string sharedFileName = sharedFile.FileName;
 
                     if (!_importFilesHash.Contains(sharedFileName))
                     {
-                        string? sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
+                        string sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
                         if (!_noexistFiles.Contains(sharedFilePath))
                         {
                             if (!File.Exists(sharedFilePath))
                             {
-                                string[]? findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
+                                string[] findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
                                 if (findFiles.Length > 0)
                                 {
                                     sharedFilePath = findFiles[0];
@@ -146,13 +146,13 @@ public class AssetsManager
         }
     }
 
-    void LoadAssetsFromMemory(FileReader reader, string originalPath, string unityVersion = null)
+    void LoadAssetsFromMemory(FileReader reader, string originalPath, string? unityVersion = null)
     {
         if (!_assetsFileListHash.Contains(reader.FileName))
         {
             try
             {
-                SerializedFile? assetsFile = new(reader, this);
+                SerializedFile assetsFile = new(reader, this);
                 assetsFile.OriginalPath = originalPath;
                 if (!string.IsNullOrEmpty(unityVersion) && assetsFile.Header.MVersion < SerializedFileFormatVersion.Unknown7)
                 {
@@ -179,11 +179,11 @@ public class AssetsManager
         Logger.Info("Loading " + reader.FullPath);
         try
         {
-            BundleFile? bundleFile = new(reader);
+            BundleFile bundleFile = new(reader);
             foreach (StreamFile? file in bundleFile.FileList)
             {
-                string? dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
-                FileReader? subReader = new(dummyPath, file.stream);
+                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                FileReader subReader = new(dummyPath, file.stream);
                 if (subReader.FileType == FileType.AssetsFile)
                 {
                     LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.MHeader.UnityRevision);
@@ -196,7 +196,7 @@ public class AssetsManager
         }
         catch (Exception e)
         {
-            string? str = $"Error while reading bundle file {reader.FullPath}";
+            string str = $"Error while reading bundle file {reader.FullPath}";
             if (originalPath != null)
             {
                 str += $" from {Path.GetFileName(originalPath)}";
@@ -214,11 +214,11 @@ public class AssetsManager
         Logger.Info("Loading " + reader.FullPath);
         try
         {
-            WebFile? webFile = new(reader);
+            WebFile webFile = new(reader);
             foreach (StreamFile? file in webFile.FileList)
             {
-                string? dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
-                FileReader? subReader = new(dummyPath, file.stream);
+                string dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                FileReader subReader = new(dummyPath, file.stream);
                 switch (subReader.FileType)
                 {
                     case FileType.AssetsFile:
@@ -389,7 +389,7 @@ public class AssetsManager
         {
             foreach (ObjectInfo? objectInfo in assetsFile.MObjects)
             {
-                ObjectReader? objectReader = new(assetsFile.Reader, assetsFile, objectInfo);
+                ObjectReader objectReader = new(assetsFile.Reader, assetsFile, objectInfo);
                 try
                 {
                     Object obj;
@@ -487,7 +487,7 @@ public class AssetsManager
                 }
                 catch (Exception e)
                 {
-                    StringBuilder? sb = new();
+                    StringBuilder sb = new();
                     sb.AppendLine("Unable to load object")
                         .AppendLine($"Assets {assetsFile.FileName}")
                         .AppendLine($"Path {assetsFile.OriginalPath}")

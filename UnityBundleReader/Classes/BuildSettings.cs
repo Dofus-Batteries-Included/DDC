@@ -8,7 +8,7 @@ public sealed class BuildSettings : Object
 
     public BuildSettings(ObjectReader reader) : base(reader)
     {
-        string[]? levels = reader.ReadStringArray();
+        string[] levels = reader.ReadStringArray();
 
         bool hasRenderTexture = reader.ReadBoolean();
         bool hasProVersion = reader.ReadBoolean();

@@ -17,7 +17,7 @@ public class SpriteAtlasData
 
     public SpriteAtlasData(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         Texture = new PPtr<Texture2D>(reader);
         AlphaTexture = new PPtr<Texture2D>(reader);
         TextureRect = new Rectf(reader);
@@ -57,7 +57,7 @@ public sealed class SpriteAtlas : NamedObject
             MPackedSprites[i] = new PPtr<Sprite>(reader);
         }
 
-        string[]? mPackedSpriteNamesToIndex = reader.ReadStringArray();
+        string[] mPackedSpriteNamesToIndex = reader.ReadStringArray();
 
         int mRenderDataMapSize = reader.ReadInt32();
         MRenderDataMap = new Dictionary<KeyValuePair<Guid, long>, SpriteAtlasData>(mRenderDataMapSize);
@@ -65,10 +65,10 @@ public sealed class SpriteAtlas : NamedObject
         {
             Guid first = new(reader.ReadBytes(16));
             long second = reader.ReadInt64();
-            SpriteAtlasData? value = new(reader);
+            SpriteAtlasData value = new(reader);
             MRenderDataMap.Add(new KeyValuePair<Guid, long>(first, second), value);
         }
-        string? mTag = reader.ReadAlignedString();
+        string mTag = reader.ReadAlignedString();
         MIsVariant = reader.ReadBoolean();
         reader.AlignStream();
     }

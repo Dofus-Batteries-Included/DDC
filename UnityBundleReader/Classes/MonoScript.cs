@@ -20,11 +20,11 @@ public sealed class MonoScript : NamedObject
         }
         else
         {
-            byte[]? mPropertiesHash = reader.ReadBytes(16);
+            byte[] mPropertiesHash = reader.ReadBytes(16);
         }
         if (Version[0] < 3) //3.0 down
         {
-            string? mPathName = reader.ReadAlignedString();
+            string mPathName = reader.ReadAlignedString();
         }
         MClassName = reader.ReadAlignedString();
         if (Version[0] >= 3) //3.0 and up

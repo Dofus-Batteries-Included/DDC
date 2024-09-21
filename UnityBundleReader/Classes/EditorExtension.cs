@@ -6,8 +6,8 @@ public abstract class EditorExtension : Object
     {
         if (Platform == BuildTarget.NoTarget)
         {
-            PPtr<EditorExtension>? mPrefabParentObject = new(reader);
-            PPtr<Object>? mPrefabInternal = new(reader); //PPtr<Prefab>
+            PPtr<EditorExtension> mPrefabParentObject = new(reader);
+            PPtr<Object> mPrefabInternal = new(reader); //PPtr<Prefab>
         }
     }
 }

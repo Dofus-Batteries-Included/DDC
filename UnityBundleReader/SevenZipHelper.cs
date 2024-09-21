@@ -6,12 +6,12 @@ public static class SevenZipHelper
 {
     public static MemoryStream StreamDecompress(MemoryStream inStream)
     {
-        Decoder? decoder = new();
+        Decoder decoder = new();
 
         inStream.Seek(0, SeekOrigin.Begin);
-        MemoryStream? newOutStream = new();
+        MemoryStream newOutStream = new();
 
-        byte[]? properties = new byte[5];
+        byte[] properties = new byte[5];
         if (inStream.Read(properties, 0, 5) != 5)
         {
             throw new Exception("input .lzma is too short");
@@ -38,8 +38,8 @@ public static class SevenZipHelper
     public static void StreamDecompress(Stream compressedStream, Stream decompressedStream, long compressedSize, long decompressedSize)
     {
         long basePosition = compressedStream.Position;
-        Decoder? decoder = new();
-        byte[]? properties = new byte[5];
+        Decoder decoder = new();
+        byte[] properties = new byte[5];
         if (compressedStream.Read(properties, 0, 5) != 5)
         {
             throw new Exception("input .lzma is too short");

@@ -33,17 +33,17 @@ public class ResourceReader
     {
         if (_needSearch)
         {
-            string? resourceFileName = Path.GetFileName(_path);
+            string resourceFileName = Path.GetFileName(_path);
             if (_assetsFile.AssetsManager.ResourceFileReaders.TryGetValue(resourceFileName, out _reader))
             {
                 _needSearch = false;
                 return _reader;
             }
             string? assetsFileDirectory = Path.GetDirectoryName(_assetsFile.FullName);
-            string? resourceFilePath = Path.Combine(assetsFileDirectory, resourceFileName);
+            string resourceFilePath = Path.Combine(assetsFileDirectory, resourceFileName);
             if (!File.Exists(resourceFilePath))
             {
-                string[]? findFiles = Directory.GetFiles(assetsFileDirectory, resourceFileName, SearchOption.AllDirectories);
+                string[] findFiles = Directory.GetFiles(assetsFileDirectory, resourceFileName, SearchOption.AllDirectories);
                 if (findFiles.Length > 0)
                 {
                     resourceFilePath = findFiles[0];
@@ -63,23 +63,23 @@ public class ResourceReader
 
     public byte[] GetData()
     {
-        BinaryReader? binaryReader = GetReader();
+        BinaryReader binaryReader = GetReader();
         binaryReader.BaseStream.Position = _offset;
         return binaryReader.ReadBytes((int)_size);
     }
 
     public void GetData(byte[] buff)
     {
-        BinaryReader? binaryReader = GetReader();
+        BinaryReader binaryReader = GetReader();
         binaryReader.BaseStream.Position = _offset;
         binaryReader.Read(buff, 0, (int)_size);
     }
 
     public void WriteData(string path)
     {
-        BinaryReader? binaryReader = GetReader();
+        BinaryReader binaryReader = GetReader();
         binaryReader.BaseStream.Position = _offset;
-        using (FileStream? writer = File.OpenWrite(path))
+        using (FileStream writer = File.OpenWrite(path))
         {
             binaryReader.BaseStream.CopyTo(writer, _size);
         }

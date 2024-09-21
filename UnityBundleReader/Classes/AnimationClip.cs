@@ -38,7 +38,7 @@ public class AnimationCurve<T>
 
     public AnimationCurve(ObjectReader reader, Func<T> readerFunc)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         int numCurves = reader.ReadInt32();
         MCurve = new Keyframe<T>[numCurves];
         for (int i = 0; i < numCurves; i++)
@@ -101,7 +101,7 @@ public class PackedFloatVector
             numChunks = (int)MNumItems / itemCountInChunk;
         }
         int end = chunkStride * numChunks / 4;
-        List<float>? data = new();
+        List<float> data = new();
         for (int index = 0; index != end; index += chunkStride / 4)
         {
             for (int i = 0; i < itemCountInChunk; ++i)
@@ -150,7 +150,7 @@ public class PackedIntVector
 
     public int[] UnpackInts()
     {
-        int[]? data = new int[MNumItems];
+        int[] data = new int[MNumItems];
         int indexPos = 0;
         int bitPos = 0;
         for (int i = 0; i < MNumItems; i++)
@@ -192,7 +192,7 @@ public class PackedQuatVector
 
     public Quaternion[] UnpackQuats()
     {
-        Quaternion[]? data = new Quaternion[MNumItems];
+        Quaternion[] data = new Quaternion[MNumItems];
         int indexPos = 0;
         int bitPos = 0;
 
@@ -366,7 +366,7 @@ public class Xform
 
     public Xform(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         T = version[0] > 5 || version[0] == 5 && version[1] >= 4 ? reader.ReadVector3() : reader.ReadVector4(); //5.4 and up
         Q = reader.ReadQuaternion();
         S = version[0] > 5 || version[0] == 5 && version[1] >= 4 ? reader.ReadVector3() : reader.ReadVector4(); //5.4 and up
@@ -403,7 +403,7 @@ public class HumanGoal
 
     public HumanGoal(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MX = new Xform(reader);
         MWeightT = reader.ReadSingle();
         MWeightR = reader.ReadSingle();
@@ -428,7 +428,7 @@ public class HumanPose
 
     public HumanPose(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MRootX = new Xform(reader);
         MLookAtPosition = version[0] > 5 || version[0] == 5 && version[1] >= 4 ? reader.ReadVector3() : reader.ReadVector4(); //5.4 and up
         MLookAtWeight = reader.ReadVector4();
@@ -523,10 +523,10 @@ public class StreamedClip
 
     public List<StreamedFrame> ReadData()
     {
-        List<StreamedFrame>? frameList = new();
-        byte[]? buffer = new byte[Data.Length * 4];
+        List<StreamedFrame> frameList = new();
+        byte[] buffer = new byte[Data.Length * 4];
         Buffer.BlockCopy(Data, 0, buffer, 0, buffer.Length);
-        using (BinaryReader? reader = new(new MemoryStream(buffer)))
+        using (BinaryReader reader = new(new MemoryStream(buffer)))
         {
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
@@ -536,12 +536,12 @@ public class StreamedClip
 
         for (int frameIndex = 2; frameIndex < frameList.Count - 1; frameIndex++)
         {
-            StreamedFrame? frame = frameList[frameIndex];
+            StreamedFrame frame = frameList[frameIndex];
             foreach (StreamedCurveKey? curveKey in frame.KeyList)
             {
                 for (int i = frameIndex - 1; i >= 0; i--)
                 {
-                    StreamedFrame? preFrame = frameList[i];
+                    StreamedFrame preFrame = frameList[i];
                     StreamedCurveKey? preCurveKey = preFrame.KeyList.FirstOrDefault(x => x.Index == curveKey.Index);
                     if (preCurveKey != null)
                     {
@@ -592,7 +592,7 @@ public class ValueConstant
 
     public ValueConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MID = reader.ReadUInt32();
         if (version[0] < 5 || version[0] == 5 && version[1] < 5) //5.5 down
         {
@@ -627,7 +627,7 @@ public class Clip
 
     public Clip(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MStreamedClip = new StreamedClip(reader);
         MDenseClip = new DenseClip(reader);
         if (version[0] > 4 || version[0] == 4 && version[1] >= 3) //4.3 and up
@@ -642,14 +642,14 @@ public class Clip
 
     public AnimationClipBindingConstant ConvertValueArrayToGenericBinding()
     {
-        AnimationClipBindingConstant? bindings = new();
-        List<GenericBinding>? genericBindings = new();
-        ValueArrayConstant? values = MBinding;
+        AnimationClipBindingConstant bindings = new();
+        List<GenericBinding> genericBindings = new();
+        ValueArrayConstant values = MBinding;
         for (int i = 0; i < values.MValueArray.Length;)
         {
             uint curveID = values.MValueArray[i].MID;
             uint curveTypeID = values.MValueArray[i].MTypeID;
-            GenericBinding? binding = new();
+            GenericBinding binding = new();
             genericBindings.Add(binding);
             if (curveTypeID == 4174552735) //CRC(PositionX))
             {
@@ -731,7 +731,7 @@ public class ClipMuscleConstant
 
     public ClipMuscleConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MDeltaPose = new HumanPose(reader);
         MStartX = new Xform(reader);
         if (version[0] > 5 || version[0] == 5 && version[1] >= 5) //5.5 and up
@@ -757,7 +757,7 @@ public class ClipMuscleConstant
         MIndexArray = reader.ReadInt32Array();
         if (version[0] < 4 || version[0] == 4 && version[1] < 3) //4.3 down
         {
-            int[]? mAdditionalCurveIndexArray = reader.ReadInt32Array();
+            int[] mAdditionalCurveIndexArray = reader.ReadInt32Array();
         }
         int numDeltas = reader.ReadInt32();
         MValueArrayDelta = new ValueDelta[numDeltas];
@@ -805,7 +805,7 @@ public class GenericBinding
 
     public GenericBinding(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         Path = reader.ReadUInt32();
         Attribute = reader.ReadUInt32();
         Script = new PPtr<Object>(reader);
@@ -899,7 +899,7 @@ public class AnimationEvent
 
     public AnimationEvent(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         Time = reader.ReadSingle();
         FunctionName = reader.ReadAlignedString();

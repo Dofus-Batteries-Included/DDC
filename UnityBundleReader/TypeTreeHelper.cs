@@ -9,8 +9,8 @@ public static class TypeTreeHelper
     public static string? ReadTypeString(TypeTree mType, ObjectReader reader)
     {
         reader.Reset();
-        StringBuilder? sb = new();
-        List<TypeTreeNode>? mNodes = mType.Nodes;
+        StringBuilder sb = new();
+        List<TypeTreeNode> mNodes = mType.Nodes;
         for (int i = 0; i < mNodes.Count; i++)
         {
             ReadStringValue(sb, mNodes, reader, ref i);
@@ -25,10 +25,10 @@ public static class TypeTreeHelper
 
     static void ReadStringValue(StringBuilder sb, List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
     {
-        TypeTreeNode? mNode = mNodes[i];
+        TypeTreeNode mNode = mNodes[i];
         int level = mNode.MLevel;
-        string? varTypeStr = mNode.MType;
-        string? varNameStr = mNode.MName;
+        string varTypeStr = mNode.MType;
+        string varNameStr = mNode.MName;
         object value = null;
         bool append = true;
         bool align = (mNode.MMetaFlag & 0x4000) != 0;
@@ -80,9 +80,9 @@ public static class TypeTreeHelper
                 break;
             case "string":
                 append = false;
-                string? str = reader.ReadAlignedString();
+                string str = reader.ReadAlignedString();
                 sb.AppendFormat("{0}{1} {2} = \"{3}\"\r\n", new string('\t', level), varTypeStr, varNameStr, str);
-                List<TypeTreeNode>? toSkip = GetNodes(mNodes, i);
+                List<TypeTreeNode> toSkip = GetNodes(mNodes, i);
                 i += toSkip.Count - 1;
                 break;
             case "map":
@@ -96,11 +96,11 @@ public static class TypeTreeHelper
                 sb.AppendFormat("{0}{1} {2}\r\n", new string('\t', level + 1), "Array", "Array");
                 int size = reader.ReadInt32();
                 sb.AppendFormat("{0}{1} {2} = {3}\r\n", new string('\t', level + 1), "int", "size", size);
-                List<TypeTreeNode>? map = GetNodes(mNodes, i);
+                List<TypeTreeNode> map = GetNodes(mNodes, i);
                 i += map.Count - 1;
-                List<TypeTreeNode>? first = GetNodes(map, 4);
+                List<TypeTreeNode> first = GetNodes(map, 4);
                 int next = 4 + first.Count;
-                List<TypeTreeNode>? second = GetNodes(map, next);
+                List<TypeTreeNode> second = GetNodes(map, next);
                 for (int j = 0; j < size; j++)
                 {
                     sb.AppendFormat("{0}[{1}]\r\n", new string('\t', level + 2), j);
@@ -135,7 +135,7 @@ public static class TypeTreeHelper
                     sb.AppendFormat("{0}{1} {2}\r\n", new string('\t', level + 1), "Array", "Array");
                     int size = reader.ReadInt32();
                     sb.AppendFormat("{0}{1} {2} = {3}\r\n", new string('\t', level + 1), "int", "size", size);
-                    List<TypeTreeNode>? vector = GetNodes(mNodes, i);
+                    List<TypeTreeNode> vector = GetNodes(mNodes, i);
                     i += vector.Count - 1;
                     for (int j = 0; j < size; j++)
                     {
@@ -148,7 +148,7 @@ public static class TypeTreeHelper
                 //Class
                 append = false;
                 sb.AppendFormat("{0}{1} {2}\r\n", new string('\t', level), varTypeStr, varNameStr);
-                List<TypeTreeNode>? @class = GetNodes(mNodes, i);
+                List<TypeTreeNode> @class = GetNodes(mNodes, i);
                 i += @class.Count - 1;
                 for (int j = 1; j < @class.Count; j++)
                 {
@@ -170,12 +170,12 @@ public static class TypeTreeHelper
     public static OrderedDictionary? ReadType(TypeTree mTypes, ObjectReader reader)
     {
         reader.Reset();
-        OrderedDictionary? obj = new();
-        List<TypeTreeNode>? mNodes = mTypes.Nodes;
+        OrderedDictionary obj = new();
+        List<TypeTreeNode> mNodes = mTypes.Nodes;
         for (int i = 1; i < mNodes.Count; i++)
         {
-            TypeTreeNode? mNode = mNodes[i];
-            string? varNameStr = mNode.MName;
+            TypeTreeNode mNode = mNodes[i];
+            string varNameStr = mNode.MName;
             obj[varNameStr] = ReadValue(mNodes, reader, ref i);
         }
         long readed = reader.Position - reader.ByteStart;
@@ -188,8 +188,8 @@ public static class TypeTreeHelper
 
     static object ReadValue(List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
     {
-        TypeTreeNode? mNode = mNodes[i];
-        string? varTypeStr = mNode.MType;
+        TypeTreeNode mNode = mNodes[i];
+        string varTypeStr = mNode.MType;
         object value;
         bool align = (mNode.MMetaFlag & 0x4000) != 0;
         switch (varTypeStr)
@@ -240,7 +240,7 @@ public static class TypeTreeHelper
                 break;
             case "string":
                 value = reader.ReadAlignedString();
-                List<TypeTreeNode>? toSkip = GetNodes(mNodes, i);
+                List<TypeTreeNode> toSkip = GetNodes(mNodes, i);
                 i += toSkip.Count - 1;
                 break;
             case "map":
@@ -249,13 +249,13 @@ public static class TypeTreeHelper
                 {
                     align = true;
                 }
-                List<TypeTreeNode>? map = GetNodes(mNodes, i);
+                List<TypeTreeNode> map = GetNodes(mNodes, i);
                 i += map.Count - 1;
-                List<TypeTreeNode>? first = GetNodes(map, 4);
+                List<TypeTreeNode> first = GetNodes(map, 4);
                 int next = 4 + first.Count;
-                List<TypeTreeNode>? second = GetNodes(map, next);
+                List<TypeTreeNode> second = GetNodes(map, next);
                 int size = reader.ReadInt32();
-                List<KeyValuePair<object, object>>? dic = new(size);
+                List<KeyValuePair<object, object>> dic = new(size);
                 for (int j = 0; j < size; j++)
                 {
                     int tmp1 = 0;
@@ -280,10 +280,10 @@ public static class TypeTreeHelper
                     {
                         align = true;
                     }
-                    List<TypeTreeNode>? vector = GetNodes(mNodes, i);
+                    List<TypeTreeNode> vector = GetNodes(mNodes, i);
                     i += vector.Count - 1;
                     int size = reader.ReadInt32();
-                    List<object>? list = new(size);
+                    List<object> list = new(size);
                     for (int j = 0; j < size; j++)
                     {
                         int tmp = 3;
@@ -293,13 +293,13 @@ public static class TypeTreeHelper
                     break;
                 }
                 //Class
-                List<TypeTreeNode>? @class = GetNodes(mNodes, i);
+                List<TypeTreeNode> @class = GetNodes(mNodes, i);
                 i += @class.Count - 1;
-                OrderedDictionary? obj = new();
+                OrderedDictionary obj = new();
                 for (int j = 1; j < @class.Count; j++)
                 {
-                    TypeTreeNode? classmember = @class[j];
-                    string? name = classmember.MName;
+                    TypeTreeNode classmember = @class[j];
+                    string name = classmember.MName;
                     obj[name] = ReadValue(@class, reader, ref j);
                 }
                 value = obj;
@@ -315,12 +315,12 @@ public static class TypeTreeHelper
 
     static List<TypeTreeNode> GetNodes(List<TypeTreeNode> mNodes, int index)
     {
-        List<TypeTreeNode>? nodes = new();
+        List<TypeTreeNode> nodes = new();
         nodes.Add(mNodes[index]);
         int level = mNodes[index].MLevel;
         for (int i = index + 1; i < mNodes.Count; i++)
         {
-            TypeTreeNode? member = mNodes[i];
+            TypeTreeNode member = mNodes[i];
             int level2 = member.MLevel;
             if (level2 <= level)
             {

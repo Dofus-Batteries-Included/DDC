@@ -10,7 +10,7 @@ public class StreamingInfo
 
     public StreamingInfo(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         if (version[0] >= 2020) //2020.1 and up
         {
@@ -34,7 +34,7 @@ public class GLTextureSettings
 
     public GLTextureSettings(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
 
         MFilterMode = reader.ReadInt32();
         MAniso = reader.ReadInt32();
@@ -122,7 +122,7 @@ public sealed class Texture2D : Texture
         }
         if (Version[0] > 2020 || Version[0] == 2020 && Version[1] >= 2) //2020.2 and up
         {
-            byte[]? mPlatformBlob = reader.ReadUInt8Array();
+            byte[] mPlatformBlob = reader.ReadUInt8Array();
             reader.AlignStream();
         }
         int imageDataSize = reader.ReadInt32();

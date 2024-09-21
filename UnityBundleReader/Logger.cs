@@ -14,7 +14,7 @@ public static class Logger
 
     public static void Error(string message, Exception e)
     {
-        StringBuilder? sb = new();
+        StringBuilder sb = new();
         sb.AppendLine(message);
         sb.AppendLine(e.ToString());
         Default.Log(LoggerEvent.Error, sb.ToString());

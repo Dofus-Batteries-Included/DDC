@@ -26,14 +26,14 @@ public sealed class PPtr<T> where T: Object
 
         if (MFileID > 0 && MFileID - 1 < _assetsFile.MExternals.Count)
         {
-            AssetsManager? assetsManager = _assetsFile.AssetsManager;
-            List<SerializedFile>? assetsFileList = assetsManager.AssetsFileList;
-            Dictionary<string, int>? assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
+            AssetsManager assetsManager = _assetsFile.AssetsManager;
+            List<SerializedFile> assetsFileList = assetsManager.AssetsFileList;
+            Dictionary<string, int> assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
 
             if (_index == -2)
             {
-                FileIdentifier? mExternal = _assetsFile.MExternals[MFileID - 1];
-                string? name = mExternal.FileName;
+                FileIdentifier mExternal = _assetsFile.MExternals[MFileID - 1];
+                string name = mExternal.FileName;
                 if (!assetsFileIndexCache.TryGetValue(name, out _index))
                 {
                     _index = assetsFileList.FindIndex(x => x.FileName.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -89,7 +89,7 @@ public sealed class PPtr<T> where T: Object
 
     public void Set(T mObject)
     {
-        string? name = mObject.AssetsFile.FileName;
+        string name = mObject.AssetsFile.FileName;
         if (string.Equals(_assetsFile.FileName, name, StringComparison.OrdinalIgnoreCase))
         {
             MFileID = 0;
@@ -113,9 +113,9 @@ public sealed class PPtr<T> where T: Object
             }
         }
 
-        AssetsManager? assetsManager = _assetsFile.AssetsManager;
-        List<SerializedFile>? assetsFileList = assetsManager.AssetsFileList;
-        Dictionary<string, int>? assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
+        AssetsManager assetsManager = _assetsFile.AssetsManager;
+        List<SerializedFile> assetsFileList = assetsManager.AssetsFileList;
+        Dictionary<string, int> assetsFileIndexCache = assetsManager.AssetsFileIndexCache;
 
         if (!assetsFileIndexCache.TryGetValue(name, out _index))
         {

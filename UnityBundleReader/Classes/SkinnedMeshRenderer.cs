@@ -17,7 +17,7 @@ public sealed class SkinnedMeshRenderer : Renderer
 
         if (Version[0] == 2 && Version[1] < 6) //2.6 down
         {
-            PPtr<Animation>? mDisableAnimationWhenOffscreen = new(reader);
+            PPtr<Animation> mDisableAnimationWhenOffscreen = new(reader);
         }
 
         MMesh = new PPtr<Mesh>(reader);

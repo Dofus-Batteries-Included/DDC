@@ -22,7 +22,7 @@ public class Limit
 
     public Limit(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         if (version[0] > 5 || version[0] == 5 && version[1] >= 4) //5.4 and up
         {
             MMin = reader.ReadVector3();
@@ -47,7 +47,7 @@ public class Axes
 
     public Axes(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MPreQ = reader.ReadVector4();
         MPostQ = reader.ReadVector4();
         if (version[0] > 5 || version[0] == 5 && version[1] >= 4) //5.4 and up
@@ -182,7 +182,7 @@ public class Human
 
     public Human(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MRootX = new Xform(reader);
         MSkeleton = new Skeleton(reader);
         MSkeletonPose = new SkeletonPose(reader);
@@ -250,7 +250,7 @@ public class AvatarConstant
 
     public AvatarConstant(ObjectReader reader)
     {
-        int[]? version = reader.Version;
+        int[] version = reader.Version;
         MAvatarSkeleton = new Skeleton(reader);
         MAvatarSkeletonPose = new SkeletonPose(reader);
 

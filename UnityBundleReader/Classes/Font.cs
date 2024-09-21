@@ -11,9 +11,9 @@ public sealed class Font : NamedObject
         if (Version[0] == 5 && Version[1] >= 5 || Version[0] > 5) //5.5 and up
         {
             float mLineSpacing = reader.ReadSingle();
-            PPtr<Material>? mDefaultMaterial = new(reader);
+            PPtr<Material> mDefaultMaterial = new(reader);
             float mFontSize = reader.ReadSingle();
-            PPtr<Texture>? mTexture = new(reader);
+            PPtr<Texture> mTexture = new(reader);
             int mAsciiStartOffset = reader.ReadInt32();
             float mTracking = reader.ReadSingle();
             int mCharacterSpacing = reader.ReadInt32();
@@ -65,7 +65,7 @@ public sealed class Font : NamedObject
             }
 
             int mConvertCase = reader.ReadInt32();
-            PPtr<Material>? mDefaultMaterial = new(reader);
+            PPtr<Material> mDefaultMaterial = new(reader);
 
             int mCharacterRectsSize = reader.ReadInt32();
             for (int i = 0; i < mCharacterRectsSize; i++)
@@ -90,7 +90,7 @@ public sealed class Font : NamedObject
                 }
             }
 
-            PPtr<Texture>? mTexture = new(reader);
+            PPtr<Texture> mTexture = new(reader);
 
             int mKerningValuesSize = reader.ReadInt32();
             for (int i = 0; i < mKerningValuesSize; i++)

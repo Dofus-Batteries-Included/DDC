@@ -37,14 +37,14 @@ public sealed class VideoClip : NamedObject
         double mFrameRate = reader.ReadDouble();
         ulong mFrameCount = reader.ReadUInt64();
         int mFormat = reader.ReadInt32();
-        ushort[]? mAudioChannelCount = reader.ReadUInt16Array();
+        ushort[] mAudioChannelCount = reader.ReadUInt16Array();
         reader.AlignStream();
-        uint[]? mAudioSampleRate = reader.ReadUInt32Array();
-        string[]? mAudioLanguage = reader.ReadStringArray();
+        uint[] mAudioSampleRate = reader.ReadUInt32Array();
+        string[] mAudioLanguage = reader.ReadStringArray();
         if (Version[0] >= 2020) //2020.1 and up
         {
             int mVideoShadersSize = reader.ReadInt32();
-            PPtr<Shader>[]? mVideoShaders = new PPtr<Shader>[mVideoShadersSize];
+            PPtr<Shader>[] mVideoShaders = new PPtr<Shader>[mVideoShadersSize];
             for (int i = 0; i < mVideoShadersSize; i++)
             {
                 mVideoShaders[i] = new PPtr<Shader>(reader);

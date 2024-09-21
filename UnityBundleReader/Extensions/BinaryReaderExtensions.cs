@@ -22,8 +22,8 @@ public static class BinaryReaderExtensions
         int length = reader.ReadInt32();
         if (length > 0 && length <= reader.BaseStream.Length - reader.BaseStream.Position)
         {
-            byte[]? stringData = reader.ReadBytes(length);
-            string? result = Encoding.UTF8.GetString(stringData);
+            byte[] stringData = reader.ReadBytes(length);
+            string result = Encoding.UTF8.GetString(stringData);
             reader.AlignStream(4);
             return result;
         }
@@ -32,7 +32,7 @@ public static class BinaryReaderExtensions
 
     public static string ReadStringToNull(this BinaryReader reader, int maxLength = 32767)
     {
-        List<byte>? bytes = new();
+        List<byte> bytes = new();
         int count = 0;
         while (reader.BaseStream.Position != reader.BaseStream.Length && count < maxLength)
         {
@@ -61,7 +61,7 @@ public static class BinaryReaderExtensions
 
     static T[] ReadArray<T>(Func<T> del, int length)
     {
-        T[]? array = new T[length];
+        T[] array = new T[length];
         for (int i = 0; i < length; i++)
         {
             array[i] = del();
