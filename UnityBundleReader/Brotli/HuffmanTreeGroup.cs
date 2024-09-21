@@ -13,14 +13,14 @@ sealed class HuffmanTreeGroup
     int _alphabetSize;
 
     /// <summary>Storage for Huffman lookup tables.</summary>
-    internal int[] Codes;
+    internal int[] Codes = [];
 
     /// <summary>
     ///     Offsets of distinct lookup tables in
     ///     <see cref="Codes" />
     ///     storage.
     /// </summary>
-    internal int[] Trees;
+    internal int[] Trees = [];
 
     /// <summary>Initializes the Huffman tree group.</summary>
     /// <param name="group">POJO to be initialised</param>

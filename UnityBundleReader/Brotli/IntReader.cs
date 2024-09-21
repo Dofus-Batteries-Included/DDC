@@ -9,14 +9,13 @@ namespace UnityBundleReader.Brotli;
 /// <summary>Byte-to-int conversion magic.</summary>
 sealed class IntReader
 {
-    byte[] byteBuffer;
-
-    int[] intBuffer;
+    byte[] _byteBuffer = [];
+    int[] _intBuffer = [];
 
     internal static void Init(IntReader ir, byte[] byteBuffer, int[] intBuffer)
     {
-        ir.byteBuffer = byteBuffer;
-        ir.intBuffer = intBuffer;
+        ir._byteBuffer = byteBuffer;
+        ir._intBuffer = intBuffer;
     }
 
     /// <summary>Translates bytes to ints.</summary>
@@ -29,7 +28,10 @@ sealed class IntReader
     {
         for (int i = 0; i < intLen; ++i)
         {
-            ir.intBuffer[i] = ir.byteBuffer[i * 4] & 0xFF | (ir.byteBuffer[i * 4 + 1] & 0xFF)<<8 | (ir.byteBuffer[i * 4 + 2] & 0xFF)<<16 | (ir.byteBuffer[i * 4 + 3] & 0xFF)<<24;
+            ir._intBuffer[i] = ir._byteBuffer[i * 4] & 0xFF
+                               | (ir._byteBuffer[i * 4 + 1] & 0xFF)<<8
+                               | (ir._byteBuffer[i * 4 + 2] & 0xFF)<<16
+                               | (ir._byteBuffer[i * 4 + 3] & 0xFF)<<24;
         }
     }
 }

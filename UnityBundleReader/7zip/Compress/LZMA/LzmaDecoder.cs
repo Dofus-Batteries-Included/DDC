@@ -80,7 +80,7 @@ public class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
                 {
                     symbol = symbol<<1 | _mDecoders[symbol].Decode(rangeDecoder);
                 } while (symbol < 0x100);
-                return (byte)symbol;
+                return unchecked((byte)symbol);
             }
 
             public byte DecodeWithMatchByte(RangeCoder.Decoder rangeDecoder, byte matchByte)
@@ -101,47 +101,53 @@ public class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
                         break;
                     }
                 } while (symbol < 0x100);
-                return (byte)symbol;
+                return unchecked((byte)symbol);
             }
         }
 
-        Decoder2[] _mCoders;
-        int _mNumPrevBits;
-        int _mNumPosBits;
-        uint _mPosMask;
+        Decoder2[]? _coders;
+        int _numPrefBits;
+        int _numPosBits;
+        uint _posMask;
 
         public void Create(int numPosBits, int numPrevBits)
         {
-            if (_mCoders != null && _mNumPrevBits == numPrevBits && _mNumPosBits == numPosBits)
+            if (_coders != null && _numPrefBits == numPrevBits && _numPosBits == numPosBits)
             {
                 return;
             }
-            _mNumPosBits = numPosBits;
-            _mPosMask = ((uint)1<<numPosBits) - 1;
-            _mNumPrevBits = numPrevBits;
-            uint numStates = (uint)1<<_mNumPrevBits + _mNumPosBits;
-            _mCoders = new Decoder2[numStates];
+            _numPosBits = numPosBits;
+            _posMask = ((uint)1<<numPosBits) - 1;
+            _numPrefBits = numPrevBits;
+            uint numStates = (uint)1<<_numPrefBits + _numPosBits;
+            _coders = new Decoder2[numStates];
             for (uint i = 0; i < numStates; i++)
             {
-                _mCoders[i].Create();
+                _coders[i].Create();
             }
         }
 
         public void Init()
         {
-            uint numStates = (uint)1<<_mNumPrevBits + _mNumPosBits;
+            if (_coders == null)
+            {
+                throw new InvalidOperationException("No coder has been created.");
+            }
+
+            uint numStates = (uint)1<<_numPrefBits + _numPosBits;
             for (uint i = 0; i < numStates; i++)
             {
-                _mCoders[i].Init();
+                _coders[i].Init();
             }
         }
 
-        uint GetState(uint pos, byte prevByte) => ((pos & _mPosMask)<<_mNumPrevBits) + (uint)(prevByte>> 8 - _mNumPrevBits);
+        uint GetState(uint pos, byte prevByte) => ((pos & _posMask)<<_numPrefBits) + (uint)(prevByte>> 8 - _numPrefBits);
 
-        public byte DecodeNormal(RangeCoder.Decoder rangeDecoder, uint pos, byte prevByte) => _mCoders[GetState(pos, prevByte)].DecodeNormal(rangeDecoder);
+        public byte DecodeNormal(RangeCoder.Decoder rangeDecoder, uint pos, byte prevByte) =>
+            _coders != null ? _coders[GetState(pos, prevByte)].DecodeNormal(rangeDecoder) : throw new InvalidOperationException("Coders are not set.");
 
         public byte DecodeWithMatchByte(RangeCoder.Decoder rangeDecoder, uint pos, byte prevByte, byte matchByte) =>
-            _mCoders[GetState(pos, prevByte)].DecodeWithMatchByte(rangeDecoder, matchByte);
+            _coders != null ? _coders[GetState(pos, prevByte)].DecodeWithMatchByte(rangeDecoder, matchByte) : throw new InvalidOperationException("Coders are not set.");
     }
 
     readonly OutWindow _mOutWindow = new();

@@ -29,7 +29,7 @@ sealed class BitReader
 
     readonly IntReader _intReader = new();
 
-    Stream _input;
+    Stream? _input;
 
     /// <summary>Input stream is finished.</summary>
     bool _endOfStreamReached;
@@ -58,7 +58,7 @@ sealed class BitReader
     internal static void ReadMoreInput(BitReader br)
     {
         // TODO: Split to check and read; move read outside of decoding loop.
-        if (br._intOffset <= Capacity - 9)
+        if (br._input == null || br._intOffset <= Capacity - 9)
         {
             return;
         }
@@ -177,12 +177,9 @@ sealed class BitReader
     /// <exception cref="System.IO.IOException" />
     internal static void Close(BitReader br)
     {
-        Stream @is = br._input;
+        Stream? @is = br._input;
         br._input = null;
-        if (@is != null)
-        {
-            @is.Close();
-        }
+        @is?.Close();
     }
 
     internal static void JumpToByteBoundary(BitReader br)
@@ -258,7 +255,7 @@ sealed class BitReader
         {
             while (length > 0)
             {
-                int len = br._input.Read(data, offset, length);
+                int len = br._input?.Read(data, offset, length) ?? -1;
                 if (len == -1)
                 {
                     throw new BrotliRuntimeException("Unexpected end of input");

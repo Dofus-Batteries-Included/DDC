@@ -4,7 +4,7 @@ class Encoder
 {
     public const uint KTopValue = 1<<24;
 
-    Stream _stream;
+    Stream? _stream;
 
     public ulong Low;
     public uint Range;
@@ -19,7 +19,7 @@ class Encoder
 
     public void Init()
     {
-        _startPosition = _stream.Position;
+        _startPosition = _stream?.Position ?? 0;
 
         Low = 0;
         Range = 0xFFFFFFFF;
@@ -35,9 +35,9 @@ class Encoder
         }
     }
 
-    public void FlushStream() => _stream.Flush();
+    public void FlushStream() => _stream?.Flush();
 
-    public void CloseStream() => _stream.Close();
+    public void CloseStream() => _stream?.Close();
 
     public void Encode(uint start, uint size, uint total)
     {
@@ -57,7 +57,7 @@ class Encoder
             byte temp = _cache;
             do
             {
-                _stream.WriteByte((byte)(temp + (Low>> 32)));
+                _stream?.WriteByte((byte)(temp + (Low>> 32)));
                 temp = 0xFF;
             } while (--_cacheSize != 0);
             _cache = (byte)((uint)Low>> 24);
@@ -102,7 +102,7 @@ class Encoder
         }
     }
 
-    public long GetProcessedSizeAdd() => _cacheSize + _stream.Position - _startPosition + 4;
+    public long GetProcessedSizeAdd() => _stream == null ? 0 : _cacheSize + _stream.Position - _startPosition + 4;
     // (long)Stream.GetProcessedSize();
 }
 
@@ -112,7 +112,7 @@ class Decoder
     public uint Range;
     public uint Code;
     // public Buffer.InBuffer Stream = new Buffer.InBuffer(1 << 16);
-    public Stream Stream;
+    public Stream? Stream;
 
     public void Init(Stream stream)
     {
@@ -131,10 +131,15 @@ class Decoder
         // Stream.ReleaseStream();
         Stream = null;
 
-    public void CloseStream() => Stream.Close();
+    public void CloseStream() => Stream?.Close();
 
     public void Normalize()
     {
+        if (Stream == null)
+        {
+            throw new InvalidOperationException("Decoder not initialized.");
+        }
+
         while (Range < KTopValue)
         {
             Code = Code<<8 | (byte)Stream.ReadByte();
@@ -144,6 +149,11 @@ class Decoder
 
     public void Normalize2()
     {
+        if (Stream == null)
+        {
+            throw new InvalidOperationException("Decoder not initialized.");
+        }
+
         if (Range < KTopValue)
         {
             Code = Code<<8 | (byte)Stream.ReadByte();
@@ -162,6 +172,11 @@ class Decoder
 
     public uint DecodeDirectBits(int numTotalBits)
     {
+        if (Stream == null)
+        {
+            throw new InvalidOperationException("Decoder not initialized.");
+        }
+
         uint range = Range;
         uint code = Code;
         uint result = 0;

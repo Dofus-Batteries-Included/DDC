@@ -6,7 +6,7 @@ namespace UnityBundleReader;
 
 public static class TypeTreeHelper
 {
-    public static string? ReadTypeString(TypeTree mType, ObjectReader reader)
+    public static string ReadTypeString(TypeTree mType, ObjectReader reader)
     {
         reader.Reset();
         StringBuilder sb = new();
@@ -27,9 +27,9 @@ public static class TypeTreeHelper
     {
         TypeTreeNode mNode = mNodes[i];
         int level = mNode.Level;
-        string varTypeStr = mNode.Type;
-        string varNameStr = mNode.Name;
-        object value = null;
+        string? varTypeStr = mNode.Type;
+        string? varNameStr = mNode.Name;
+        object? value = null;
         bool append = true;
         bool align = (mNode.MetaFlag & 0x4000) != 0;
         switch (varTypeStr)
@@ -159,7 +159,7 @@ public static class TypeTreeHelper
         }
         if (append)
         {
-            sb.AppendFormat("{0}{1} {2} = {3}\r\n", new string('\t', level), varTypeStr, varNameStr, value);
+            sb.Append($"{new string('\t', level)}{varTypeStr} {varNameStr} = {value}\r\n");
         }
         if (align)
         {
@@ -167,21 +167,31 @@ public static class TypeTreeHelper
         }
     }
 
-    public static OrderedDictionary? ReadType(TypeTree mTypes, ObjectReader reader)
+    public static OrderedDictionary ReadType(TypeTree mTypes, ObjectReader reader)
     {
         reader.Reset();
         OrderedDictionary obj = new();
         List<TypeTreeNode> mNodes = mTypes.Nodes;
         for (int i = 1; i < mNodes.Count; i++)
         {
-            TypeTreeNode mNode = mNodes[i];
-            string varNameStr = mNode.Name;
-            obj[varNameStr] = ReadValue(mNodes, reader, ref i);
+            TypeTreeNode node = mNodes[i];
+            string? varNameStr = node.Name;
+            object value = ReadValue(mNodes, reader, ref i);
+
+            if (varNameStr != null)
+            {
+                obj[varNameStr] = value;
+            }
+            else
+            {
+                Logger.Warning($"Node {node} is unnamed.");
+            }
         }
-        long readed = reader.Position - reader.ByteStart;
-        if (readed != reader.ByteSize)
+
+        long read = reader.Position - reader.ByteStart;
+        if (read != reader.ByteSize)
         {
-            Logger.Info($"Error while read type, read {readed} bytes but expected {reader.ByteSize} bytes");
+            Logger.Info($"Error while read type, read {read} bytes but expected {reader.ByteSize} bytes");
         }
         return obj;
     }
@@ -189,7 +199,7 @@ public static class TypeTreeHelper
     static object ReadValue(List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
     {
         TypeTreeNode mNode = mNodes[i];
-        string varTypeStr = mNode.Type;
+        string? varTypeStr = mNode.Type;
         object value;
         bool align = (mNode.MetaFlag & 0x4000) != 0;
         switch (varTypeStr)
@@ -299,8 +309,17 @@ public static class TypeTreeHelper
                 for (int j = 1; j < @class.Count; j++)
                 {
                     TypeTreeNode classmember = @class[j];
-                    string name = classmember.Name;
-                    obj[name] = ReadValue(@class, reader, ref j);
+                    string? name = classmember.Name;
+                    object classMemberValue = ReadValue(@class, reader, ref j);
+
+                    if (name != null)
+                    {
+                        obj[name] = classMemberValue;
+                    }
+                    else
+                    {
+                        Logger.Warning($"Class member {classmember} is unnamed.");
+                    }
                 }
                 value = obj;
                 break;
