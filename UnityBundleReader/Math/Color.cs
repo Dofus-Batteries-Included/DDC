@@ -20,14 +20,7 @@ public struct Color : IEquatable<Color>
 
     public override int GetHashCode() => ((Vector4)this).GetHashCode();
 
-    public override bool Equals(object other)
-    {
-        if (!(other is Color))
-        {
-            return false;
-        }
-        return Equals((Color)other);
-    }
+    public override bool Equals(object? other) => other is Color color && Equals(color);
 
     public bool Equals(Color other) => R.Equals(other.R) && G.Equals(other.G) && B.Equals(other.B) && A.Equals(other.A);
 
