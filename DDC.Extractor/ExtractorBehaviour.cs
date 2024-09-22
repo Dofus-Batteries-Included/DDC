@@ -10,7 +10,10 @@ using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
-using DDC.Extractor.Converters;
+using DDC.Extractor.Abstractions;
+using DDC.Extractor.Areas;
+using DDC.Extractor.MapPositions;
+using DDC.Extractor.PointOfInterests;
 using UnityEngine;
 
 namespace DDC.Extractor;
@@ -27,8 +30,11 @@ public class ExtractorBehaviour : MonoBehaviour
 
         Extractor.Logger.LogInfo("Start extracting data...");
 
-        yield return WaitForCompletion(ExtractDataFromGame("point-of-interest.json", DataCenterModule.GetDataRoot<PointOfInterestRoot>(), new PointOfInterestConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("point-of-interest.json", DataCenterModule.GetDataRoot<PointOfInterestRoot>(), new PointsOfInterestConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("map-positions.json", DataCenterModule.GetDataRoot<MapPositionsRoot>(), new MapPositionsConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("areas.json", DataCenterModule.GetDataRoot<AreasRoot>(), new AreasConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("super-areas.json", DataCenterModule.GetDataRoot<SuperAreasRoot>(), new SuperAreasConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("sub-areas.json", DataCenterModule.GetDataRoot<SubAreasRoot>(), new SubAreasConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
@@ -56,7 +62,7 @@ public class ExtractorBehaviour : MonoBehaviour
             entries[entry.Key] = output;
         }
 
-        Models.I18N.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
+        I18N.Models.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
 
         string path = Path.Join(Extractor.OutputDirectory, filename);
         await using FileStream stream = File.Open(path, FileMode.Create);

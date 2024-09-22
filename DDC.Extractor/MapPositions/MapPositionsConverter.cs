@@ -1,10 +1,11 @@
-﻿using Core.DataCenter.Metadata.World;
+﻿using DDC.Extractor.Abstractions;
+using DDC.Extractor.MapPositions.Models;
 
-namespace DDC.Extractor.Converters;
+namespace DDC.Extractor.MapPositions;
 
-public class MapPositionsConverter : IConverter<MapPositions, Models.MapPositions>
+public class MapPositionsConverter : IConverter<Core.DataCenter.Metadata.World.MapPositions, MapPosition>
 {
-    public Models.MapPositions Convert(MapPositions data) =>
+    public MapPosition Convert(Core.DataCenter.Metadata.World.MapPositions data) =>
         new()
         {
             MapId = data.id,
