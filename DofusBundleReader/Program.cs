@@ -6,7 +6,6 @@ using CommandLine;
 using DofusBundleReader.Abstractions;
 using DofusBundleReader.Maps;
 using DofusBundleReader.WorldGraphs;
-using MessagePack;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
@@ -111,7 +110,7 @@ async Task ExtractDataFromBundles<TData>(string outputFileName, string bundleFil
     }
 
     await using FileStream stream = File.Open(output, FileMode.Create);
-    await WriteData(data, args.OutputFormat, stream);
+    await JsonSerializer.SerializeAsync(stream, data, jsonSerializerOptions);
     stream.Flush();
 
     globalLogger.LogInformation("Extracted data of type {Name} to {Output}.", dataTypeName, output);
@@ -119,31 +118,9 @@ async Task ExtractDataFromBundles<TData>(string outputFileName, string bundleFil
 
 string GetOutputFileName(string filename, ExtractArgsBase args)
 {
-    string name = args.OutputFormat switch
-    {
-        OutputFormat.Json => filename + ".json",
-        OutputFormat.MessagePack => filename + ".bin",
-        _ => throw new ArgumentOutOfRangeException(nameof(args.OutputFormat), args.OutputFormat, null)
-    };
-    return Path.Join(args.Output, name);
+    return Path.Join(args.Output, filename + ".json");
 }
 
-async Task WriteData<TData>(TData data, OutputFormat format, FileStream outputStream)
-{
-    switch (format)
-    {
-        case OutputFormat.Json:
-            await JsonSerializer.SerializeAsync(outputStream, data, jsonSerializerOptions);
-            break;
-        case OutputFormat.MessagePack:
-        {
-            await MessagePackSerializer.SerializeAsync(outputStream, data, MessagePackSerializerOptions.Standard);
-            break;
-        }
-        default:
-            throw new ArgumentOutOfRangeException(nameof(format), format, null);
-    }
-}
 
 abstract class ExtractArgsBase
 {
@@ -152,9 +129,6 @@ abstract class ExtractArgsBase
 
     [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
     public string Output { get; set; } = "./output";
-
-    [Option("format", Default = OutputFormat.Json, HelpText = "Format of the output.")]
-    public OutputFormat OutputFormat { get; set; } = OutputFormat.Json;
 }
 
 [Verb("worldgraph")]
@@ -165,10 +139,4 @@ class ExtractWorldGraphArgs : ExtractArgsBase
 [Verb("maps")]
 class ExtractMapsArgs : ExtractArgsBase
 {
-}
-
-enum OutputFormat
-{
-    Json,
-    MessagePack
 }
