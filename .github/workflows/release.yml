@@ -99,7 +99,10 @@ jobs:
 
       - name: Run DDC.Extractor
         run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; node ../scripts/bepinex-run-until "Dofus.exe" "DDC data extraction complete."
-        
+
+      - name: Build DofusBundleReader
+        run: dotnet build DofusBundleReader/DofusBundleReader.csproj --configuration Release --no-restore
+            
       - name: Run DofusBundleReader worldgraph
         run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; &"../DofusBundleReader/bin/Release/net8.0/DofusBundleReader.exe" worldgraph "Dofus_Data/StreamingAssets/aa/StandaloneWindows64" -o ./extracted-data
 
