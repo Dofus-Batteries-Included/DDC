@@ -9,9 +9,9 @@ public class WebFile
 
     class WebData
     {
-        public int DataOffset;
-        public int DataLength;
-        public string Path;
+        public required int DataOffset;
+        public required int DataLength;
+        public required string Path;
     }
 
     public WebFile(EndianBinaryReader reader)

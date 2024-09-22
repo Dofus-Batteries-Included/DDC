@@ -7,5 +7,5 @@ public class FileIdentifier
     public string? PathName;
 
     //custom
-    public string FileName;
+    public required string FileName;
 }
