@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using DofusBundleReader.Abstractions;
@@ -20,7 +19,7 @@ public partial class MapsBundleExtractor : IBundleExtractor<IReadOnlyDictionary<
 
     public IReadOnlyDictionary<long, Map>? Extract(IReadOnlyList<MonoBehaviour> behaviours)
     {
-        ConcurrentDictionary<long, Map> result = new();
+        Dictionary<long, Map> result = new();
 
         for (int index = 0; index < behaviours.Count; index++)
         {
@@ -31,10 +30,10 @@ public partial class MapsBundleExtractor : IBundleExtractor<IReadOnlyDictionary<
 
         _logger.LogInformation("Maps extraction over: {SuccessCount} successes, {ErrorCount} errors.", result.Count, behaviours.Count - result.Count);
 
-        return result.IsEmpty ? null : result;
+        return result.Count == 0 ? null : result;
     }
 
-    void ExtractOne(MonoBehaviour behaviour, ConcurrentDictionary<long, Map> result)
+    void ExtractOne(MonoBehaviour behaviour, Dictionary<long, Map> result)
     {
         Regex nameRegex = MapBehaviourNameRegex();
 
