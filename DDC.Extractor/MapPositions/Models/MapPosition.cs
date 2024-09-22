@@ -1,6 +1,6 @@
-namespace DDC.Extractor.Models;
+namespace DDC.Extractor.MapPositions.Models;
 
-public class MapPositions
+public class MapPosition
 {
     public long MapId { get; init; }
     public int PosX { get; init; }
