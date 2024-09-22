@@ -380,7 +380,7 @@ public class AssetsManager
                         case ClassIDType.MonoBehaviour:
                             MonoBehaviour mb = new(objectReader);
                             assetsFile.AddObject(mb);
-                            _logger.LogInformation("Found MonoBehaviour {Name}.", mb.Name ?? "__UNNAMED__");
+                            _logger.LogDebug("Found MonoBehaviour {Name}.", mb.Name ?? "__UNNAMED__");
                             break;
                         default:
                             _logger.LogDebug("Object of type {Type} skipped because it is not a MonoBehaviour.", objectReader.Type);

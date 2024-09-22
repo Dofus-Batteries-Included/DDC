@@ -51,11 +51,11 @@ public class Object
         return null;
     }
 
-    public OrderedDictionary? ToType()
+    public OrderedDictionary? ToType(IReadOnlyCollection<string>? propertiesToKeep = null)
     {
         if (SerializedType?.Type != null)
         {
-            return TypeTreeHelper.ReadType(SerializedType.Type, Reader);
+            return TypeTreeHelper.ReadType(SerializedType.Type, Reader, propertiesToKeep);
         }
         return null;
     }

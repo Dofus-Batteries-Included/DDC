@@ -34,17 +34,20 @@ public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map
                     continue;
                 }
 
-                _logger.LogDebug("Reading data from {Name}. {Percent}% ({Count}/{TotalCount}).", behaviour.Name, count * 100.0 / behaviours.Count, count, behaviours.Count);
+                _logger.LogDebug("Reading data from {Name}. {Percent:00.}% ({Count}/{TotalCount}).", behaviour.Name, count * 100.0 / behaviours.Count, count, behaviours.Count);
 
                 string idStr = match.Groups["id"].Value;
                 if (!long.TryParse(idStr, out long id))
                 {
+                    _logger.LogWarning("Map ID is invalid: {Name}.", behaviour.Name);
                     continue;
                 }
 
                 Map? map = ExtractMap(behaviour);
                 if (map == null)
                 {
+                    _logger.LogWarning("Could not extract map from {Name}.", behaviour.Name);
+                    errors++;
                     continue;
                 }
 
@@ -66,7 +69,7 @@ public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map
 
     static Map? ExtractMap(MonoBehaviour behaviour)
     {
-        OrderedDictionary? props = behaviour.ToType();
+        OrderedDictionary? props = behaviour.ToType(new HashSet<string> { "cellsData" });
         object? cellsDataObj = props?["cellsData"];
         if (cellsDataObj is not IList cellsData)
         {

@@ -167,7 +167,7 @@ public static class TypeTreeHelper
         }
     }
 
-    public static OrderedDictionary ReadType(TypeTree types, ObjectReader reader)
+    public static OrderedDictionary ReadType(TypeTree types, ObjectReader reader, IReadOnlyCollection<string>? propertiesToKeep = null)
     {
         reader.Reset();
         OrderedDictionary obj = new();
@@ -176,16 +176,18 @@ public static class TypeTreeHelper
         {
             TypeTreeNode node = nodes[i];
             string? varNameStr = node.Name;
-            object value = ReadValue(nodes, reader, ref i);
+            bool keepValue = varNameStr != null && (propertiesToKeep == null || propertiesToKeep.Contains(varNameStr));
 
-            if (varNameStr != null)
+            if (keepValue)
             {
-                obj[varNameStr] = value;
+                object value = ReadValue(nodes, reader, ref i);
+                obj[varNameStr!] = value;
             }
             else
             {
-                Logger.Warning($"Node {node} is unnamed.");
+                SkipValue(nodes, reader, ref i);
             }
+
         }
 
         long read = reader.Position - reader.ByteStart;
@@ -330,6 +332,124 @@ public static class TypeTreeHelper
             reader.AlignStream();
         }
         return value;
+    }
+
+    static void SkipValue(List<TypeTreeNode> mNodes, BinaryReader reader, ref int i)
+    {
+        TypeTreeNode mNode = mNodes[i];
+        string? varTypeStr = mNode.Type;
+        bool align = (mNode.MetaFlag & 0x4000) != 0;
+        switch (varTypeStr)
+        {
+            case "SInt8":
+                reader.BaseStream.Position += 1;
+                break;
+            case "UInt8":
+                reader.BaseStream.Position += 1;
+                break;
+            case "char":
+                reader.BaseStream.Position += 2;
+                break;
+            case "short":
+            case "SInt16":
+                reader.BaseStream.Position += 2;
+                break;
+            case "UInt16":
+            case "unsigned short":
+                reader.BaseStream.Position += 2;
+                break;
+            case "int":
+            case "SInt32":
+                reader.BaseStream.Position += 4;
+                break;
+            case "UInt32":
+            case "unsigned int":
+            case "Type*":
+                reader.BaseStream.Position += 4;
+                break;
+            case "long long":
+            case "SInt64":
+                reader.BaseStream.Position += 8;
+                break;
+            case "UInt64":
+            case "unsigned long long":
+            case "FileSize":
+                reader.BaseStream.Position += 8;
+                break;
+            case "float":
+                reader.BaseStream.Position += 4;
+                break;
+            case "double":
+                reader.BaseStream.Position += 8;
+                break;
+            case "bool":
+                reader.BaseStream.Position += 1;
+                break;
+            case "string":
+                reader.ReadAlignedString();
+                List<TypeTreeNode> toSkip = GetNodes(mNodes, i);
+                i += toSkip.Count - 1;
+                break;
+            case "map":
+            {
+                if ((mNodes[i + 1].MetaFlag & 0x4000) != 0)
+                {
+                    align = true;
+                }
+                List<TypeTreeNode> map = GetNodes(mNodes, i);
+                i += map.Count - 1;
+                List<TypeTreeNode> first = GetNodes(map, 4);
+                int next = 4 + first.Count;
+                List<TypeTreeNode> second = GetNodes(map, next);
+                int size = reader.ReadInt32();
+                for (int j = 0; j < size; j++)
+                {
+                    int tmp1 = 0;
+                    int tmp2 = 0;
+                    SkipValue(first, reader, ref tmp1);
+                    SkipValue(second, reader, ref tmp2);
+                }
+                break;
+            }
+            case "TypelessData":
+            {
+                int size = reader.ReadInt32();
+                reader.BaseStream.Position += size;
+                i += 2;
+                break;
+            }
+            default:
+            {
+                if (i < mNodes.Count - 1 && mNodes[i + 1].Type == "Array") //Array
+                {
+                    if ((mNodes[i + 1].MetaFlag & 0x4000) != 0)
+                    {
+                        align = true;
+                    }
+                    List<TypeTreeNode> vector = GetNodes(mNodes, i);
+                    i += vector.Count - 1;
+                    int size = reader.ReadInt32();
+                    for (int j = 0; j < size; j++)
+                    {
+                        int tmp = 3;
+                        SkipValue(vector, reader, ref tmp);
+                    }
+                    break;
+                }
+                //Class
+                List<TypeTreeNode> @class = GetNodes(mNodes, i);
+                i += @class.Count - 1;
+                for (int j = 1; j < @class.Count; j++)
+                {
+                    SkipValue(@class, reader, ref j);
+                }
+                break;
+            }
+        }
+        if (align)
+        {
+            reader.AlignStream();
+        }
     }
 
     static List<TypeTreeNode> GetNodes(List<TypeTreeNode> mNodes, int index)
