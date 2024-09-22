@@ -6,14 +6,15 @@ using CommandLine;
 using DofusBundleReader.Abstractions;
 using DofusBundleReader.Maps;
 using DofusBundleReader.WorldGraphs;
+using MessagePack;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using UnityBundleReader;
 using UnityBundleReader.Classes;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Logger = Serilog.Core.Logger;
 
 #if DEBUG
@@ -36,19 +37,21 @@ JsonSerializerOptions jsonSerializerOptions = new()
 
 try
 {
-    ParserResult<object> parserResult = Parser.Default.ParseArguments<ExtractWorldGraphArgs, ExtractMapsArgs>(args);
+    Parser parser = new(
+        with =>
+        {
+            with.HelpWriter = Console.Error;
+            with.CaseInsensitiveEnumValues = true;
+        }
+    );
+    ParserResult<object> parserResult = parser.ParseArguments<ExtractWorldGraphArgs, ExtractMapsArgs>(args);
 
     await parserResult.WithParsedAsync<ExtractWorldGraphArgs>(
-        args => ExtractDataFromBundles(Path.Join(args.Output, "world-graph.json"), args.BundleDirectory, "worldassets", new WorldGraphBundleExtractor())
+        args => ExtractDataFromBundles("world-graph", args.BundleDirectory, "worldassets", new WorldGraphBundleExtractor(), args)
     );
 
     await parserResult.WithParsedAsync<ExtractMapsArgs>(
-        args => ExtractDataFromBundles(
-            Path.Join(args.Output, "maps.json"),
-            args.BundleDirectory,
-            "mapdata",
-            new MapsBundleExtractor(loggerFactory.CreateLogger<MapsBundleExtractor>())
-        )
+        args => ExtractDataFromBundles("maps", args.BundleDirectory, "mapdata", new MapsBundleExtractor(loggerFactory.CreateLogger<MapsBundleExtractor>()), args)
     );
 }
 catch (Exception exn)
@@ -62,8 +65,9 @@ finally
 
 return;
 
-async Task ExtractDataFromBundles<TData>(string output, string bundleFileDirectory, string bundleFilePrefix, IBundleExtractor<TData> extractor)
+async Task ExtractDataFromBundles<TData>(string outputFileName, string bundleFileDirectory, string bundleFilePrefix, IBundleExtractor<TData> extractor, ExtractArgsBase args)
 {
+    string output = GetOutputFileName(outputFileName, args);
     string dataTypeName = typeof(TData).ToString();
 
     globalLogger.LogInformation("Extracting data of type {Name}...", dataTypeName);
@@ -93,7 +97,7 @@ async Task ExtractDataFromBundles<TData>(string output, string bundleFileDirecto
             break;
     }
 
-    AssetsManager assetsManager = new(NullLogger<AssetsManager>.Instance) { SpecifyUnityVersion = "2022.3.29f1" };
+    AssetsManager assetsManager = new(loggerFactory.CreateLogger<AssetsManager>()) { SpecifyUnityVersion = "2022.3.29f1" };
     assetsManager.LoadFiles(files);
     MonoBehaviour[] behaviours = assetsManager.AssetsFileList.SelectMany(f => f.Objects).OfType<MonoBehaviour>().ToArray();
 
@@ -105,10 +109,38 @@ async Task ExtractDataFromBundles<TData>(string output, string bundleFileDirecto
     }
 
     await using FileStream stream = File.Open(output, FileMode.Create);
-    await JsonSerializer.SerializeAsync(stream, data, jsonSerializerOptions);
+    await WriteData(data, args.OutputFormat, stream);
     stream.Flush();
 
     globalLogger.LogInformation("Extracted data of type {Name} to {Output}.", dataTypeName, output);
+}
+
+string GetOutputFileName(string filename, ExtractArgsBase args)
+{
+    string name = args.OutputFormat switch
+    {
+        OutputFormat.Json => filename + ".json",
+        OutputFormat.MessagePack => filename + ".bin",
+        _ => throw new ArgumentOutOfRangeException(nameof(args.OutputFormat), args.OutputFormat, null)
+    };
+    return Path.Join(args.Output, name);
+}
+
+async Task WriteData<TData>(TData data, OutputFormat format, FileStream outputStream)
+{
+    switch (format)
+    {
+        case OutputFormat.Json:
+            await JsonSerializer.SerializeAsync(outputStream, data, jsonSerializerOptions);
+            break;
+        case OutputFormat.MessagePack:
+        {
+            await MessagePackSerializer.SerializeAsync(outputStream, data, MessagePackSerializerOptions.Standard);
+            break;
+        }
+        default:
+            throw new ArgumentOutOfRangeException(nameof(format), format, null);
+    }
 }
 
 abstract class ExtractArgsBase
@@ -118,6 +150,9 @@ abstract class ExtractArgsBase
 
     [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
     public string Output { get; set; } = "./output";
+
+    [Option("format", Default = OutputFormat.Json, HelpText = "Format of the output.")]
+    public OutputFormat OutputFormat { get; set; } = OutputFormat.Json;
 }
 
 [Verb("worldgraph")]
@@ -128,4 +163,10 @@ class ExtractWorldGraphArgs : ExtractArgsBase
 [Verb("maps")]
 class ExtractMapsArgs : ExtractArgsBase
 {
+}
+
+enum OutputFormat
+{
+    Json,
+    MessagePack
 }

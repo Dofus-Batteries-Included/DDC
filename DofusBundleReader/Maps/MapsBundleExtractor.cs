@@ -22,6 +22,7 @@ public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map
         Dictionary<long, Map> result = new();
         Regex nameRegex = MapBehaviourNameRegex();
 
+        int errors = 0;
         foreach (MonoBehaviour behaviour in behaviours.Where(b => b.Name != null))
         {
             try
@@ -31,6 +32,8 @@ public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map
                 {
                     continue;
                 }
+
+                _logger.LogInformation("Reading data from {Name}.", behaviour.Name);
 
                 string idStr = match.Groups["id"].Value;
                 if (!long.TryParse(idStr, out long id))
@@ -49,10 +52,11 @@ public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map
             catch (Exception exn)
             {
                 _logger.LogError(exn, "An error occured while extracting map data from {Name}.", behaviour.Name);
+                errors++;
             }
         }
 
-        _logger.LogInformation("Extracted a total of {Count} maps.", result.Count);
+        _logger.LogInformation("Maps extraction over: {SuccessCount} successes, {ErrorCount} errors.", result.Count, errors);
 
         return result.Count == 0 ? null : result;
     }
