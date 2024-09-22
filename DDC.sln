@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDC.Extractor", "DDC.Extrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityBundleReader", "UnityBundleReader\UnityBundleReader.csproj", "{D699608C-D88A-48A6-86AC-D20BB8C19516}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DofusBundleReader", "DofusBundleReader\DofusBundleReader.csproj", "{1704F170-71E7-47E9-8537-57F05A45BE80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D699608C-D88A-48A6-86AC-D20BB8C19516}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D699608C-D88A-48A6-86AC-D20BB8C19516}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D699608C-D88A-48A6-86AC-D20BB8C19516}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1704F170-71E7-47E9-8537-57F05A45BE80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1704F170-71E7-47E9-8537-57F05A45BE80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1704F170-71E7-47E9-8537-57F05A45BE80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1704F170-71E7-47E9-8537-57F05A45BE80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

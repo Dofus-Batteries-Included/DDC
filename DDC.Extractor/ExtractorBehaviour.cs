@@ -59,7 +59,7 @@ public class ExtractorBehaviour : MonoBehaviour
         Models.I18N.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
 
         string path = Path.Join(Extractor.OutputDirectory, filename);
-        await using FileStream stream = File.OpenWrite(path);
+        await using FileStream stream = File.Open(path, FileMode.Create);
         await JsonSerializer.SerializeAsync(stream, localizationTable, JsonSerializerOptions);
         stream.Flush();
 
@@ -76,7 +76,7 @@ public class ExtractorBehaviour : MonoBehaviour
         Il2CppSystem.Collections.Generic.List<TData> data = root.GetObjects();
         TSerializedData[] arr = data._items.Take(data.Count).Select(converter.Convert).ToArray();
 
-        await using FileStream stream = File.OpenWrite(path);
+        await using FileStream stream = File.Open(path, FileMode.Create);
         await JsonSerializer.SerializeAsync(stream, arr, JsonSerializerOptions);
         stream.Flush();
 
