@@ -1,5 +1,6 @@
 ﻿using DDC.Extractor.Abstractions;
 using DDC.Extractor.Areas.Models;
+using DDC.Extractor.Common.Models;
 
 namespace DDC.Extractor.Areas;
 
@@ -14,12 +15,18 @@ public class AreasConverter : IConverter<Core.DataCenter.Metadata.World.Areas, A
             SuperAreaId = data.superAreaId,
             ContainHouses = data.containHouses,
             ContainPaddocks = data.containPaddocks,
-            Bounds = new AreaBounds
+            Bounds = new Bounds
             {
-                X = (int)data.bounds.x,
-                Y = (int)data.bounds.y,
-                Width = (int)data.bounds.width,
-                Height = (int)data.bounds.height
+                Position = new Position
+                {
+                    X = (int)data.bounds.x,
+                    Y = (int)data.bounds.y
+                },
+                Size = new Size
+                {
+                    Width = (int)data.bounds.width,
+                    Height = (int)data.bounds.height
+                }
             }
         };
 }

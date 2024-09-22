@@ -14,7 +14,6 @@ using DDC.Extractor.Abstractions;
 using DDC.Extractor.Areas;
 using DDC.Extractor.MapPositions;
 using DDC.Extractor.PointOfInterests;
-using DDC.Extractor.SuperAreas;
 using UnityEngine;
 
 namespace DDC.Extractor;
@@ -35,6 +34,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractData("map-positions.json", DataCenterModule.GetDataRoot<MapPositionsRoot>(), new MapPositionsConverter()));
         yield return WaitForCompletion(ExtractData("areas.json", DataCenterModule.GetDataRoot<AreasRoot>(), new AreasConverter()));
         yield return WaitForCompletion(ExtractData("super-areas.json", DataCenterModule.GetDataRoot<SuperAreasRoot>(), new SuperAreasConverter()));
+        yield return WaitForCompletion(ExtractData("sub-areas.json", DataCenterModule.GetDataRoot<SubAreasRoot>(), new SubAreasConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));

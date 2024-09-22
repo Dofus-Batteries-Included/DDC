@@ -1,4 +1,6 @@
-﻿namespace DDC.Extractor.Areas.Models;
+﻿using DDC.Extractor.Common.Models;
+
+namespace DDC.Extractor.Areas.Models;
 
 public class Area
 {
@@ -6,7 +8,7 @@ public class Area
     public int NameId { get; init; }
     public int? WorldMapId { get; init; }
     public int? SuperAreaId { get; init; }
-    public AreaBounds Bounds { get; init; }
+    public Bounds Bounds { get; init; }
     public bool ContainHouses { get; init; }
     public bool ContainPaddocks { get; init; }
 }
