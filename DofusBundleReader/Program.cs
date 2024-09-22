@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommandLine;
 using DofusBundleReader.Abstractions;
+using DofusBundleReader.Maps;
 using DofusBundleReader.WorldGraphs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -35,10 +36,19 @@ JsonSerializerOptions jsonSerializerOptions = new()
 
 try
 {
-    ParserResult<object> parserResult = Parser.Default.ParseArguments<ExtractWorldGraphArgs, VersionArgs>(args);
+    ParserResult<object> parserResult = Parser.Default.ParseArguments<ExtractWorldGraphArgs, ExtractMapsArgs>(args);
 
     await parserResult.WithParsedAsync<ExtractWorldGraphArgs>(
-        args => ExtractDataFromBundle(Path.Join(args.Output, "world-graph.json"), args.BundleDirectory, "worldassets", new WorldGraphBundleExtractor())
+        args => ExtractDataFromBundles(Path.Join(args.Output, "world-graph.json"), args.BundleDirectory, "worldassets", new WorldGraphBundleExtractor())
+    );
+
+    await parserResult.WithParsedAsync<ExtractMapsArgs>(
+        args => ExtractDataFromBundles(
+            Path.Join(args.Output, "maps.json"),
+            args.BundleDirectory,
+            "mapdata",
+            new MapsBundleExtractor(loggerFactory.CreateLogger<MapsBundleExtractor>())
+        )
     );
 }
 catch (Exception exn)
@@ -52,9 +62,9 @@ finally
 
 return;
 
-async Task ExtractDataFromBundle<TData>(string output, string bundleFileDirectory, string bundleFilePrefix, IBundleExtractor<TData> extractor)
+async Task ExtractDataFromBundles<TData>(string output, string bundleFileDirectory, string bundleFilePrefix, IBundleExtractor<TData> extractor)
 {
-    string dataTypeName = typeof(TData).Name;
+    string dataTypeName = typeof(TData).ToString();
 
     globalLogger.LogInformation("Extracting data of type {Name}...", dataTypeName);
 
@@ -64,17 +74,27 @@ async Task ExtractDataFromBundle<TData>(string output, string bundleFileDirector
         return;
     }
 
-    string? file = Directory.EnumerateFiles(bundleFileDirectory).FirstOrDefault(p => Path.GetFileName(p).StartsWith(bundleFilePrefix));
-    if (file == null)
+    string[] files = Directory.EnumerateFiles(bundleFileDirectory).Where(p => Path.GetFileName(p).StartsWith(bundleFilePrefix)).ToArray();
+    switch (files.Length)
     {
-        globalLogger.LogError("Could not find bundle {Name} in directory {Directory}.", bundleFilePrefix, bundleFileDirectory);
-        return;
+        case 0:
+            globalLogger.LogError("Could not find bundle {Name} in directory {Directory}.", bundleFilePrefix, bundleFileDirectory);
+            return;
+        case 1:
+            globalLogger.LogInformation("Found bundle file: {File}.", files.First());
+            break;
+        case > 1:
+            globalLogger.LogInformation(
+                "Found {Count} bundle files at {Directory}: {Files}.",
+                files.Length,
+                bundleFileDirectory,
+                string.Join(", ", files.Select(Path.GetFileName))
+            );
+            break;
     }
 
-    globalLogger.LogInformation("Found bundle file: {File}.", file);
-
     AssetsManager assetsManager = new(NullLogger<AssetsManager>.Instance) { SpecifyUnityVersion = "2022.3.29f1" };
-    assetsManager.LoadFiles(file);
+    assetsManager.LoadFiles(files);
     MonoBehaviour[] behaviours = assetsManager.AssetsFileList.SelectMany(f => f.Objects).OfType<MonoBehaviour>().ToArray();
 
     TData? data = extractor.Extract(behaviours);
@@ -91,8 +111,7 @@ async Task ExtractDataFromBundle<TData>(string output, string bundleFileDirector
     globalLogger.LogInformation("Extracted data of type {Name} to {Output}.", dataTypeName, output);
 }
 
-[Verb("worldgraph")]
-class ExtractWorldGraphArgs
+abstract class ExtractArgsBase
 {
     [Value(0, Required = false, Default = ".", HelpText = "Directory containing the worldassets_*.bundle file.")]
     public string BundleDirectory { get; set; } = ".";
@@ -101,7 +120,12 @@ class ExtractWorldGraphArgs
     public string Output { get; set; } = "./output";
 }
 
-[Verb("version")]
-class VersionArgs
+[Verb("worldgraph")]
+class ExtractWorldGraphArgs : ExtractArgsBase
+{
+}
+
+[Verb("maps")]
+class ExtractMapsArgs : ExtractArgsBase
 {
 }
