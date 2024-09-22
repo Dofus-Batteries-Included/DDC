@@ -4,5 +4,5 @@ namespace DofusBundleReader.Abstractions;
 
 public interface IBundleExtractor<out TData>
 {
-    TData? Extract(IReadOnlyCollection<MonoBehaviour> behaviours);
+    TData? Extract(IReadOnlyList<MonoBehaviour> behaviours);
 }

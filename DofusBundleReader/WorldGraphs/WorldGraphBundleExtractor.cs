@@ -9,7 +9,7 @@ namespace DofusBundleReader.WorldGraphs;
 
 public class WorldGraphBundleExtractor : IBundleExtractor<WorldGraph>
 {
-    public WorldGraph? Extract(IReadOnlyCollection<MonoBehaviour> behaviours)
+    public WorldGraph? Extract(IReadOnlyList<MonoBehaviour> behaviours)
     {
         MonoBehaviour? behaviour = behaviours.FirstOrDefault(b => string.Equals(b.Name, "WorldGraph", StringComparison.OrdinalIgnoreCase));
         OrderedDictionary? props = behaviour?.ToType();

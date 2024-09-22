@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using DofusBundleReader.Abstractions;
@@ -8,7 +9,7 @@ using UnityBundleReader.Classes;
 
 namespace DofusBundleReader.Maps;
 
-public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map>>
+public partial class MapsBundleExtractor : IBundleExtractor<IReadOnlyDictionary<long, Map>>
 {
     readonly ILogger<MapsBundleExtractor> _logger;
 
@@ -17,54 +18,54 @@ public partial class MapsBundleExtractor : IBundleExtractor<Dictionary<long, Map
         _logger = logger;
     }
 
-    public Dictionary<long, Map>? Extract(IReadOnlyCollection<MonoBehaviour> behaviours)
+    public IReadOnlyDictionary<long, Map>? Extract(IReadOnlyList<MonoBehaviour> behaviours)
     {
-        Dictionary<long, Map> result = new();
-        Regex nameRegex = MapBehaviourNameRegex();
+        ConcurrentDictionary<long, Map> result = new();
 
-        int count = 0;
-        int errors = 0;
-        foreach (MonoBehaviour behaviour in behaviours.Where(b => b.Name != null))
+        for (int index = 0; index < behaviours.Count; index++)
         {
-            try
-            {
-                Match match = nameRegex.Match(behaviour.Name!);
-                if (!match.Success)
-                {
-                    continue;
-                }
-
-                _logger.LogDebug("Reading data from {Name}. {Percent:00.}% ({Count}/{TotalCount}).", behaviour.Name, count * 100.0 / behaviours.Count, count, behaviours.Count);
-
-                string idStr = match.Groups["id"].Value;
-                if (!long.TryParse(idStr, out long id))
-                {
-                    _logger.LogWarning("Map ID is invalid: {Name}.", behaviour.Name);
-                    continue;
-                }
-
-                Map? map = ExtractMap(behaviour);
-                if (map == null)
-                {
-                    _logger.LogWarning("Could not extract map from {Name}.", behaviour.Name);
-                    errors++;
-                    continue;
-                }
-
-                result[id] = map;
-            }
-            catch (Exception exn)
-            {
-                _logger.LogError(exn, "An error occured while extracting map data from {Name}.", behaviour.Name);
-                errors++;
-            }
-
-            count++;
+            MonoBehaviour behaviour = behaviours[index];
+            ExtractOne(behaviour, result);
+            _logger.LogDebug("Processing map {Name}. {Percent:0.}% ({Count}/{TotalCount})", behaviour.Name, index * 100.0 / behaviours.Count, index, behaviours.Count);
         }
 
-        _logger.LogInformation("Maps extraction over: {SuccessCount} successes, {ErrorCount} errors.", result.Count, errors);
+        _logger.LogInformation("Maps extraction over: {SuccessCount} successes, {ErrorCount} errors.", result.Count, behaviours.Count - result.Count);
 
-        return result.Count == 0 ? null : result;
+        return result.IsEmpty ? null : result;
+    }
+
+    void ExtractOne(MonoBehaviour behaviour, ConcurrentDictionary<long, Map> result)
+    {
+        Regex nameRegex = MapBehaviourNameRegex();
+
+        try
+        {
+            Match match = nameRegex.Match(behaviour.Name!);
+            if (!match.Success)
+            {
+                return;
+            }
+
+            string idStr = match.Groups["id"].Value;
+            if (!long.TryParse(idStr, out long id))
+            {
+                _logger.LogWarning("Map ID is invalid: {Name}.", behaviour.Name);
+                return;
+            }
+
+            Map? map = ExtractMap(behaviour);
+            if (map == null)
+            {
+                _logger.LogWarning("Could not extract map from {Name}.", behaviour.Name);
+                return;
+            }
+
+            result.TryAdd(id, map);
+        }
+        catch (Exception exn)
+        {
+            _logger.LogError(exn, "An error occured while extracting map data from {Name}.", behaviour.Name);
+        }
     }
 
     static Map? ExtractMap(MonoBehaviour behaviour)
