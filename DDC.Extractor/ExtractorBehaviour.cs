@@ -10,7 +10,10 @@ using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
+using DDC.Extractor.BundleExtractors;
 using DDC.Extractor.Converters;
+using Microsoft.Extensions.Logging.Abstractions;
+using UnityBundleReader;
 using UnityEngine;
 
 namespace DDC.Extractor;
@@ -34,6 +37,9 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
         yield return WaitForCompletion(ExtractLocale("fr.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/fr.bin"));
         yield return WaitForCompletion(ExtractLocale("pt.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/pt.bin"));
+        yield return WaitForCompletion(
+            ExtractDataFromBundle("world-graph.json", "Dofus_Data/StreamingAssets/aa/StandaloneWindows64", "worldassets", new WorldGraphBundleExtractor())
+        );
 
         Extractor.Logger.LogInfo("DDC data extraction complete.");
 
@@ -78,6 +84,41 @@ public class ExtractorBehaviour : MonoBehaviour
 
         await using FileStream stream = File.OpenWrite(path);
         await JsonSerializer.SerializeAsync(stream, arr, JsonSerializerOptions);
+        stream.Flush();
+
+        Extractor.Logger.LogInfo($"Extracted data of type {dataTypeName} to {path}.");
+    }
+
+    static async Task ExtractDataFromBundle<TData>(string filename, string bundleFileDirectory, string bundleFilePrefix, IBundleExtractor<TData> extractor)
+    {
+        string dataTypeName = typeof(TData).Name;
+        string path = Path.Join(Extractor.OutputDirectory, filename);
+
+        Extractor.Logger.LogInfo($"Extracting data of type {dataTypeName}...");
+
+        if (!Directory.Exists(bundleFileDirectory))
+        {
+            Extractor.Logger.LogError($"Could not find directory {bundleFileDirectory}.");
+            return;
+        }
+
+        string file = Directory.EnumerateFiles(bundleFileDirectory).FirstOrDefault(p => Path.GetFileName(p).StartsWith(bundleFilePrefix));
+        if (file == null)
+        {
+            Extractor.Logger.LogError($"Could not find bundle {bundleFilePrefix} in directory {bundleFileDirectory}.");
+            return;
+        }
+
+        Extractor.Logger.LogInfo($"Found bundle file: {file}.");
+
+        AssetsManager assetsManager = new(NullLogger<AssetsManager>.Instance) { SpecifyUnityVersion = "2022.3.29f1" };
+        assetsManager.LoadFiles(file);
+        UnityBundleReader.Classes.MonoBehaviour[] behaviours = assetsManager.AssetsFileList.SelectMany(f => f.Objects).OfType<UnityBundleReader.Classes.MonoBehaviour>().ToArray();
+
+        TData data = extractor.Extract(behaviours);
+
+        await using FileStream stream = File.OpenWrite(path);
+        await JsonSerializer.SerializeAsync(stream, data, JsonSerializerOptions);
         stream.Flush();
 
         Extractor.Logger.LogInfo($"Extracted data of type {dataTypeName} to {path}.");

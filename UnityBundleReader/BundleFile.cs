@@ -344,10 +344,10 @@ public class BundleFile
 
 public class BundleFileHeader
 {
-    public required string Signature;
-    public required uint Version;
-    public required string UnityVersion;
-    public required string UnityRevision;
+    public string Signature;
+    public uint Version;
+    public string UnityVersion;
+    public string UnityRevision;
     public long Size;
     public uint CompressedBlocksInfoSize;
     public uint UncompressedBlocksInfoSize;
@@ -356,9 +356,9 @@ public class BundleFileHeader
 
 public class BundleFileNode
 {
-    public required long Offset;
-    public required long Size;
-    public required string Path;
+    public long Offset;
+    public long Size;
+    public string Path;
     public uint Flags;
 }
 

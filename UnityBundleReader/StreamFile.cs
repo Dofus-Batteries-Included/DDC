@@ -2,7 +2,7 @@
 
 public class StreamFile
 {
-    public required string Path;
-    public required string FileName;
-    public required Stream Stream;
+    public string Path;
+    public string FileName;
+    public Stream Stream;
 }
