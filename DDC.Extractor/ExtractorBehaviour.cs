@@ -27,8 +27,8 @@ public class ExtractorBehaviour : MonoBehaviour
 
         Extractor.Logger.LogInfo("Start extracting data...");
 
-        yield return WaitForCompletion(ExtractData("point-of-interest.json", DataCenterModule.GetDataRoot<PointOfInterestRoot>(), new PointOfInterestConverter()));
-        yield return WaitForCompletion(ExtractData("map-positions.json", DataCenterModule.GetDataRoot<MapPositionsRoot>(), new MapPositionsConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("point-of-interest.json", DataCenterModule.GetDataRoot<PointOfInterestRoot>(), new PointOfInterestConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("map-positions.json", DataCenterModule.GetDataRoot<MapPositionsRoot>(), new MapPositionsConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
@@ -66,7 +66,7 @@ public class ExtractorBehaviour : MonoBehaviour
         Extractor.Logger.LogInfo($"Extracted locale {table.m_header.languageCode} to {path}.");
     }
 
-    static async Task ExtractData<TData, TSerializedData>(string filename, MetadataRoot<TData> root, IConverter<TData, TSerializedData> converter)
+    static async Task ExtractDataFromGame<TData, TSerializedData>(string filename, MetadataRoot<TData> root, IConverter<TData, TSerializedData> converter)
     {
         string dataTypeName = typeof(TData).Name;
         string path = Path.Join(Extractor.OutputDirectory, filename);
