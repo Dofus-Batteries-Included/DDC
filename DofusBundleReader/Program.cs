@@ -101,6 +101,8 @@ async Task ExtractDataFromBundles<TData>(string outputFileName, string bundleFil
     assetsManager.LoadFiles(files);
     MonoBehaviour[] behaviours = assetsManager.AssetsFileList.SelectMany(f => f.Objects).OfType<MonoBehaviour>().ToArray();
 
+    globalLogger.LogInformation("Found a total of {Count} behaviours to process.", behaviours.Length);
+
     TData? data = extractor.Extract(behaviours);
     if (data == null)
     {
