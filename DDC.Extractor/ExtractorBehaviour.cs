@@ -12,6 +12,7 @@ using Core.DataCenter.Metadata.World;
 using Core.Localization;
 using DDC.Extractor.Abstractions;
 using DDC.Extractor.Areas;
+using DDC.Extractor.MapCoordinates;
 using DDC.Extractor.MapPositions;
 using DDC.Extractor.PointOfInterests;
 using UnityEngine;
@@ -32,6 +33,7 @@ public class ExtractorBehaviour : MonoBehaviour
 
         yield return WaitForCompletion(ExtractDataFromGame("point-of-interest.json", DataCenterModule.GetDataRoot<PointOfInterestRoot>(), new PointsOfInterestConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("map-positions.json", DataCenterModule.GetDataRoot<MapPositionsRoot>(), new MapPositionsConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("map-coordinates.json", DataCenterModule.GetDataRoot<MapCoordinatesRoot>(), new MapCoordinatesConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("areas.json", DataCenterModule.GetDataRoot<AreasRoot>(), new AreasConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("super-areas.json", DataCenterModule.GetDataRoot<SuperAreasRoot>(), new SuperAreasConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("sub-areas.json", DataCenterModule.GetDataRoot<SubAreasRoot>(), new SubAreasConverter()));
