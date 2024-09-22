@@ -101,7 +101,7 @@ jobs:
         run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; node ../scripts/bepinex-run-until "Dofus.exe" "DDC data extraction complete."
         
       - name: Run DofusBundleReader worldgraph
-        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; ../DofusBundleReader/bin/Release/net6.0/DofusBundleReader.exe worldgraph "Dofus_Data\StreamingAssets\aa\StandaloneWindows64" -o ./extracted-data
+        run: cd ${{ steps.read_dofus_version.outputs.dofus_path }}; &"../DofusBundleReader/bin/Release/net8.0/DofusBundleReader.exe" worldgraph "Dofus_Data/StreamingAssets/aa/StandaloneWindows64" -o ./extracted-data
 
       - name: Create metadata file
         run: |
