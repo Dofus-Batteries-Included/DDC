@@ -88,25 +88,28 @@ public partial class MapsBundleExtractor : IBundleExtractor<IReadOnlyDictionary<
     {
         Dictionary<int, Cell> result = new();
 
-        foreach (IDictionary cell in cellsData.OfType<IDictionary>())
+        foreach (IDictionary cellData in cellsData.OfType<IDictionary>())
         {
-            int cellNumber = Convert.ToInt32(cell["cellNumber"]);
-            result.Add(
-                cellNumber,
-                new Cell
-                {
-                    CellNumber = cellNumber,
-                    Floor = Convert.ToInt32(cell["floor"]),
-                    MoveZone = Convert.ToInt32(cell["moveZone"]),
-                    LinkedZone = Convert.ToInt32(cell["linkedZone"]),
-                    Speed = Convert.ToInt32(cell["speed"]),
-                    Los = Convert.ToBoolean(cell["los"]),
-                    Visible = Convert.ToBoolean(cell["nonWalkableDuringRP"]),
-                    NonWalkableDuringFight = Convert.ToBoolean(cell["nonWalkableDuringFight"]),
-                    NonWalkableDuringRp = Convert.ToBoolean(cell["nonWalkableDuringRP"]),
-                    HavenbagCell = Convert.ToBoolean(cell["havenbagCell"])
-                }
-            );
+            int cellNumber = Convert.ToInt32(cellData["cellNumber"]);
+            Cell cell = new()
+            {
+                CellNumber = cellNumber,
+                Floor = Convert.ToInt32(cellData["floor"]),
+                MoveZone = Convert.ToInt32(cellData["moveZone"]),
+                LinkedZone = Convert.ToInt32(cellData["linkedZone"]),
+                Speed = Convert.ToInt32(cellData["speed"]),
+                Los = Convert.ToBoolean(cellData["los"]),
+                Visible = Convert.ToBoolean(cellData["nonWalkableDuringRP"]),
+                NonWalkableDuringFight = Convert.ToBoolean(cellData["nonWalkableDuringFight"]),
+                NonWalkableDuringRp = Convert.ToBoolean(cellData["nonWalkableDuringRP"]),
+                HavenbagCell = Convert.ToBoolean(cellData["havenbagCell"])
+            };
+            result.Add(cellNumber, cell);
+            
+            if (cell.MoveZone != 0)
+            {
+                // hello
+            }
         }
 
         return result;

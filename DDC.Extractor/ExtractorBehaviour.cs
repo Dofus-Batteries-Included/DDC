@@ -37,6 +37,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractDataFromGame("areas.json", DataCenterModule.GetDataRoot<AreasRoot>(), new AreasConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("super-areas.json", DataCenterModule.GetDataRoot<SuperAreasRoot>(), new SuperAreasConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("sub-areas.json", DataCenterModule.GetDataRoot<SubAreasRoot>(), new SubAreasConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("world-maps.json", DataCenterModule.GetDataRoot<WorldMapsRoot>(), new WorldMapsConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
