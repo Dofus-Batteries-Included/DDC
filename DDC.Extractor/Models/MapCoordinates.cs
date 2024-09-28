@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using DDC.Extractor.Common.Models;
 
-namespace DDC.Extractor.MapCoordinates.Models;
+namespace DDC.Extractor.Models;
 
 public class MapCoordinates
 {

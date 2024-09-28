@@ -1,8 +1,7 @@
 ﻿using Core.DataCenter.Metadata.World;
-using DDC.Extractor.Abstractions;
-using DDC.Extractor.Areas.Models;
+using DDC.Extractor.Models;
 
-namespace DDC.Extractor.Areas;
+namespace DDC.Extractor.Converters;
 
 public class SuperAreasConverter : IConverter<SuperAreas, SuperArea>
 {

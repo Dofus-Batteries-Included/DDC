@@ -1,7 +1,6 @@
-﻿using DDC.Extractor.Abstractions;
-using DDC.Extractor.MapPositions.Models;
+﻿using DDC.Extractor.Models;
 
-namespace DDC.Extractor.MapPositions;
+namespace DDC.Extractor.Converters;
 
 public class MapPositionsConverter : IConverter<Core.DataCenter.Metadata.World.MapPositions, MapPosition>
 {

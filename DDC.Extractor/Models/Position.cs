@@ -1,4 +1,4 @@
-﻿namespace DDC.Extractor.Common.Models;
+﻿namespace DDC.Extractor.Models;
 
 public class Position
 {

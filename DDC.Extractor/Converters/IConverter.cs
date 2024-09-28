@@ -2,7 +2,7 @@
 using System.Linq;
 using Core.DataCenter;
 
-namespace DDC.Extractor.Abstractions;
+namespace DDC.Extractor.Converters;
 
 public interface IConverter<in TData, out TConvertedData>
 {

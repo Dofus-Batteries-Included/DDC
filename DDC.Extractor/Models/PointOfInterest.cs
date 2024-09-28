@@ -1,4 +1,4 @@
-namespace DDC.Extractor.PointOfInterests.Models;
+namespace DDC.Extractor.Models;
 
 public class PointOfInterest
 {

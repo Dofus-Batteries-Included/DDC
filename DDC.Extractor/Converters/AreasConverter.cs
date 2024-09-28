@@ -1,8 +1,6 @@
-﻿using DDC.Extractor.Abstractions;
-using DDC.Extractor.Areas.Models;
-using DDC.Extractor.Common.Models;
+﻿using DDC.Extractor.Models;
 
-namespace DDC.Extractor.Areas;
+namespace DDC.Extractor.Converters;
 
 public class AreasConverter : IConverter<Core.DataCenter.Metadata.World.Areas, Area>
 {

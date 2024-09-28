@@ -1,4 +1,4 @@
-namespace DDC.Extractor.MapPositions.Models;
+namespace DDC.Extractor.Models;
 
 public class MapPosition
 {

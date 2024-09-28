@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DDC.Extractor.Abstractions;
-using DDC.Extractor.Common.Models;
+using DDC.Extractor.Models;
 
-namespace DDC.Extractor.MapCoordinates;
+namespace DDC.Extractor.Converters;
 
 public class MapCoordinatesConverter : IConverter<Core.DataCenter.Metadata.World.MapCoordinates, Models.MapCoordinates>
 {

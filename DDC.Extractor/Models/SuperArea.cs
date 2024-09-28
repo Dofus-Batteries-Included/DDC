@@ -1,4 +1,4 @@
-﻿namespace DDC.Extractor.Areas.Models;
+﻿namespace DDC.Extractor.Models;
 
 public class SuperArea
 {

@@ -2,11 +2,9 @@
 using System.Linq;
 using Core.DataCenter.Metadata.World;
 using Core.DataCenter.Types;
-using DDC.Extractor.Abstractions;
-using DDC.Extractor.Areas.Models;
-using DDC.Extractor.Common.Models;
+using DDC.Extractor.Models;
 
-namespace DDC.Extractor.Areas;
+namespace DDC.Extractor.Converters;
 
 public class SubAreasConverter : IConverter<SubAreas, SubArea>
 {

@@ -1,7 +1,6 @@
 ﻿using Core.DataCenter.Metadata.Quest.TreasureHunt;
-using DDC.Extractor.Abstractions;
 
-namespace DDC.Extractor.PointOfInterests;
+namespace DDC.Extractor.Converters;
 
 public class PointsOfInterestConverter : IConverter<PointOfInterest, Models.PointOfInterest>
 {

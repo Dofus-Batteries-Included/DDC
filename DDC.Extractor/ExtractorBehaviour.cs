@@ -10,11 +10,7 @@ using Core.DataCenter;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
-using DDC.Extractor.Abstractions;
-using DDC.Extractor.Areas;
-using DDC.Extractor.MapCoordinates;
-using DDC.Extractor.MapPositions;
-using DDC.Extractor.PointOfInterests;
+using DDC.Extractor.Converters;
 using UnityEngine;
 
 namespace DDC.Extractor;
@@ -65,7 +61,7 @@ public class ExtractorBehaviour : MonoBehaviour
             entries[entry.Key] = output;
         }
 
-        I18N.Models.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
+        Models.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
 
         string path = Path.Join(Extractor.OutputDirectory, filename);
         await using FileStream stream = File.Open(path, FileMode.Create);

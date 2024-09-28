@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DDC.Extractor.I18N.Models;
+namespace DDC.Extractor.Models;
 
 public class LocalizationTable
 {

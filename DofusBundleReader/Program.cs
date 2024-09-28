@@ -3,6 +3,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommandLine;
+using DofusBundleReader;
 using DofusBundleReader.Abstractions;
 using DofusBundleReader.Maps;
 using DofusBundleReader.WorldGraphs;
@@ -13,7 +14,6 @@ using Serilog.Extensions.Logging;
 using UnityBundleReader;
 using UnityBundleReader.Classes;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 using Logger = Serilog.Core.Logger;
 
 #if DEBUG
@@ -121,22 +121,24 @@ string GetOutputFileName(string filename, ExtractArgsBase args)
     return Path.Join(args.Output, filename + ".json");
 }
 
-
-abstract class ExtractArgsBase
+namespace DofusBundleReader
 {
-    [Value(0, Required = false, Default = ".", HelpText = "Directory containing the worldassets_*.bundle file.")]
-    public string BundleDirectory { get; set; } = ".";
+    abstract class ExtractArgsBase
+    {
+        [Value(0, Required = false, Default = ".", HelpText = "Directory containing the worldassets_*.bundle file.")]
+        public string BundleDirectory { get; set; } = ".";
 
-    [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
-    public string Output { get; set; } = "./output";
-}
+        [Option('o', "output", Default = "./output", HelpText = "Output directory.")]
+        public string Output { get; set; } = "./output";
+    }
 
-[Verb("worldgraph")]
-class ExtractWorldGraphArgs : ExtractArgsBase
-{
-}
+    [Verb("worldgraph")]
+    class ExtractWorldGraphArgs : ExtractArgsBase
+    {
+    }
 
-[Verb("maps")]
-class ExtractMapsArgs : ExtractArgsBase
-{
+    [Verb("maps")]
+    class ExtractMapsArgs : ExtractArgsBase
+    {
+    }
 }
