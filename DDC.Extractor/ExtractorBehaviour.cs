@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Core.DataCenter;
+using Core.DataCenter.Metadata.Interactive;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
@@ -34,6 +35,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractDataFromGame("super-areas.json", DataCenterModule.GetDataRoot<SuperAreasRoot>(), new SuperAreasConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("sub-areas.json", DataCenterModule.GetDataRoot<SubAreasRoot>(), new SubAreasConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("world-maps.json", DataCenterModule.GetDataRoot<WorldMapsRoot>(), new WorldMapsConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("interactives.json", DataCenterModule.GetDataRoot<InteractivesRoot>(), new InteractivesConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
