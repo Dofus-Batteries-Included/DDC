@@ -92,7 +92,10 @@ public class WorldGraphBundleExtractor : IBundleExtractor<WorldGraph>
                 {
                     MapId = Convert.ToInt64(t["m_transitionMapId"]),
                     Type = EnumValueOrDefault((WorldGraphEdgeType)Convert.ToInt32(t["m_type"])),
-                    Direction = EnumValueOrDefault((WorldGraphEdgeDirection)Convert.ToInt32(t["m_direction"]))
+                    Direction = EnumValueOrDefault((WorldGraphEdgeDirection)Convert.ToInt32(t["m_direction"])),
+                    SkillId = Convert.ToInt32(t["m_skillId"]),
+                    CellId = Convert.ToInt32(t["m_cellId"]),
+                    Criterion = t["m_criterion"] as string
                 }
             )
             .Where(t => t.MapId != default || t.Type is not null || t.Direction is not null)
