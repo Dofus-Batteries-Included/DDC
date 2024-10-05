@@ -1,3 +1,5 @@
+[![Discord](https://img.shields.io/discord/1279846081550618696?label=discord)](https://discord.gg/z4pYKSTjKZ)
+
 # Dofus Data Center (DDC)
 
 Extract and release data from Dofus.\
