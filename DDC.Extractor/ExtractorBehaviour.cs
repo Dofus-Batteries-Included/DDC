@@ -75,6 +75,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractDataFromGame("jobs.json", DataCenterModule.GetDataRoot<JobsRoot>(), new JobsConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("monsters.json", DataCenterModule.GetDataRoot<MonstersRoot>(), new MonstersConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("monster-races.json", DataCenterModule.GetDataRoot<MonsterRacesRoot>(), new MonsterRacesConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("monster-super-races.json", DataCenterModule.GetDataRoot<MonsterSuperRacesRoot>(), new MonsterSuperRacesConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
