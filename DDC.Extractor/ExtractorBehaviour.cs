@@ -13,10 +13,13 @@ using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
 using DDC.Extractor.Converters;
+using DDC.Extractor.Models.Effects;
+using JsonSubTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using EffectInstance = Core.DataCenter.Metadata.Effect.EffectInstance;
 
 namespace DDC.Extractor;
 
@@ -24,8 +27,23 @@ public class ExtractorBehaviour : MonoBehaviour
 {
     static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {
-        ContractResolver = new DefaultContractResolver { NamingStrategy = new KebabCaseNamingStrategy() },
-        Converters = [new StringEnumConverter(new KebabCaseNamingStrategy())],
+        ContractResolver = new OrderedContractResolver { NamingStrategy = new KebabCaseNamingStrategy() },
+        Converters =
+        [
+            new StringEnumConverter(new KebabCaseNamingStrategy()),
+            JsonSubtypesConverterBuilder.Of(typeof(EffectInstance), "type")
+                .RegisterSubtype(typeof(EffectInstanceString), "string")
+                .RegisterSubtype(typeof(EffectInstanceDice), "dice")
+                .RegisterSubtype(typeof(EffectInstanceInteger), "integer")
+                .RegisterSubtype(typeof(EffectInstanceMinMax), "min-max")
+                .RegisterSubtype(typeof(EffectInstanceDate), "date")
+                .RegisterSubtype(typeof(EffectInstanceDuration), "duration")
+                .RegisterSubtype(typeof(EffectInstanceLadder), "ladder")
+                .RegisterSubtype(typeof(EffectInstanceMount), "mount")
+                .RegisterSubtype(typeof(EffectInstanceCreature), "creature")
+                .SerializeDiscriminatorProperty()
+                .Build()
+        ],
         NullValueHandling = NullValueHandling.Ignore
     };
 

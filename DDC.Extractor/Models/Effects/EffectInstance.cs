@@ -1,22 +1,9 @@
-﻿using System.Runtime.Serialization;
-using Core.DataCenter.Metadata.Effect;
+﻿using Core.DataCenter.Metadata.Effect;
 using DDC.Extractor.Models.Spells;
 using Metadata.Enums;
-using Newtonsoft.Json;
-using NJsonSchema.NewtonsoftJson.Converters;
 
 namespace DDC.Extractor.Models.Effects;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "type")]
-[KnownType(typeof(EffectInstanceString))]
-[KnownType(typeof(EffectInstanceDice))]
-[KnownType(typeof(EffectInstanceInteger))]
-[KnownType(typeof(EffectInstanceMinMax))]
-[KnownType(typeof(EffectInstanceDate))]
-[KnownType(typeof(EffectInstanceDuration))]
-[KnownType(typeof(EffectInstanceLadder))]
-[KnownType(typeof(EffectInstanceMount))]
-[KnownType(typeof(EffectInstanceCreature))]
 public class EffectInstance
 {
     public EffectInstance(Core.DataCenter.Metadata.Effect.EffectInstance instance)
