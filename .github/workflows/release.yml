@@ -81,7 +81,7 @@ jobs:
         run: dotnet restore
 
       - name: Publish
-        run: dotnet publish DDC.Extractor/DDC.Extractor.csproj --configuration Release
+        run: dotnet publish DDC.Extractor/DDC.Extractor.csproj --configuration Release --no-restore
 
       - name: Pack plugin
         run: |
@@ -127,7 +127,7 @@ jobs:
           cd ${{ steps.read_dofus_version.outputs.dofus_path }}/extracted-data
           7z a data.zip .
 
-      - name: Upload compiled libraries to release
+      - name: Upload data to release
         if: ${{ github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
@@ -136,7 +136,7 @@ jobs:
           asset_name: data.zip
           tag: ${{ github.ref }}
 
-      - name: Upload compiled library to artifacts
+      - name: Upload data to artifacts
         if: ${{ github.event_name != 'release' }}
         uses: actions/upload-artifact@v4
         with:
