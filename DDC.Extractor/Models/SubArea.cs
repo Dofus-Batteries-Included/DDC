@@ -1,9 +1,33 @@
 ﻿using System.Collections.Generic;
+using Core.DataCenter.Metadata.World;
+using DDC.Extractor.Extensions;
 
 namespace DDC.Extractor.Models;
 
 public class SubArea
 {
+    public SubArea(SubAreas data)
+    {
+        Id = data.id;
+        NameId = data.nameId;
+        AreaId = data.areaId;
+        WorldMapId = data.worldmapId;
+        Level = data.level;
+        Center = data.m_center.ToNonEmptyPositionOrNull();
+        Bounds = data.bounds.ToNonEmptyBoundsOrNull();
+        Neighbours = data.neighbors.ToNonEmptyCSharpListOrNull();
+        EntranceMapIds = data.entranceMapIds.ToNonEmptyCSharpListOrNull();
+        ExitMapIds = data.exitMapIds.ToNonEmptyCSharpListOrNull();
+        ZaapMapId = data.associatedZaapMapId == 0 ? null : data.associatedZaapMapId;
+        Capturable = data.capturable;
+        BasicAccountAllowed = data.basicAccountAllowed;
+        PsiAllowed = data.psiAllowed;
+        MountAutoTripAllowed = data.mountAutoTripAllowed;
+        IsConquestVillage = data.isConquestVillage;
+        DisplayOnWorldMap = data.displayOnWorldMap;
+        CustomWorldMap = data.hasCustomWorldMap ? data.customWorldMap.ToNonEmptyCSharpListOrNull() : null;
+    }
+
     public int Id { get; set; }
     public int NameId { get; set; }
     public int AreaId { get; set; }

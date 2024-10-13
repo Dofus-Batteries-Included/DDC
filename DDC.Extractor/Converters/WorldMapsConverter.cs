@@ -5,11 +5,5 @@ namespace DDC.Extractor.Converters;
 
 public class WorldMapsConverter : IConverter<WorldMaps, WorldMap>
 {
-    public WorldMap Convert(WorldMaps data) =>
-        new()
-        {
-            Id = data.id,
-            NameId = data.nameId,
-            Origin = new Position { X = data.origineX, Y = data.origineY }
-        };
+    public WorldMap Convert(WorldMaps data) => new(data);
 }
