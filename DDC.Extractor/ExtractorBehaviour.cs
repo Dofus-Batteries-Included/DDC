@@ -25,7 +25,7 @@ public class ExtractorBehaviour : MonoBehaviour
     static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {
         ContractResolver = new DefaultContractResolver { NamingStrategy = new KebabCaseNamingStrategy() },
-        Converters = [new StringEnumConverter()],
+        Converters = [new StringEnumConverter(new KebabCaseNamingStrategy())],
         NullValueHandling = NullValueHandling.Ignore
     };
 
