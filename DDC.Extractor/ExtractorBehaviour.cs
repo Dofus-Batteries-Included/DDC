@@ -10,6 +10,7 @@ using Core.DataCenter.Metadata.Effect;
 using Core.DataCenter.Metadata.Interactive;
 using Core.DataCenter.Metadata.Item;
 using Core.DataCenter.Metadata.Job;
+using Core.DataCenter.Metadata.Monster;
 using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
@@ -72,6 +73,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractDataFromGame("effects.json", DataCenterModule.GetDataRoot<EffectsRoot>(), new EffectsConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("recipes.json", DataCenterModule.GetDataRoot<RecipesRoot>(), new RecipesConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("jobs.json", DataCenterModule.GetDataRoot<JobsRoot>(), new JobsConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("monsters.json", DataCenterModule.GetDataRoot<MonstersRoot>(), new MonstersConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));

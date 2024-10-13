@@ -72,7 +72,7 @@ public class EffectInstance
 
 static class EffectInstanceMappingExtensions
 {
-    public static EffectInstance ToInstance(this Core.DataCenter.Metadata.Effect.EffectInstance instance)
+    public static EffectInstance ToDdc(this Core.DataCenter.Metadata.Effect.EffectInstance instance)
     {
         string effectDescr = instance.ToString();
         string effectType = effectDescr[..effectDescr.IndexOf(' ')];

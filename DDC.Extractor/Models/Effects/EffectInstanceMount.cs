@@ -21,7 +21,7 @@ public class EffectInstanceMount : EffectInstance
         IsFecondationReady = instance.isFecondationReady;
         ReproductionCount = instance.reproductionCount;
         ReproductionCountMax = instance.reproductionCountMax;
-        Effects = instance.effects.ToCSharpList().Select(e => e.ToInstance()).ToArray();
+        Effects = instance.effects.ToCSharpList().Select(e => e.ToDdc()).ToArray();
         Capacities = instance.capacities.ToCSharpList();
     }
 

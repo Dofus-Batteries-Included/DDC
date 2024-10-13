@@ -15,7 +15,7 @@ public class Item
         NameId = item.nameId;
         DescriptionId = item.descriptionId;
         ItemTypeId = item.typeId;
-        PossibleEffects = item.possibleEffects.ToCSharpList().Select(e => e.ToInstance()).ToArray();
+        PossibleEffects = item.possibleEffects.ToCSharpList().Select(e => e.ToDdc()).ToArray();
         EvolutiveEffectIds = item.evolutiveEffectIds.ToCSharpList();
         Price = item.price;
         Weight = item.weight;

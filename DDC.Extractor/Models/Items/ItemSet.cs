@@ -13,7 +13,7 @@ public class ItemSet
         Id = set.id;
         NameId = set.nameId;
         Items = set.items.ToCSharpList();
-        Effects = set.effects.ToCSharpList().Where(el => el != null).Select(el => el.values.ToCSharpList().Where(e => e != null).Select(e => e.ToInstance()).ToArray()).ToArray();
+        Effects = set.effects.ToCSharpList().Where(el => el != null).Select(el => el.values.ToCSharpList().Where(e => e != null).Select(e => e.ToDdc()).ToArray()).ToArray();
         BonusIsSecret = set.bonusIsSecret;
     }
 
