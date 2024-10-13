@@ -2,7 +2,7 @@
 
 namespace DDC.Extractor.Converters;
 
-public class MapCoordinatesConverter : IConverter<MapCoordinates, Models.MapCoordinates>
+public class MapCoordinatesConverter : IConverter<MapCoordinates, Models.Worlds.MapCoordinates>
 {
-    public Models.MapCoordinates Convert(MapCoordinates data) => new(data);
+    public Models.Worlds.MapCoordinates Convert(MapCoordinates data) => new(data);
 }

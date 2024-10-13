@@ -1,6 +1,6 @@
 ﻿using Core.DataCenter.Types;
 
-namespace DDC.Extractor.Models;
+namespace DDC.Extractor.Models.Worlds;
 
 public class Bounds
 {

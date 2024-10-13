@@ -98,7 +98,7 @@ public class ExtractorBehaviour : MonoBehaviour
             entries[entry.Key] = output;
         }
 
-        Models.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
+        Models.I18N.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
 
         string path = Path.Join(Extractor.OutputDirectory, filename);
         string serialized = JsonConvert.SerializeObject(localizationTable, JsonSerializerSettings);

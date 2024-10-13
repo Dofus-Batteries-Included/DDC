@@ -1,6 +1,6 @@
 ﻿using Core.DataCenter.Metadata.Interactive;
 
-namespace DDC.Extractor.Models;
+namespace DDC.Extractor.Models.Worlds;
 
 public class Interactive
 {

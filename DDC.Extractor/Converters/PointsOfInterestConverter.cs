@@ -2,7 +2,7 @@
 
 namespace DDC.Extractor.Converters;
 
-public class PointsOfInterestConverter : IConverter<PointOfInterest, Models.PointOfInterest>
+public class PointsOfInterestConverter : IConverter<PointOfInterest, Models.Worlds.PointOfInterest>
 {
-    public Models.PointOfInterest Convert(PointOfInterest data) => new(data);
+    public Models.Worlds.PointOfInterest Convert(PointOfInterest data) => new(data);
 }

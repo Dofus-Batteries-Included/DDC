@@ -1,6 +1,6 @@
 ﻿using Core.DataCenter.Metadata.World;
 
-namespace DDC.Extractor.Models;
+namespace DDC.Extractor.Models.Worlds;
 
 public class WorldMap
 {
