@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,7 +42,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractDataFromGame("item-sets.json", DataCenterModule.GetDataRoot<ItemSetsRoot>(), new ItemSetsConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("item-types.json", DataCenterModule.GetDataRoot<ItemTypesRoot>(), new ItemTypesConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("item-super-types.json", DataCenterModule.GetDataRoot<ItemSuperTypesRoot>(), new ItemSuperTypesConverter()));
-        yield return WaitForCompletion(ExtractDataFromGame("item-super-types.json", DataCenterModule.GetDataRoot<EvolutiveItemTypesRoot>(), new EvolutiveItemTypesConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("evolutive-item-types.json", DataCenterModule.GetDataRoot<EvolutiveItemTypesRoot>(), new EvolutiveItemTypesConverter()));
         yield return WaitForCompletion(ExtractLocale("de.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/de.bin"));
         yield return WaitForCompletion(ExtractLocale("en.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/en.bin"));
         yield return WaitForCompletion(ExtractLocale("es.i18n.json", "Dofus_Data/StreamingAssets/Content/I18n/es.bin"));
@@ -86,8 +87,23 @@ public class ExtractorBehaviour : MonoBehaviour
 
         Extractor.Logger.LogInfo($"Extracting data of type {dataTypeName}...");
 
-        Il2CppSystem.Collections.Generic.List<TData> data = root.GetObjects();
-        TSerializedData[] arr = data._items.Take(data.Count).Select(converter.Convert).ToArray();
+        TSerializedData[] arr;
+        try
+        {
+            Il2CppSystem.Collections.Generic.List<TData> data = root.GetObjects();
+            arr = data._items.Take(data.Count).Select(converter.Convert).ToArray();
+        }
+        catch (Exception exn)
+        {
+            Extractor.Logger.LogError($"Error while converting data of type {dataTypeName}.{Environment.NewLine}{exn}");
+            return;
+        }
+
+        if (arr.Length == 0)
+        {
+            Extractor.Logger.LogError($"Did not find any data of type {dataTypeName}.");
+            return;
+        }
 
         await using FileStream stream = File.Open(path, FileMode.Create);
         await JsonSerializer.SerializeAsync(stream, arr, JsonSerializerOptions);
@@ -110,6 +126,16 @@ public class ExtractorBehaviour : MonoBehaviour
         while (!task.IsCompleted)
         {
             yield return null;
+        }
+
+        if (task.IsFaulted)
+        {
+            throw new Exception("Task is faulted.", task.Exception);
+        }
+
+        if (task.IsCanceled)
+        {
+            throw new Exception("Task is canceled.", task.Exception);
         }
     }
 }

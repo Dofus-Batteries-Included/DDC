@@ -19,9 +19,6 @@ public class ItemTypesConverter : IConverter<ItemTypes, ItemType>
             Mimickable = type.mimickable,
             CraftXpRatio = type.craftXpRatio,
             PossiblePositions = type.possiblePositions.ToCSharpList(),
-            ZoneShape = type.zoneShape,
-            ZoneSize = type.zoneSize,
-            ZoneMinSize = type.zoneMinSize,
             RawZone = type.rawZone,
             IsInEncyclopedia = type.isInEncyclopedia,
             AdminSelectionTypeName = type.adminSelectionTypeName

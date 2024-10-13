@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Metadata.Enums;
 
 namespace DDC.Extractor.Models.Items;
 
@@ -15,9 +14,6 @@ public class ItemType
     public bool Mimickable { get; set; }
     public int CraftXpRatio { get; set; }
     public IReadOnlyList<int> PossiblePositions { get; set; }
-    public SpellZoneShape ZoneShape { get; set; }
-    public uint ZoneSize { get; set; }
-    public uint ZoneMinSize { get; set; }
     public string RawZone { get; set; }
     public bool IsInEncyclopedia { get; set; }
     public string AdminSelectionTypeName { get; set; }
