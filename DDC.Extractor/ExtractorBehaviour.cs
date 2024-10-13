@@ -73,6 +73,7 @@ public class ExtractorBehaviour : MonoBehaviour
         yield return WaitForCompletion(ExtractDataFromGame("effects.json", DataCenterModule.GetDataRoot<EffectsRoot>(), new EffectsConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("recipes.json", DataCenterModule.GetDataRoot<RecipesRoot>(), new RecipesConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("jobs.json", DataCenterModule.GetDataRoot<JobsRoot>(), new JobsConverter()));
+        yield return WaitForCompletion(ExtractDataFromGame("skill-names.json", DataCenterModule.GetDataRoot<SkillNamesRoot>(), new SkillNamesConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("monsters.json", DataCenterModule.GetDataRoot<MonstersRoot>(), new MonstersConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("monster-races.json", DataCenterModule.GetDataRoot<MonsterRacesRoot>(), new MonsterRacesConverter()));
         yield return WaitForCompletion(ExtractDataFromGame("monster-super-races.json", DataCenterModule.GetDataRoot<MonsterSuperRacesRoot>(), new MonsterSuperRacesConverter()));
