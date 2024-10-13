@@ -1,9 +1,22 @@
-﻿using Core.DataCenter.Metadata.Effect;
+﻿using System.Runtime.Serialization;
+using Core.DataCenter.Metadata.Effect;
 using DDC.Extractor.Models.Spells;
 using Metadata.Enums;
+using Newtonsoft.Json;
+using NJsonSchema.NewtonsoftJson.Converters;
 
 namespace DDC.Extractor.Models.Effects;
 
+[JsonConverter(typeof(JsonInheritanceConverter), "type")]
+[KnownType(typeof(EffectInstanceString))]
+[KnownType(typeof(EffectInstanceDice))]
+[KnownType(typeof(EffectInstanceInteger))]
+[KnownType(typeof(EffectInstanceMinMax))]
+[KnownType(typeof(EffectInstanceDate))]
+[KnownType(typeof(EffectInstanceDuration))]
+[KnownType(typeof(EffectInstanceLadder))]
+[KnownType(typeof(EffectInstanceMount))]
+[KnownType(typeof(EffectInstanceCreature))]
 public class EffectInstance
 {
     public EffectInstance(Core.DataCenter.Metadata.Effect.EffectInstance instance)
@@ -72,18 +85,23 @@ public class EffectInstance
 
 static class EffectInstanceMappingExtensions
 {
-    public static EffectInstance ToInstance(this Core.DataCenter.Metadata.Effect.EffectInstance instance) =>
-        instance switch
+    public static EffectInstance ToInstance(this Core.DataCenter.Metadata.Effect.EffectInstance instance)
+    {
+        string effectDescr = instance.ToString();
+        string effectType = effectDescr[..effectDescr.IndexOf(' ')];
+
+        return effectType switch
         {
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceString str => new EffectInstanceString(str),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDice dice => new EffectInstanceDice(dice),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceInteger integer => new EffectInstanceInteger(integer),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceMinMax minMax => new EffectInstanceMinMax(minMax),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDate date => new EffectInstanceDate(date),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDuration duration => new EffectInstanceDuration(duration),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceLadder ladder => new EffectInstanceLadder(ladder),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceMount mount => new EffectInstanceMount(mount),
-            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceCreature creature => new EffectInstanceCreature(creature),
+            "EffectInstanceString" => new EffectInstanceString(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceString(instance.Pointer)),
+            "EffectInstanceDice" => new EffectInstanceDice(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDice(instance.Pointer)),
+            "EffectInstanceInteger" => new EffectInstanceInteger(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceInteger(instance.Pointer)),
+            "EffectInstanceMinMax" => new EffectInstanceMinMax(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceMinMax(instance.Pointer)),
+            "EffectInstanceDate" => new EffectInstanceDate(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDate(instance.Pointer)),
+            "EffectInstanceDuration" => new EffectInstanceDuration(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDuration(instance.Pointer)),
+            "EffectInstanceLadder" => new EffectInstanceLadder(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceLadder(instance.Pointer)),
+            "EffectInstanceMount" => new EffectInstanceMount(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceMount(instance.Pointer)),
+            "EffectInstanceCreature" => new EffectInstanceCreature(new Core.DataCenter.Metadata.Effect.Instance.EffectInstanceCreature(instance.Pointer)),
             _ => new EffectInstance(instance)
         };
+    }
 }

@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Core.DataCenter;
@@ -15,13 +13,21 @@ using Core.DataCenter.Metadata.Quest.TreasureHunt;
 using Core.DataCenter.Metadata.World;
 using Core.Localization;
 using DDC.Extractor.Converters;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace DDC.Extractor;
 
 public class ExtractorBehaviour : MonoBehaviour
 {
-    static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerDefaults.Web) { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+    static readonly JsonSerializerSettings JsonSerializerSettings = new()
+    {
+        ContractResolver = new DefaultContractResolver { NamingStrategy = new KebabCaseNamingStrategy() },
+        Converters = [new StringEnumConverter()],
+        NullValueHandling = NullValueHandling.Ignore
+    };
 
     void Start() => StartCoroutine(StartCoroutine().WrapToIl2Cpp());
 
@@ -75,9 +81,8 @@ public class ExtractorBehaviour : MonoBehaviour
         Models.LocalizationTable localizationTable = new() { LanguageCode = table.m_header.languageCode, Entries = entries };
 
         string path = Path.Join(Extractor.OutputDirectory, filename);
-        await using FileStream stream = File.Open(path, FileMode.Create);
-        await JsonSerializer.SerializeAsync(stream, localizationTable, JsonSerializerOptions);
-        stream.Flush();
+        string serialized = JsonConvert.SerializeObject(localizationTable, JsonSerializerSettings);
+        await File.WriteAllTextAsync(path, serialized);
 
         Extractor.Logger.LogInfo($"Extracted locale {table.m_header.languageCode} to {path}.");
     }
@@ -107,9 +112,8 @@ public class ExtractorBehaviour : MonoBehaviour
             return;
         }
 
-        await using FileStream stream = File.Open(path, FileMode.Create);
-        await JsonSerializer.SerializeAsync(stream, arr, JsonSerializerOptions);
-        stream.Flush();
+        string serialized = JsonConvert.SerializeObject(arr, JsonSerializerSettings);
+        await File.WriteAllTextAsync(path, serialized);
 
         Extractor.Logger.LogInfo($"Extracted data of type {dataTypeName} to {path}.");
     }
