@@ -7,7 +7,7 @@ namespace DDC.Extractor.Models.Spells;
 
 public class SpellZoneDescription
 {
-    public IReadOnlyCollection<int> CellIds { get; set; }
+    public IReadOnlyList<int> CellIds { get; set; }
     public SpellZoneShape Shape { get; set; }
     public byte Param1 { get; set; }
     public byte Param2 { get; set; }

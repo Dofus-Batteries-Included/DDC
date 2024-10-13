@@ -10,12 +10,12 @@ public class Item
     public uint NameId { get; set; }
     public uint DescriptionId { get; set; }
     public Core.DataCenter.Metadata.Item.Items.ItemCategoryEnum Category { get; set; }
-    public IReadOnlyCollection<EffectInstance> PossibleEffects { get; set; }
+    public IReadOnlyList<EffectInstance> PossibleEffects { get; set; }
     public float Price { get; set; }
     public uint Weight { get; set; }
     public float RecyclingNuggets { get; set; }
     public int ItemTypeId { get; set; }
-    public List<ushort> RecipeIds { get; set; }
+    public IReadOnlyList<ushort> RecipeIds { get; set; }
     public byte RecipeSlots { get; set; }
     public bool SecretRecipe { get; set; }
     public short ItemSetId { get; set; }
