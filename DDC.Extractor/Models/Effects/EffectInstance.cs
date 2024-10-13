@@ -6,6 +6,39 @@ namespace DDC.Extractor.Models.Effects;
 
 public class EffectInstance
 {
+    public EffectInstance(Core.DataCenter.Metadata.Effect.EffectInstance instance)
+    {
+        EffectId = instance.effectId;
+        EffectUid = instance.effectUid;
+        BaseEffectId = instance.baseEffectId;
+        EffectElement = instance.effectElement;
+        Delay = instance.delay;
+        Duration = instance.duration;
+        Dispellable = instance.dispellable;
+        Group = instance.group;
+        Modificator = instance.modificator;
+        Order = instance.order;
+        Trigger = instance.trigger;
+        Triggers = instance.triggers;
+        ShowInSet = instance.showInSet;
+        Random = instance.random;
+        SpellId = instance.spellId;
+        TargetId = instance.targetId;
+        TargetMask = instance.targetMask;
+        ZoneStopAtTarget = instance.zoneStopAtTarget;
+        ZoneDescription = new SpellZoneDescription(instance.zoneDescr);
+        ZoneShape = instance.zoneShape;
+        ZoneSize = instance.zoneSize;
+        ZoneMinSize = instance.zoneMinSize;
+        ZoneDamageDecreaseStepPercent = instance.zoneDamageDecreaseStepPercent;
+        ZoneMaxDamageDecreaseApplyCount = instance.zoneMaxDamageDecreaseApplyCount;
+        VisibleInTooltip = instance.visibleInTooltip;
+        VisibleOnTerrain = instance.visibleOnTerrain;
+        VisibleInBuffUi = instance.visibleInBuffUi;
+        VisibleInFightLog = instance.visibleInFightLog;
+        ForClientOnly = instance.forClientOnly;
+    }
+
     public ActionId EffectId { get; set; }
     public int EffectUid { get; set; }
     public short BaseEffectId { get; set; }
@@ -40,36 +73,17 @@ public class EffectInstance
 static class EffectInstanceMappingExtensions
 {
     public static EffectInstance ToInstance(this Core.DataCenter.Metadata.Effect.EffectInstance instance) =>
-        new()
+        instance switch
         {
-            EffectId = instance.effectId,
-            EffectUid = instance.effectUid,
-            BaseEffectId = instance.baseEffectId,
-            EffectElement = instance.effectElement,
-            Delay = instance.delay,
-            Duration = instance.duration,
-            Dispellable = instance.dispellable,
-            Group = instance.group,
-            Modificator = instance.modificator,
-            Order = instance.order,
-            Trigger = instance.trigger,
-            Triggers = instance.triggers,
-            ShowInSet = instance.showInSet,
-            Random = instance.random,
-            SpellId = instance.spellId,
-            TargetId = instance.targetId,
-            TargetMask = instance.targetMask,
-            ZoneStopAtTarget = instance.zoneStopAtTarget,
-            ZoneDescription = instance.zoneDescr.ToDescription(),
-            ZoneShape = instance.zoneShape,
-            ZoneSize = instance.zoneSize,
-            ZoneMinSize = instance.zoneMinSize,
-            ZoneDamageDecreaseStepPercent = instance.zoneDamageDecreaseStepPercent,
-            ZoneMaxDamageDecreaseApplyCount = instance.zoneMaxDamageDecreaseApplyCount,
-            VisibleInTooltip = instance.visibleInTooltip,
-            VisibleOnTerrain = instance.visibleOnTerrain,
-            VisibleInBuffUi = instance.visibleInBuffUi,
-            VisibleInFightLog = instance.visibleInFightLog,
-            ForClientOnly = instance.forClientOnly
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceString str => new EffectInstanceString(str),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDice dice => new EffectInstanceDice(dice),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceInteger integer => new EffectInstanceInteger(integer),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceMinMax minMax => new EffectInstanceMinMax(minMax),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDate date => new EffectInstanceDate(date),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceDuration duration => new EffectInstanceDuration(duration),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceLadder ladder => new EffectInstanceLadder(ladder),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceMount mount => new EffectInstanceMount(mount),
+            Core.DataCenter.Metadata.Effect.Instance.EffectInstanceCreature creature => new EffectInstanceCreature(creature),
+            _ => new EffectInstance(instance)
         };
 }
