@@ -80,11 +80,12 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build DDC.Extractor plugin
-        run: dotnet build DDC.Extractor/DDC.Extractor.csproj --configuration Release --no-restore
+      - name: Publish
+        run: dotnet publish DDC.Extractor/DDC.Extractor.csproj --configuration Release
 
-      - name: Copy plugin
-        run: copy DDC.Extractor/bin/Release/net6.0/DDC*.dll ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/plugins
+      - name: Pack plugin
+        run: |
+          ./pack.ps1 -configuration Release -output ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/plugins/DDC
 
       - name: Create BepInEx config folder
         run: md ${{ steps.read_dofus_version.outputs.dofus_path }}/BepInEx/config -Force
