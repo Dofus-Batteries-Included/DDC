@@ -36,10 +36,10 @@ jobs:
       - name: Read current game version
         id: read_dofus_version
         run: |
-          $CytrusGameVersion=$(cytrus-v6 version -g dofus -b)
+          $CytrusGameVersion=$(cytrus-v6 version -g dofus)
           $GameVersion=$CytrusGameVersion.Split("_")[1]
           echo "dofus_version=$GameVersion" >> $Env:GITHUB_OUTPUT
-          echo "dofus_path=dofus-beta-$GameVersion" >> $Env:GITHUB_OUTPUT
+          echo "dofus_path=dofus-$GameVersion" >> $Env:GITHUB_OUTPUT
 
       - name: Restore game files
         id: restore_game_files
@@ -50,7 +50,7 @@ jobs:
 
       - name: Download latest game files
         if: ${{ steps.restore_game_files.outputs.cache-hit != 'true' }}
-        run: cytrus-v6 download -g dofus -b -o ${{ steps.read_dofus_version.outputs.dofus_path }} # Use beta for now
+        run: cytrus-v6 download -g dofus -o ${{ steps.read_dofus_version.outputs.dofus_path }}
 
       - name: Download BepInEx
         run: curl https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.697%2B5362580.zip -o BepInEx.zip
